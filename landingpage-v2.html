@@ -234,9 +234,9 @@ a { color: inherit; }
   width: clamp(88px, 19cqw, 124px); aspect-ratio: 1; border-radius: 50%;
   background: var(--white); box-shadow: var(--shadow-sm); color: var(--forest); pointer-events: none;
 }
-.badge__ring { position: absolute; inset: 0; animation: spin 26s linear infinite; }
+.badge__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: spin 26s linear infinite; }
 .badge__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 13px; fill: currentColor; }
-.badge__heart { position: absolute; inset: 31%; animation: heartbeat 2.4s ease-in-out infinite; }
+.badge__heart { position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; animation: heartbeat 2.4s ease-in-out infinite; }
 .badge__heart path { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes heartbeat { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(1.12); } 90% { transform: scale(.97); } }
@@ -388,10 +388,10 @@ a { color: inherit; }
   container-type: inline-size; margin-bottom: 10px;
   view-transition-name: match-hund;
 }
-.analyse__blob { position: absolute; inset: 8% 0 4%; color: var(--lime-300); animation: float-rot 3s ease-in-out infinite alternate; }
-.analyse__blob--2 { inset: 0 6% 42% 34%; color: var(--lime); animation-duration: 2.2s; }
+.analyse__blob { position: absolute; left: 0; top: 8%; width: 100%; height: 88%; color: var(--lime-300); animation: float-rot 3s ease-in-out infinite alternate; }
+.analyse__blob--2 { left: 34%; top: 0; width: 60%; height: 58%; color: var(--lime); animation-duration: 2.2s; }
 .analyse__blob path { fill: currentColor; }
-.analyse__ring { position: absolute; inset: -6%; animation: spin 6s linear infinite; }
+.analyse__ring { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; animation: spin 6s linear infinite; }
 .analyse__ring circle { fill: none; stroke: var(--forest); stroke-width: 1.6; stroke-dasharray: 2 9; stroke-linecap: round; opacity: .5; }
 .analyse__dog { position: absolute; inset: 6% 5% 0; width: 90%; height: 94%; object-fit: contain; opacity: 0; transform: scale(.85) rotate(-4deg); transition: opacity 120ms linear, transform 260ms var(--spring); }
 .analyse__dog.is-on { opacity: 1; transform: none; }
