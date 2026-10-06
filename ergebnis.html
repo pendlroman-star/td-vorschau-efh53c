@@ -74,6 +74,19 @@ a { color: inherit; }
 .js .mc__name .marker::before { animation-delay: 1500ms; }
 @keyframes marker-in { from { transform: rotate(-1.2deg) scaleX(0); } to { transform: rotate(-1.2deg) scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .js .r-type .marker::before, .js .mc__name .marker::before { animation: none; } }
+/* Rassenname kann zweizeilig sein (Jack Russell Terrier, Labrador Retriever):
+   Marker als Hintergrund je Zeile – jede Zeile bekommt ihren eigenen, passend langen Balken */
+.r-type .marker {
+  display: inline; padding: 0 .08em; margin: 0 -.08em;
+  background-image: linear-gradient(var(--lime), var(--lime));
+  background-repeat: no-repeat; background-position: 0 88%; background-size: 100% .48em;
+  border-radius: .25em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.r-type .marker::before { content: none; }
+.js .r-type .marker { animation: marker-line 900ms var(--ease) 900ms both; }
+@keyframes marker-line { from { background-size: 0% .48em; } to { background-size: 100% .48em; } }
+@media (prefers-reduced-motion: reduce) { .js .r-type .marker { animation: none; } }
 
 /* ==========================================================================
    ERGEBNIS-HERO: 1) Dein Charakter  2) Dein Doppelgänger aus dem Tierheim
