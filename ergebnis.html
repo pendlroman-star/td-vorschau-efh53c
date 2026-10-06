@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dein Ergebnis – Tierischer Doppelgänger – Arche Noah</title>
+<meta name="description" content="Dein tierischer Doppelgänger – ein Quiz der Arche Noah – Aktiver Tierschutz Austria.">
+<meta name="theme-color" content="#13492a">
+<meta name="robots" content="noindex">
+<link rel="icon" href="bilder/arche-icon.svg" type="image/svg+xml">
+<!-- Für den Livebetrieb Schriften selbst hosten (Datenschutz) – im Prototyp über Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&family=Barlow:wght@600;700;800&family=Sour+Gummy:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #13492a; --forest-900: #0d3a20;
+  --lime: #a1c750; --lime-600: #8db53c; --lime-400: #b6d473; --lime-300: #c7de8f; --lime-200: #dbeab6; --lime-100: #eaf3d4;
+  --cream: #f6f9ed; --sand: #e9e8db; --paper: #f1f2e8; --white: #fff;
+  --font-fun: "Sour Gummy", "Barlow", system-ui, sans-serif;
+  --font-head: "Barlow", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring: cubic-bezier(0.34, 1.32, 0.64, 1);
+  --shadow-sm: 0 1px 2px rgba(13, 58, 32, .06), 0 6px 18px -10px rgba(13, 58, 32, .25);
+  --shadow-lg: 0 2px 6px rgba(13, 58, 32, .06), 0 30px 60px -30px rgba(13, 58, 32, .45);
+  --header-h: 76px;
+  color-scheme: light;
+  --blob: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='15 12 165 160'%3E%3Cpath d='M155.4 42.6c17.6 18.9 25.3 46.6 19.4 70.7-5.9 24.1-25.4 44.6-49.2 54.3-23.8 9.7-51.9 8.6-72.3-3.8C32.9 151.4 20.2 127.5 19.1 103.2 18 78.9 28.5 54.2 46.9 37.9 65.3 21.6 91.6 13.7 113.7 17.4c22.1 3.7 24.1 6.3 41.7 25.2z'/%3E%3C/svg%3E");   /* organische Form als Maske (eingebettet, funktioniert auch per Doppelklick) */
+}
+@view-transition { navigation: auto; }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--white); color: var(--forest); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+
+.btn {
+  --bg: var(--lime); --fg: var(--forest);
+  display: inline-flex; align-items: center; justify-content: center; gap: .6em;
+  min-height: 48px; padding: .7em 1.4em; border: 2px solid transparent; border-radius: 12px;
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-weight: 700; font-size: 1rem; line-height: 1.2;
+  text-decoration: none; cursor: pointer;
+  transition: transform 300ms var(--ease), background-color 200ms, box-shadow 300ms var(--ease), border-color 200ms;
+}
+.btn:hover { --bg: #b0d45f; transform: translateY(-2px); box-shadow: 0 10px 22px -12px rgba(13, 58, 32, .55); }
+.btn--outline { --bg: transparent; border-color: var(--forest); }
+.btn--outline:hover { --bg: var(--lime-100); }
+.btn--small { min-height: 40px; padding: .5em 1.1em; font-size: .92rem; border-radius: 10px; }
+.btn svg { width: 18px; height: 18px; }
+
+/* Header */
+.site-header { position: sticky; top: 0; z-index: 50; background: var(--forest); transition: box-shadow 300ms var(--ease); }
+.site-header.is-scrolled { box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .55); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--header-h); }
+.brand img { width: clamp(150px, 18vw, 215px); height: auto; }
+.site-nav { display: flex; gap: 10px; }
+.site-nav .btn--ghost { --bg: transparent; --fg: var(--white); border-color: rgba(255, 255, 255, .28); }
+.site-nav .btn--ghost:hover { --bg: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .55); box-shadow: none; }
+
+.display { margin: 0; font-family: var(--font-fun); font-weight: 800; text-transform: uppercase; line-height: .98; color: var(--forest); }
+.marker { position: relative; display: inline-block; z-index: 0; }
+.marker::before {
+  content: ""; position: absolute; z-index: -1; left: -.1em; right: -.1em; bottom: .02em; height: .5em;
+  background: var(--lime); border-radius: .25em .4em .3em .35em / .4em .3em .4em .3em;
+  transform: rotate(-1.2deg); transform-origin: left center;
+}
+
+.js .r-type .marker::before, .js .mc__name .marker::before { animation: marker-in 900ms var(--ease) 900ms both; }
+.js .mc__name .marker::before { animation-delay: 1500ms; }
+@keyframes marker-in { from { transform: rotate(-1.2deg) scaleX(0); } to { transform: rotate(-1.2deg) scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .js .r-type .marker::before, .js .mc__name .marker::before { animation: none; } }
+
+/* ==========================================================================
+   ERGEBNIS-HERO: 1) Dein Charakter  2) Dein Doppelgänger aus dem Tierheim
+   ========================================================================== */
+.r-hero { position: relative; overflow: clip; background: var(--cream); isolation: isolate; padding-bottom: clamp(48px, 6vw, 80px); }
+.r-hero__wave { position: absolute; inset: auto 0 0 0; z-index: -1; width: 100%; height: 55%; color: var(--sand); }
+.r-hero__inner {
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  align-items: center; gap: clamp(24px, 4vw, 64px);
+  padding-block: clamp(36px, 5vw, 64px) clamp(8px, 2vw, 24px);
+}
+.pill { display: inline-block; margin: 0 0 1rem; padding: .35em .95em; border-radius: 99px; background: var(--forest); color: var(--lime); font-weight: 700; font-size: .9rem; }
+.r-kicker { margin: 0 0 .4rem; font-family: var(--font-head); font-weight: 700; font-size: 1rem; letter-spacing: .14em; text-transform: uppercase; }
+.r-type { font-size: clamp(2.5rem, 5.4vw, 4.4rem); text-wrap: balance; }
+.r-traits { display: flex; flex-wrap: wrap; gap: 8px; margin: 1.3rem 0 1.2rem; padding: 0; list-style: none; }
+.r-traits li { padding: .35em .85em; border-radius: 99px; border: 1.5px solid rgba(19, 73, 42, .2); background: var(--white); font-weight: 700; font-size: .9rem; }
+.r-traits li:nth-child(-n+3) { background: var(--lime); border-color: var(--lime); }
+.r-quip { margin: 0; max-width: 30ch; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.3rem, 2.2vw, 1.7rem); line-height: 1.2; text-wrap: balance; }
+
+/* Bild wie im Slider: Formen + freigestellter Hund + 3 Eigenschafts-Icons */
+.r-visual { position: relative; width: min(100%, 470px); justify-self: center; aspect-ratio: 1000 / 1100; container-type: inline-size; view-transition-name: match-hund; }
+.r-visual .bubble { position: absolute; left: 0; top: 0; width: 100cqw; transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)) scale(var(--s)); }
+.r-visual .bubble svg { width: 100%; height: auto; animation: var(--float) var(--dur, 10s) ease-in-out infinite alternate; }
+.r-visual .bubble path { fill: currentColor; }
+.r-visual .bubble:nth-child(1) { color: var(--lime-200); --float: b-y; --dur: 9s; }
+.r-visual .bubble:nth-child(2) { color: var(--lime);     --float: b-x; --dur: 12s; }
+.r-visual .bubble:nth-child(3) { color: var(--lime-400); --float: b-r; --dur: 14s; }
+.r-visual .bubble:nth-child(4) { color: var(--lime-300); --float: b-y; --dur: 10.5s; }
+.r-visual .bubble:nth-child(5) { color: var(--lime-600); --float: b-y; --dur: 8s; }
+@keyframes b-y { from { transform: translateY(-1.6%); } to { transform: translateY(1.6%); } }
+@keyframes b-x { from { transform: translateX(-2.4%); } to { transform: translateX(2.4%); } }
+@keyframes b-r { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+.r-shadow { position: absolute; left: 19%; bottom: .5%; width: 62%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, rgba(13, 58, 32, .26), rgba(13, 58, 32, .08) 60%, transparent); }
+.r-dog { position: absolute; inset: 6% 5% 0 5%; width: 90%; height: 94%; object-fit: contain; animation: breathe 3.6s ease-in-out infinite alternate; }
+@keyframes breathe { from { transform: none; } to { transform: translateY(-0.9cqw) rotate(-.35deg); } }
+.icon-slot { position: absolute; left: 0; top: 0; width: 11.5cqw; color: var(--forest); transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)); }
+.icon-slot svg { width: 100%; height: auto; overflow: visible; animation: float-y 6s ease-in-out infinite alternate; }
+.icon-slot:nth-child(2n) svg { animation-name: float-rot; animation-duration: 7.5s; }
+.doodle-svg path { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+@keyframes float-y { from { transform: translateY(-4px); } to { transform: translateY(4px); } }
+@keyframes float-rot { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+
+/* Match-Karte: der echte Hund */
+.mc {
+  position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  border-radius: 26px; background: var(--white);
+  box-shadow: 0 1px 2px rgba(13, 58, 32, .05), 0 30px 70px -34px rgba(13, 58, 32, .5);
+}
+.mc__photo { position: relative; margin: 0; min-height: 320px; border-radius: 26px 0 0 26px; overflow: hidden; background: var(--lime-100); }
+.mc__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mc__photo--leer { display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--forest); text-align: center; font-weight: 700; }
+.mc__photo--leer svg { width: 56px; height: 56px; opacity: .5; }
+.mc__photo--leer small { font-weight: 500; opacity: .7; }
+.mc__body { padding: clamp(24px, 3.4vw, 44px); }
+.mc__kicker { margin: 0 0 .3rem; font-weight: 700; font-size: 1.05rem; }
+.mc__name { font-size: clamp(3rem, 6vw, 4.6rem); margin: 0 0 .9rem; }
+.mc__says {
+  position: relative; display: inline-block; margin: 0 0 1.1rem; padding: .7em 1em;
+  border-radius: 18px 18px 18px 4px; background: var(--lime-100);
+  font-family: var(--font-fun); font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.25; text-transform: uppercase;
+}
+.mc__text { margin: 0 0 1.5rem; max-width: 52ch; font-size: 1.05rem; }
+.mc__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.mc__hint { min-height: 1.4em; margin: .7rem 0 0; font-size: .9rem; opacity: .8; }
+
+.true-love { position: absolute; left: -30px; top: -30px; z-index: 2; width: clamp(104px, 11vw, 132px); aspect-ratio: 1; border-radius: 50%; background: var(--forest); color: var(--lime); box-shadow: var(--shadow-lg); }
+.true-love__ring { position: absolute; inset: 0; animation: spin 24s linear infinite; }
+.true-love__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 14px; fill: currentColor; }
+.true-love__heart { position: absolute; inset: 28%; }
+.true-love__heart circle, .true-love__heart path { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   DEIN MATCH IST ERST DER ANFANG
+   ========================================================================== */
+.match { padding: clamp(56px, 8vw, 104px) 0 clamp(56px, 8vw, 96px); background: var(--white); }
+.match__grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 5vw, 64px); align-items: start; }
+.match__photo { margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 3.4; background: var(--lime-100); box-shadow: var(--shadow-sm); }
+.match__photo img { width: 100%; height: 100%; object-fit: cover; }
+.match__photo--cutout img { object-fit: contain; object-position: 50% 100%; padding-top: 6%; }
+.match h2 { margin: 0 0 .7rem; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.3rem); text-transform: uppercase; line-height: 1.1; }
+.match p { margin: 0 0 1rem; max-width: 62ch; }
+.match .lead, .match .closing { font-weight: 700; }
+.match__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.6rem; }
+.match__hint { min-height: 1.4em; margin: .8rem 0 0; font-size: .9rem; opacity: .8; }
+
+/* ==========================================================================
+   SPENDEN
+   ========================================================================== */
+.spende { position: relative; padding: clamp(56px, 8vw, 104px) 0; background: var(--cream); overflow: clip; scroll-margin-top: var(--header-h); }
+.spende::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 140px; background: linear-gradient(var(--sand), var(--cream)); pointer-events: none; }
+.spende__grid { position: relative; display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.spende__intro { position: sticky; top: calc(var(--header-h) + 32px); }
+.spende h2 { margin: 0 0 .8rem; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.7rem, 3.2vw, 2.5rem); text-transform: uppercase; line-height: 1.08; text-wrap: balance; }
+.spende__text { margin: 0 0 1.4rem; font-size: 1.08rem; max-width: 46ch; }
+.impact { display: grid; gap: 10px; margin: 0 0 1.4rem; padding: 0; list-style: none; }
+.impact li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: var(--white); box-shadow: var(--shadow-sm); }
+.impact b { flex: none; display: grid; place-items: center; min-width: 64px; height: 40px; padding: 0 10px; border-radius: 10px; background: var(--lime); font-family: var(--font-head); font-weight: 800; font-size: 1.05rem; }
+.impact span { font-weight: 700; line-height: 1.3; }
+.spende__tax { display: flex; align-items: center; gap: 10px; margin: 0; font-size: .95rem; }
+.spende__tax svg { flex: none; width: 22px; height: 22px; color: var(--lime-600); }
+
+.donate-card { position: relative; border-radius: 22px; background: var(--white); box-shadow: 0 1px 2px rgba(13, 58, 32, .05), 0 30px 70px -34px rgba(13, 58, 32, .45); padding: clamp(18px, 3vw, 34px); }
+.donate-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; border-radius: 22px 22px 0 0; background: var(--lime); }
+.fso_iframe { display: block; width: 100%; min-height: 900px; border: 0; }
+.donate-note { margin: .9rem 0 0; font-size: .82rem; opacity: .65; text-align: center; }
+
+/* Nachbildung des Spendenformulars (formulare.aktivertierschutz.at) – nur Vorschau */
+.fso { --g: #2c5f2e; --g-dark: #244e26; font-family: var(--font-body); color: var(--g); font-size: 16px; }
+.fso h3 { margin: 0 0 14px; font-size: 18px; font-weight: 700; color: var(--forest); text-align: center; }
+.fso__amounts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 18px; }
+.fso__amount { display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; border: 2px solid var(--g); border-radius: 5px; background: #fff; color: var(--g); font: 700 16px/1 var(--font-body); cursor: pointer; transition: background-color 150ms; }
+.fso__amount svg { width: 14px; height: 14px; }
+.fso__amount:hover { background: var(--lime-100); }
+.fso__amount[aria-pressed="true"] { background: #a1c750; color: var(--g-dark); }
+.fso__custom { display: flex; height: 48px; }
+.fso__custom span { display: grid; place-items: center; width: 34px; border-radius: 5px 0 0 5px; background: #e9ecef; color: #212529; }
+.fso__custom input { width: 92px; border-radius: 0 5px 5px 0 !important; }
+.fso label, .fso .fso__label { display: block; margin: 0 0 4px; font-size: 14px; font-weight: 700; }
+.fso input[type="text"], .fso input[type="email"], .fso select {
+  width: 100%; height: 44px; padding: 0 10px; border: 2px solid var(--g); border-radius: 5px; background: #fff; color: #212529; font: 400 16px var(--font-body);
+}
+.fso select { background: #f0f5f0; appearance: none; -webkit-appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; }
+.fso input::placeholder { color: #b9c2bb; }
+.fso input:focus, .fso select:focus { outline: none; box-shadow: 0 0 0 3px rgba(161, 199, 80, .45); }
+.fso__row { display: grid; gap: 12px; margin-bottom: 12px; }
+.fso__row--2 { grid-template-columns: 1fr 1fr; }
+.fso__row--3 { grid-template-columns: 1fr 1fr 1fr; }
+.fso__h { margin: 16px 0 2px; font-size: 18px; font-weight: 700; }
+.fso__hint { margin: 0 0 12px; font-size: 11px; font-weight: 400; color: var(--g); }
+.fso__check { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; font-size: 14px; font-weight: 700; cursor: pointer; }
+.fso__check input { flex: none; width: 16px; height: 16px; margin-top: 2px; accent-color: var(--g); }
+.fso__pay { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 6px 0 18px; }
+.fso__pay button { height: 34px; padding: 0 10px; border: 2px solid transparent; border-radius: 5px; background: #fff; font: 800 13px var(--font-head); letter-spacing: .02em; cursor: pointer; }
+.fso__pay button[aria-pressed="true"] { border-color: var(--g); }
+.fso__pay .mc { color: #eb001b; } .fso__pay .pp { color: #003087; font-style: italic; } .fso__pay .visa { color: #1a1f71; font-style: italic; font-size: 16px; } .fso__pay .sepa { color: #10298e; }
+.fso__submit { height: 44px; padding: 0 22px; border: 0; border-radius: 5px; background: var(--g); color: #fff; font: 700 16px var(--font-body); cursor: pointer; }
+.fso__submit:hover { background: var(--g-dark); }
+.fso__msg { min-height: 1.3em; margin: 10px 0 0; font-size: 14px; font-weight: 700; }
+
+/* Footer */
+.site-footer { background: var(--forest); color: var(--cream); padding: clamp(44px, 6vw, 64px) 0 0; font-size: .95rem; }
+.footer-grid { display: grid; grid-template-columns: repeat(4, auto) 1fr; gap: 28px clamp(28px, 5vw, 64px); align-items: start; padding-bottom: clamp(36px, 5vw, 52px); }
+.footer-grid h3 { margin: 0 0 .7rem; font-family: var(--font-head); font-weight: 800; font-size: .95rem; letter-spacing: .06em; text-transform: uppercase; }
+.footer-grid ul, .footer-grid address { margin: 0; padding: 0; list-style: none; font-style: normal; display: grid; gap: .35rem; }
+.footer-grid a { text-decoration: none; opacity: .9; }
+.footer-grid a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.tax-badge { justify-self: end; display: grid; place-items: center; text-align: center; padding: 10px 14px; border-radius: 10px; background: var(--cream); color: var(--forest); font-family: var(--font-head); font-weight: 800; text-transform: uppercase; line-height: 1; box-shadow: 0 0 0 3px var(--forest), 0 0 0 6px var(--cream); transform: rotate(-3deg); }
+.tax-badge span:nth-child(1) { font-size: .8rem; }
+.tax-badge span:nth-child(2), .tax-badge span:nth-child(3) { font-size: 1.45rem; }
+.footer-bottom { background: var(--cream); color: var(--forest); }
+.footer-bottom .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; min-height: 56px; padding-block: 10px; font-size: .9rem; }
+.social { display: flex; gap: clamp(16px, 5vw, 64px); margin: 0; padding: 0; list-style: none; }
+.social a { text-decoration: none; font-weight: 500; }
+.claim { font-family: var(--font-head); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+
+/* Ankunft nach dem Quiz: Seite „öffnet sich" aus der Creme-Fläche */
+.arrival { position: fixed; inset: 0; z-index: 100; background: var(--cream); pointer-events: none; }
+
+/* Einblenden */
+.js [data-in] { opacity: 0; }
+
+@media (max-width: 900px) {
+  :root { --header-h: 64px; }
+  .r-hero__inner { grid-template-columns: 1fr; }
+  .r-visual { order: -1; width: min(86%, 380px); }
+  .r-hero__wave { height: 40%; }
+  .mc { grid-template-columns: 1fr; }
+  .mc__photo { min-height: 0; aspect-ratio: 4 / 3; border-radius: 26px 26px 0 0; }
+  .true-love { left: auto; right: 14px; top: 14px; width: 92px; }
+  .match__grid { grid-template-columns: 1fr; }
+  .spende__grid { grid-template-columns: 1fr; }
+  .spende__intro { position: static; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .tax-badge { justify-self: start; }
+}
+@media (max-width: 520px) {
+  .site-nav .btn--ghost { display: none; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .fso__row--2, .fso__row--3 { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .true-love__ring, .icon-slot svg, .r-visual .bubble svg, .r-dog { animation: none; }
+  .js [data-in] { opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="landingpage.html" aria-label="Arche Noah – Aktiver Tierschutz Austria, zur Startseite des Quiz">
+      <img src="bilder/logo-offwhite.svg" alt="" width="215" height="48">
+    </a>
+    <nav class="site-nav" aria-label="Hauptnavigation">
+      <a class="btn btn--small btn--ghost" href="landingpage.html#quiz">Zum Quiz</a>
+      <a class="btn btn--small" href="#spenden">Jetzt spenden</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="r-hero" aria-labelledby="r-title">
+    <svg class="r-hero__wave" viewBox="0 0 1440 520" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60c160 70 300 110 470 90 190-22 260-120 470-110 200 10 330 120 500 170V520H0Z"/></svg>
+    <div class="wrap r-hero__inner">
+      <!-- 1) Dein Charakter -->
+      <div>
+        <p class="pill" data-in>Dein Ergebnis</p>
+        <p class="r-kicker" data-in>Dein Charakter</p>
+        <h1 class="display r-type" id="r-title" data-in>Du bist ein <span class="marker" id="r-breed"></span></h1>
+        <ul class="r-traits" id="r-traits" aria-label="Deine Eigenschaften" data-in></ul>
+        <p class="r-quip" id="r-quip" data-in></p>
+      </div>
+      <div class="r-visual" id="r-visual" aria-hidden="true" data-in>
+        <div id="r-bubbles"><div class="bubble"><svg viewBox="0 0 200 200"><path d="M155.4 42.6c17.6 18.9 25.3 46.6 19.4 70.7-5.9 24.1-25.4 44.6-49.2 54.3-23.8 9.7-51.9 8.6-72.3-3.8C32.9 151.4 20.2 127.5 19.1 103.2 18 78.9 28.5 54.2 46.9 37.9 65.3 21.6 91.6 13.7 113.7 17.4c22.1 3.7 24.1 6.3 41.7 25.2z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M146.7 34.9c20.2 13.4 34.9 37.7 34.6 61.4-.3 23.7-15.6 46.8-35.6 61.6-20 14.8-44.7 21.3-66.4 15.1-21.7-6.2-40.4-25.1-48.6-47.2-8.2-22.1-5.9-47.4 6.6-65.4C49.8 42.4 72.7 31.7 95.4 26.6c22.7-5.1 31.1-5.1 51.3 8.3z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M141.9 47.3c15.7 15.2 28.4 35.3 26.6 54.5-1.8 19.2-18.1 37.5-37.9 49.3-19.8 11.8-43.1 17.1-61.9 9.9-18.8-7.2-33.1-26.9-36.3-47.6-3.2-20.7 4.7-42.4 19.4-58.1C66.5 39.6 87.9 29.9 105.3 31c17.4 1.1 20.9 1.1 36.6 16.3z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M150.2 49.7c13.9 17.5 20.5 41.6 13.6 60.7-6.9 19.1-27.3 33.2-48.9 40.6-21.6 7.4-44.4 8.1-61.3-2.2C36.7 138.5 25.7 117.3 27 96.6 28.3 75.9 41.9 55.7 59.8 43.4 77.7 31.1 99.9 26.7 117.3 29.5c17.4 2.8 19 2.7 32.9 20.2z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M154.3 58.5c13.2 21.6 13.5 51.6-.9 71.2-14.4 19.6-43.5 28.8-68.4 24.3-24.9-4.5-45.6-22.7-52.3-44.5-6.7-21.8.6-47.2 17.4-63.5 16.8-16.3 43.1-23.5 63.3-19.5 20.2 4 27.7 10.4 40.9 32z"/></svg></div></div>
+        <div class="r-shadow"></div>
+        <img class="r-dog" id="r-dog" alt="">
+        <div id="r-icons"></div>
+      </div>
+    </div>
+
+    <!-- 2) Dein tierischer Doppelgänger aus dem Tierheim -->
+    <div class="wrap">
+      <article class="mc" id="match-card" aria-labelledby="mc-name" data-in>
+        <figure class="mc__photo" id="mc-photo"></figure>
+        <div class="mc__body">
+          <p class="mc__kicker">Genau deshalb haben wir jemanden für dich. Dein tierischer Doppelgänger ist:</p>
+          <p class="display mc__name" id="mc-name"><span class="marker" id="r-name"></span></p>
+          <p class="mc__says" id="r-says"></p>
+          <p class="mc__text" id="r-text"></p>
+          <div class="mc__actions">
+            <a class="btn" href="#spenden" id="mc-donate">Jetzt spenden</a>
+            <button type="button" class="btn btn--outline" id="share">Ergebnis teilen</button>
+          </div>
+          <p class="mc__hint" aria-live="polite" id="hint"></p>
+        </div>
+        <div class="true-love" aria-hidden="true">
+          <svg class="true-love__ring" viewBox="0 0 120 120"><defs><path id="tl" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs><text textLength="276" lengthAdjust="spacing"><textPath href="#tl" textLength="276" lengthAdjust="spacing">YOUR TRUE LOVE ♥ YOUR TRUE LOVE ♥</textPath></text></svg>
+          <svg class="true-love__heart" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21"/><path d="M24.2 36c-5-3.4-11.4-8.2-12.9-13.5-1.2-4.1 1.2-8.4 5.1-8.9 3.2-.4 6.2 1.8 7.6 4.9 1.4-3.4 4.4-5.6 7.8-5.1 4.1.7 6.1 5.2 4.6 9.3-1.8 5.1-7.7 9.8-12.3 13.3"/></svg>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="spende" id="spenden" aria-labelledby="s-title">
+    <div class="wrap spende__grid">
+      <div class="spende__intro" data-in>
+        <p class="pill">Gemeinsam helfen</p>
+        <h2 id="s-title"></h2>
+        <p class="spende__text" id="s-text"></p>
+        <!-- Spendenbeispiele: Platzhalter – Beträge und Wirkung vom Kunden -->
+        <ul class="impact" aria-label="So hilft deine Spende">
+          <li><b>XX €</b><span>Platzhalter 1</span></li>
+          <li><b>XX €</b><span>Platzhalter 2</span></li>
+          <li><b>XX €</b><span>Platzhalter 3</span></li>
+        </ul>
+        <p class="spende__tax"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Deine Spende ist steuerlich absetzbar.</p>
+      </div>
+
+      <div data-in>
+        <div class="donate-card">
+          <!-- Hier steht das Spendenformular. Auf *.aktivertierschutz.at wird automatisch
+               das echte Formular (iframe) eingesetzt – anderswo blockiert es der Anbieter,
+               daher zeigt der Prototyp eine Nachbildung. -->
+          <div id="donate-slot"></div>
+        </div>
+        <p class="donate-note" id="donate-note">Vorschau: Auf aktivertierschutz.at erscheint hier das echte Spendenformular.</p>
+      </div>
+    </div>
+  </section>
+  <section class="match" aria-labelledby="m-title">
+    <div class="wrap match__grid">
+      <figure class="match__photo" id="m-figure" data-in><img id="m-photo" alt="" loading="lazy"></figure>
+      <div data-in>
+        <h2 id="m-title">Dein Match ist erst der Anfang</h2>
+        <p class="lead">Du hast deinen tierischen Doppelgänger gefunden – jetzt wird es spannend. 🐾</p>
+        <p id="m-text"></p>
+        <p class="closing" id="m-closing"></p>
+        <div class="match__actions">
+          <a class="btn btn--outline btn--small" href="landingpage.html#quiz">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H6M11 6l-6 6 6 6"/></svg>
+            Zurück zum Quiz
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <nav aria-labelledby="f-recht"><h3 id="f-recht">Rechtliches</h3><ul><li><a href="#">Impressum</a></li><li><a href="#">Barrierefreiheit</a></li><li><a href="#">Datenschutzerklärung</a></li></ul></nav>
+    <nav aria-labelledby="f-info"><h3 id="f-info">Informationen</h3><ul><li><a href="#">Jetzt spenden</a></li><li><a href="#">Kontakt &amp; Öffnungszeiten</a></li><li><a href="#">Tierschutznachrichten</a></li></ul></nav>
+    <div><h3>Adresse</h3><address>Neufeldweg 211<br>8041 Graz<br>Österreich</address></div>
+    <div><h3>Spendenkonto</h3><ul><li>Aktiver Tierschutz Austria</li><li>IBAN AT71 3800 0000 0513 5025</li><li>BIC RZSTAT2G</li></ul></div>
+    <div class="tax-badge" role="img" aria-label="Ihre Spende ist steuerlich absetzbar"><span>Ihre Spende ist</span><span>steuerlich</span><span>absetzbar</span></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="wrap">
+      <ul class="social"><li><a href="#">Instagram</a></li><li><a href="#">Facebook</a></li><li><a href="#">Youtube</a></li></ul>
+      <span class="claim">Gemeinsam stark für Tiere.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="daten.js?v=5"></script>
+<script>
+document.documentElement.classList.add('js');
+// Zurück zu der Startseite, von der man gekommen ist (Version 1 oder 2)
+try {
+  const start = sessionStorage.getItem('tdg-start');
+  if (start && /^landingpage(-v\d+)?\.html$/.test(start)) document.querySelectorAll('a[href^="landingpage.html"]').forEach(l => l.href = l.getAttribute('href').replace('landingpage.html', start));
+} catch (_) {}
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Welcher Hund? (aus ?hund=… – Standard: Border Collie wie im Entwurf) ---------- */
+const id = new URLSearchParams(location.search).get('hund');
+const h = HUNDE.find(x => x.id === id) || HUNDE.find(x => x.id === 'collie');
+const e = h.ergebnis;
+const sein = e.er === 'sie' ? 'ihre' : 'seine';
+const ihn  = e.er === 'sie' ? 'sie' : 'ihn';
+const $ = s => document.getElementById(s);
+
+document.title = `${e.tiername} ist dein tierischer Doppelgänger – Arche Noah`;
+const idx = HUNDE.indexOf(h);
+
+// 1) Dein Charakter
+$('r-breed').textContent = h.name;
+$('r-traits').innerHTML  = h.eigenschaften.map(t => `<li>${t}</li>`).join('');
+$('r-quip').textContent  = e.headline;
+// Bild wie im Slider – gleiche Anordnung von Formen und Icons (KOMPOSITION in daten.js)
+[...document.querySelectorAll('#r-bubbles .bubble')].forEach((b, k) => {
+  const [x, y, w, r] = KOMPOSITION[idx].bubbles[k];
+  b.style.cssText = `--x:${x};--y:${y};--s:${w / 100};--r:${r}`;
+});
+$('r-dog').src = h.bild;
+$('r-icons').innerHTML = h.icons.map((name, k) => {
+  const [x, y, r] = iconPos(idx, k);
+  return `<div class="icon-slot" style="--x:${x};--y:${y};--r:${r}"><svg class="doodle-svg" viewBox="0 0 48 48">${iconMarkup(name)}</svg></div>`;
+}).join('');
+
+// 2) Der echte Hund aus dem Tierheim
+$('r-name').textContent = e.tiername;
+$('r-says').textContent = `„${e.sagt}“`;
+$('r-text').textContent = e.text.replace(/^Genau deshalb haben wir jemanden für dich\.\s*/, '');
+$('mc-donate').textContent = `Jetzt für ${e.tiername} spenden`;
+const fig = $('mc-photo');
+if (e.foto) fig.innerHTML = `<img src="${e.foto}" alt="${e.tiername}, dein tierischer Doppelgänger" style="object-position:${e.fokus || '50% 50%'}">`;
+else { fig.classList.add('mc__photo--leer'); fig.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><ellipse cx="16" cy="21.5" rx="7" ry="6"/><ellipse cx="7" cy="13.5" rx="2.8" ry="3.4" transform="rotate(-18 7 13.5)"/><ellipse cx="12.5" cy="8" rx="2.8" ry="3.6" transform="rotate(-6 12.5 8)"/><ellipse cx="19.5" cy="8" rx="2.8" ry="3.6" transform="rotate(6 19.5 8)"/><ellipse cx="25" cy="13.5" rx="2.8" ry="3.4" transform="rotate(18 25 13.5)"/></g></svg>Foto von ${e.tiername}<small>Platzhalter – Foto folgt</small>`; }
+
+// „Dein Match ist erst der Anfang"
+$('m-text').textContent  = `In den nächsten Tagen nehmen wir dich mit auf eine kleine Reise und erzählen dir mehr über ${e.tiername}, deinen Doppelgänger: ${sein} Geschichte, ${sein} Persönlichkeit und was ${ihn} so besonders macht. Außerdem erfährst du mehr über unsere Arbeit und darüber, wie du mit deiner Entscheidung echten Tierschutz unterstützen kannst.`;
+$('m-closing').innerHTML = `Also: Augen offen halten und immer wieder in dein Postfach schauen.<br>Wir freuen uns, dich und ${e.tiername} noch ein Stück näher zusammenzubringen. <span aria-hidden="true">❤️</span>`;
+const m = $('m-photo');
+if (e.foto2) { m.src = e.foto2; m.style.objectPosition = e.fokus2 || '50% 50%'; }
+else { $('m-figure').classList.add('match__photo--cutout'); m.src = h.bild; }
+m.alt = `Noch ein Bild von ${e.tiername}`;
+
+/* ---------- Spenden ---------- */
+const SPENDENFORMULAR = 'https://formulare.aktivertierschutz.at/embed/product?productid=11';
+$('s-title').textContent = `Hilf ${e.tiername} und allen anderen Tieren in Not`;
+$('s-text').textContent  = `${e.tiername} wartet bei uns auf ein Zuhause. Bis es so weit ist, kümmern wir uns um ${ihn} – mit Futter, tierärztlicher Versorgung und viel Zuwendung. Mit deiner Spende hilfst du ${e.tiername} und allen anderen Tieren im Tierheim.`;
+
+const slot = $('donate-slot');
+const live = /(^|\.)aktivertierschutz\.at$/.test(location.hostname);
+if (live) {
+  // Echtes Formular – genauso eingebunden wie auf aktivertierschutz.at/spenden
+  slot.innerHTML = `<iframe class="fso_iframe" src="${SPENDENFORMULAR}" title="Spendenformular" loading="lazy"></iframe>`;
+  $('donate-note').remove();
+  ['iFrameResizer.min.js', 'IFrameRegistration.js', 'fso-forms-api-parent.js'].forEach(f => {
+    const sc = document.createElement('script'); sc.src = `https://formulare.aktivertierschutz.at/js/${f}`; sc.async = false; document.body.appendChild(sc);
+  });
+} else {
+  const heart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-8.8-9.2C2.4 7.7 4.4 5 7.2 5c2 0 3.6 1.2 4.8 3 1.2-1.8 2.8-3 4.8-3 2.8 0 4.8 2.7 4 5.8C19.5 15.4 12 20 12 20z"/></svg>';
+  slot.innerHTML = `
+    <form class="fso" novalidate aria-label="Spendenformular (Vorschau)">
+      <h3>Gleich spenden und sofort helfen</h3>
+      <div class="fso__amounts" role="group" aria-label="Betrag">
+        ${[15, 25, 40, 150].map(b => `<button type="button" class="fso__amount" data-b="${b}" aria-pressed="${b === 25}">${heart}${b} €</button>`).join('')}
+        <div class="fso__custom"><span>€</span><input type="text" inputmode="numeric" value="25" aria-label="Anderer Betrag in Euro"></div>
+      </div>
+      <label for="f-freq">Wie häufig möchten Sie diesen Betrag spenden?</label>
+      <select id="f-freq"><option>einmalig</option><option>monatlich</option><option>jährlich</option></select>
+      <p class="fso__h">Meine Daten</p>
+      <p class="fso__hint">Mit * gekennzeichnete Felder sind Pflichtfelder.</p>
+      <div class="fso__row fso__row--2">
+        <div><label for="f-anrede">Anrede*</label><select id="f-anrede"><option></option><option>Frau</option><option>Herr</option><option>Divers</option></select></div>
+        <div><label for="f-titel">Titel</label><input id="f-titel" type="text" placeholder="Ing."></div>
+      </div>
+      <div class="fso__row"><div><label for="f-vn">Vorname*</label><input id="f-vn" type="text" placeholder="Maria" autocomplete="given-name"></div></div>
+      <div class="fso__row"><div><label for="f-nn">Nachname*</label><input id="f-nn" type="text" placeholder="Muster" autocomplete="family-name"></div></div>
+      <div class="fso__row"><div><label for="f-em">Email*</label><input id="f-em" type="email" placeholder="maria.muster@muster.at" autocomplete="email"></div></div>
+      <div class="fso__row"><div><label for="f-gb">Geburtsdatum</label><p class="fso__hint">Um Ihre Spenden von der Steuer absetzen zu können, ist die Angabe Ihres Geburtsdatums erforderlich.</p><input id="f-gb" type="text" placeholder="07.02.1989"></div></div>
+      <div class="fso__row fso__row--3">
+        <div><label for="f-str">Strasse</label><input id="f-str" type="text" placeholder="Musterstraße" autocomplete="address-line1"></div>
+        <div><label for="f-hnr">Hausnummer</label><input id="f-hnr" type="text"></div>
+        <div><label for="f-plz">PLZ</label><input id="f-plz" type="text" placeholder="1070" autocomplete="postal-code"></div>
+      </div>
+      <div class="fso__row fso__row--2">
+        <div><label for="f-ort">Ort</label><input id="f-ort" type="text" placeholder="Wien" autocomplete="address-level2"></div>
+        <div><label for="f-land">Land*</label><select id="f-land"><option>Deutschland</option><option>Frankreich</option><option>Italien</option><option selected>Österreich</option><option>Schweiz</option><option>Slowakei</option><option>Slowenien</option><option>Tschechische Republik</option></select></div>
+      </div>
+      <label class="fso__check"><input type="checkbox"> Ja, ich möchte den regelmäßigen Newsletter der Arche Noah erhalten.</label>
+      <label class="fso__check"><input type="checkbox"> <span>Ich nehme die <a href="#">Datenschutzbestimmungen</a> zur Kenntnis und erkläre mich damit einverstanden.*</span></label>
+      <p class="fso__h" style="font-size:14px;margin-top:22px">Bitte Zahlungsweise wählen:</p>
+      <div class="fso__pay" role="group" aria-label="Zahlungsweise">
+        <button type="button" class="mc" aria-pressed="false">Mastercard</button><button type="button" class="pp" aria-pressed="false">PayPal</button><button type="button" class="visa" aria-pressed="false">VISA</button><button type="button" class="sepa" aria-pressed="false">SEPA</button>
+      </div>
+      <button type="submit" class="fso__submit">Jetzt spenden</button>
+      <p class="fso__msg" role="status"></p>
+    </form>`;
+  const form = slot.querySelector('form');
+  const custom = form.querySelector('.fso__custom input');
+  form.addEventListener('click', ev => {
+    const a = ev.target.closest('.fso__amount');
+    if (a) { form.querySelectorAll('.fso__amount').forEach(b => b.setAttribute('aria-pressed', b === a)); custom.value = a.dataset.b; }
+    const p = ev.target.closest('.fso__pay button');
+    if (p) form.querySelectorAll('.fso__pay button').forEach(b => b.setAttribute('aria-pressed', b === p));
+  });
+  custom.addEventListener('input', () => form.querySelectorAll('.fso__amount').forEach(b => b.setAttribute('aria-pressed', b.dataset.b === custom.value.trim())));
+  form.addEventListener('submit', ev => { ev.preventDefault(); form.querySelector('.fso__msg').textContent = 'Vorschau – im Prototyp wird nichts gesendet.'; });
+}
+
+/* ---------- Auftritt ---------- */
+let ankunft = false;
+try { ankunft = sessionStorage.getItem('tdg-ankunft') === '1'; sessionStorage.removeItem('tdg-ankunft'); } catch (_) {}
+
+function auftritt() {
+  const items = [...document.querySelectorAll('[data-in]')];
+  if (reduce) { items.forEach(el => el.style.opacity = 1); return; }
+  const startDelay = ankunft ? 250 : 0;
+  // Charakter: Text der Reihe nach
+  items.filter(el => el.closest('.r-hero__inner') && el.id !== 'r-visual').forEach((el, n) =>
+    el.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 700, delay: startDelay + 150 + n * 90, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' }));
+  // Bild federt herein (wie der Hund im Slider)
+  $('r-visual').animate([
+    { opacity: 0, transform: 'translate3d(8%, 3%, 0) rotate(5deg) scale(.88)' },
+    { opacity: 1, transform: 'translate3d(-1%, -1%, 0) rotate(-1deg) scale(1.02)', offset: .65 },
+    { opacity: 1, transform: 'none' },
+  ], { duration: 1100, delay: startDelay, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
+  document.querySelectorAll('#r-icons path').forEach((p, n) =>
+    p.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 650, delay: startDelay + 700 + n * 120, easing: 'cubic-bezier(.45, 0, .2, 1)', fill: 'both' }));
+  // Danach: der echte Hund – Karte schiebt sich herein, Plakette ploppt auf
+  $('match-card').animate([{ opacity: 0, transform: 'translateY(40px) scale(.98)' }, { opacity: 1, transform: 'none' }],
+    { duration: 900, delay: startDelay + 900, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
+  document.querySelector('.true-love').animate([{ transform: 'scale(0) rotate(-40deg)' }, { transform: 'scale(1.08) rotate(6deg)', offset: .7 }, { transform: 'none' }],
+    { duration: 800, delay: startDelay + 1500, easing: 'cubic-bezier(.34, 1.4, .64, 1)', fill: 'both' });
+  // Unterer Abschnitt beim Scrollen
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 800, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
+    io.unobserve(en.target);
+  }), { threshold: .15 });
+  document.querySelectorAll('.match [data-in], .spende [data-in]').forEach(el => io.observe(el));
+  // Nach dem Quiz: Creme-Fläche öffnet sich als Kreis zum Bild hin
+  if (ankunft) {
+    const a = document.createElement('div');
+    a.className = 'arrival';
+    document.body.appendChild(a);
+    const r = $('r-visual').getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    a.animate([{ clipPath: `circle(150vmax at ${cx}px ${cy}px)` }, { clipPath: `circle(0px at ${cx}px ${cy}px)` }],
+      { duration: 800, easing: 'cubic-bezier(.65, 0, .35, 1)', fill: 'both' }).finished.then(() => a.remove());
+  }
+}
+auftritt();
+
+/* ---------- Teilen ---------- */
+$('share').addEventListener('click', async () => {
+  const text = `Mein tierischer Doppelgänger ist ${e.tiername}! Finde heraus, wer deiner ist:`;
+  const url = new URL('landingpage.html', location.href).href;
+  try {
+    if (navigator.share) await navigator.share({ title: 'Tierischer Doppelgänger', text, url });
+    else { await navigator.clipboard.writeText(`${text} ${url}`); $('hint').textContent = 'Text und Link wurden kopiert.'; }
+  } catch (_) {}
+});
+
+const header = document.querySelector('.site-header');
+addEventListener('scroll', () => header.classList.toggle('is-scrolled', scrollY > 8), { passive: true });
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tierischer Doppelgänger – Testversionen</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#13492a">
+<link rel="icon" href="bilder/arche-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Barlow:wght@700;800&family=Sour+Gummy:wght@800&display=swap" rel="stylesheet">
+<style>
+:root { --forest: #13492a; --lime: #a1c750; --lime-100: #eaf3d4; --cream: #f6f9ed; --white: #fff; color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cream); color: var(--forest); font-family: "Atkinson Hyperlegible Next", system-ui, sans-serif; line-height: 1.5; }
+header { background: var(--forest); padding: 18px 20px; }
+header img { width: 190px; height: auto; display: block; margin: 0 auto; }
+main { max-width: 860px; margin: 0 auto; padding: 40px 16px 64px; }
+h1 { margin: 0 0 .3rem; font-family: "Sour Gummy", system-ui, sans-serif; font-weight: 800; font-size: clamp(2rem, 6vw, 3rem); text-transform: uppercase; line-height: 1; }
+.lead { margin: 0 0 2rem; font-size: 1.05rem; }
+h2 { margin: 2rem 0 .8rem; font-family: Barlow, system-ui, sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: .08em; text-transform: uppercase; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.card { display: block; padding: 20px 22px; border-radius: 18px; background: var(--white); text-decoration: none; color: inherit; box-shadow: 0 1px 2px rgba(13,58,32,.05), 0 14px 34px -22px rgba(13,58,32,.45); transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s; border-top: 5px solid var(--lime); }
+.card:hover { transform: translateY(-3px); box-shadow: 0 1px 2px rgba(13,58,32,.05), 0 22px 44px -24px rgba(13,58,32,.5); }
+.card:focus-visible { outline: 3px solid var(--forest); outline-offset: 3px; }
+.card strong { display: block; font-family: Barlow, system-ui, sans-serif; font-weight: 800; font-size: 1.25rem; }
+.card span { display: block; margin-top: .3rem; font-size: .95rem; opacity: .85; }
+.dogs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 480px) { .dogs { grid-template-columns: repeat(2, 1fr); } }
+.dog { display: grid; justify-items: center; gap: 6px; padding: 12px 8px 10px; border-radius: 14px; background: var(--white); text-decoration: none; color: inherit; font-weight: 700; font-size: .9rem; text-align: center; transition: transform .3s cubic-bezier(.22,1,.36,1); }
+.dog:hover { transform: translateY(-3px); }
+.dog img { width: 84px; height: 92px; object-fit: contain; }
+.note { margin-top: 2.4rem; padding: 14px 18px; border-radius: 14px; background: var(--lime-100); font-size: .92rem; }
+</style>
+</head>
+<body>
+<header><img src="bilder/logo-offwhite.svg" alt="Arche Noah – Aktiver Tierschutz Austria" width="190" height="42"></header>
+<main>
+  <h1>Tierischer Doppelgänger</h1>
+  <p class="lead">Testversionen der Quiz-Landingpage – Prototyp, nicht öffentlich verlinkt.</p>
+
+  <h2>Startseite</h2>
+  <div class="cards">
+    <a class="card" href="landingpage.html"><strong>Version 1 – Slider</strong><span>Die Hunde wechseln automatisch einzeln, mit Formen und Eigenschafts-Icons.</span></a>
+    <a class="card" href="landingpage-v2.html"><strong>Version 2 – Gruppenbild</strong><span>Die sechs Hunde laufen herbei und versammeln sich zu einem Gruppenfoto.</span></a>
+  </div>
+
+  <h2>Ergebnisseite direkt ansehen</h2>
+  <div class="dogs" id="dogs"></div>
+
+  <p class="note">Hinweis: Das Spendenformular auf der Ergebnisseite ist hier eine Nachbildung. Das echte Formular lässt sich nur unter aktivertierschutz.at einbetten und erscheint dort automatisch. Fragen 3–5, Ergebnis- und FAQ-Texte sowie die Tierheim-Hunde (außer Moritz) sind Platzhalter bzw. Vorschläge.</p>
+</main>
+<script src="daten.js"></script>
+<script>
+document.getElementById('dogs').innerHTML = HUNDE.map(h =>
+  `<a class="dog" href="ergebnis.html?hund=${h.id}"><img src="${h.bild}" alt="" loading="lazy">${h.name}<small style="font-weight:400;opacity:.75">${h.ergebnis.tiername}</small></a>`).join('');
+</script>
+</body>
+</html>
