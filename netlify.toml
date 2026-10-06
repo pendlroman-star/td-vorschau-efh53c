@@ -1,0 +1,9 @@
+# Netlify: reine statische Seite – kein Build-Schritt nötig
+[build]
+  publish = "."
+
+# Testseite: nicht in Suchmaschinen aufnehmen
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
