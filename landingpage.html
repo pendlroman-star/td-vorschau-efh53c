@@ -229,7 +229,7 @@ a { color: inherit; }
 
 /* Eigenschafts-Icons (3 je Hund) */
 .icon-slot {
-  position: absolute; left: 0; top: 0; width: 11.5cqw;
+  position: absolute; left: 0; top: 0; width: calc(var(--w, 11.5) * 1cqw);
   color: var(--forest);
   transform: translate(calc(var(--x, 50) * 1cqw - 50%), calc(var(--y, 50) * 1cqw - 50%)) rotate(calc(var(--r, 0) * 1deg));
 }
@@ -243,6 +243,10 @@ a { color: inherit; }
   stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 0;
 }
+/* Arche-Icons: gefüllte Pinselform; beim Auftritt fährt zuerst eine Kontur nach, dann füllt sich die Form */
+.ai { display: block; width: 100%; height: auto; overflow: visible; }
+.ai > * { fill: currentColor; stroke: currentColor; stroke-width: var(--sw, 2); stroke-opacity: 0; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+
 
 .shadow {
   position: absolute; left: 19%; bottom: .5%; width: 62%; height: 7%;
@@ -724,7 +728,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=5"></script>
+<script src="daten.js?v=9"></script>
 <script>
 document.documentElement.classList.add('js');
 try { sessionStorage.setItem('tdg-start', 'landingpage.html'); } catch (_) {}
@@ -796,11 +800,16 @@ const snapT = el => { const t = getComputedStyle(el).transform; return t === 'no
 const snapO = el => getComputedStyle(el).opacity;
 const pad = n => String(n).padStart(2, '0');
 
-function drawIcon(svg, name, delay = 0) {
-  svg.innerHTML = iconMarkup(name);
+function drawIcon(holder, name, delay = 0) {
+  holder.innerHTML = iconSVG(name);
   if (reduce()) return;
-  svg.querySelectorAll('path').forEach((p, n) => {
-    play(p, [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 620, delay: delay + n * 110, easing: 'cubic-bezier(.45, 0, .2, 1)' });
+  // Kontur zeichnet die Form nach, dann füllt sie sich mit Arche-Grün
+  holder.querySelectorAll('.ai > *').forEach((p, n) => {
+    play(p, [
+      { strokeOpacity: 1, strokeDashoffset: 1, fillOpacity: 0 },
+      { strokeOpacity: 1, strokeDashoffset: 0, fillOpacity: 0, offset: .62 },
+      { strokeOpacity: 0, strokeDashoffset: 0, fillOpacity: 1 },
+    ], { duration: 950, delay: delay + n * 120, easing: 'cubic-bezier(.45, 0, .2, 1)' });
   });
 }
 
@@ -889,7 +898,8 @@ const Slider = (() => {
       s.style.setProperty('--x', x); s.style.setProperty('--y', y); s.style.setProperty('--r', r);
       const pop = s.firstElementChild;
       const delay = base + k * 110;
-      drawIcon(pop.firstElementChild, HUNDE[i].icons[k], delay + 60);
+      s.style.setProperty('--w', iconWidth(HUNDE[i].icons[k]));
+      drawIcon(pop, HUNDE[i].icons[k], delay + 60);
       if (reduce()) return play(pop, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
       play(pop, [
         { opacity: 0, transform: 'scale(.3) rotate(-18deg)' },

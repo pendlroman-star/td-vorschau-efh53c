@@ -674,7 +674,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=5"></script>
+<script src="daten.js?v=9"></script>
 <script>
 document.documentElement.classList.add('js');
 try { sessionStorage.setItem('tdg-start', 'landingpage-v2.html'); } catch (_) {}
@@ -746,11 +746,16 @@ const snapT = el => { const t = getComputedStyle(el).transform; return t === 'no
 const snapO = el => getComputedStyle(el).opacity;
 const pad = n => String(n).padStart(2, '0');
 
-function drawIcon(svg, name, delay = 0) {
-  svg.innerHTML = iconMarkup(name);
+function drawIcon(holder, name, delay = 0) {
+  holder.innerHTML = iconSVG(name);
   if (reduce()) return;
-  svg.querySelectorAll('path').forEach((p, n) => {
-    play(p, [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 620, delay: delay + n * 110, easing: 'cubic-bezier(.45, 0, .2, 1)' });
+  // Kontur zeichnet die Form nach, dann füllt sie sich mit Arche-Grün
+  holder.querySelectorAll('.ai > *').forEach((p, n) => {
+    play(p, [
+      { strokeOpacity: 1, strokeDashoffset: 1, fillOpacity: 0 },
+      { strokeOpacity: 1, strokeDashoffset: 0, fillOpacity: 0, offset: .62 },
+      { strokeOpacity: 0, strokeDashoffset: 0, fillOpacity: 1 },
+    ], { duration: 950, delay: delay + n * 120, easing: 'cubic-bezier(.45, 0, .2, 1)' });
   });
 }
 

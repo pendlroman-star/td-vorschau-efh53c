@@ -122,10 +122,14 @@ a { color: inherit; }
 .r-shadow { position: absolute; left: 19%; bottom: .5%; width: 62%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, rgba(13, 58, 32, .26), rgba(13, 58, 32, .08) 60%, transparent); }
 .r-dog { position: absolute; inset: 6% 5% 0 5%; width: 90%; height: 94%; object-fit: contain; animation: breathe 3.6s ease-in-out infinite alternate; }
 @keyframes breathe { from { transform: none; } to { transform: translateY(-0.9cqw) rotate(-.35deg); } }
-.icon-slot { position: absolute; left: 0; top: 0; width: 11.5cqw; color: var(--forest); transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)); }
+.icon-slot { position: absolute; left: 0; top: 0; width: calc(var(--w, 11.5) * 1cqw); color: var(--forest); transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)); }
 .icon-slot svg { width: 100%; height: auto; overflow: visible; animation: float-y 6s ease-in-out infinite alternate; }
 .icon-slot:nth-child(2n) svg { animation-name: float-rot; animation-duration: 7.5s; }
 .doodle-svg path { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+/* Arche-Icons: gefüllte Pinselform; beim Auftritt fährt zuerst eine Kontur nach, dann füllt sich die Form */
+.ai { display: block; width: 100%; height: auto; overflow: visible; }
+.ai > * { fill: currentColor; stroke: currentColor; stroke-width: var(--sw, 2); stroke-opacity: 0; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+
 @keyframes float-y { from { transform: translateY(-4px); } to { transform: translateY(4px); } }
 @keyframes float-rot { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
 
@@ -393,7 +397,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=5"></script>
+<script src="daten.js?v=9"></script>
 <script>
 document.documentElement.classList.add('js');
 // Zurück zu der Startseite, von der man gekommen ist (Version 1 oder 2)
@@ -426,7 +430,7 @@ $('r-quip').textContent  = e.headline;
 $('r-dog').src = h.bild;
 $('r-icons').innerHTML = h.icons.map((name, k) => {
   const [x, y, r] = iconPos(idx, k);
-  return `<div class="icon-slot" style="--x:${x};--y:${y};--r:${r}"><svg class="doodle-svg" viewBox="0 0 48 48">${iconMarkup(name)}</svg></div>`;
+  return `<div class="icon-slot" style="--x:${x};--y:${y};--r:${r};--w:${iconWidth(name)}">${iconSVG(name)}</div>`;
 }).join('');
 
 // 2) Der echte Hund aus dem Tierheim
@@ -529,8 +533,12 @@ function auftritt() {
     { opacity: 1, transform: 'translate3d(-1%, -1%, 0) rotate(-1deg) scale(1.02)', offset: .65 },
     { opacity: 1, transform: 'none' },
   ], { duration: 1100, delay: startDelay, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
-  document.querySelectorAll('#r-icons path').forEach((p, n) =>
-    p.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 650, delay: startDelay + 700 + n * 120, easing: 'cubic-bezier(.45, 0, .2, 1)', fill: 'both' }));
+  document.querySelectorAll('#r-icons .ai > *').forEach((p, n) =>
+    p.animate([
+      { strokeOpacity: 1, strokeDashoffset: 1, fillOpacity: 0 },
+      { strokeOpacity: 1, strokeDashoffset: 0, fillOpacity: 0, offset: .62 },
+      { strokeOpacity: 0, strokeDashoffset: 0, fillOpacity: 1 },
+    ], { duration: 950, delay: startDelay + 700 + n * 140, easing: 'cubic-bezier(.45, 0, .2, 1)', fill: 'both' }));
   // Danach: der echte Hund – Karte schiebt sich herein, Plakette ploppt auf
   $('match-card').animate([{ opacity: 0, transform: 'translateY(40px) scale(.98)' }, { opacity: 1, transform: 'none' }],
     { duration: 900, delay: startDelay + 900, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
