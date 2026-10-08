@@ -51,7 +51,7 @@ h2 { margin: 2rem 0 .8rem; font-family: Barlow, system-ui, sans-serif; font-weig
 
   <p class="note">Hinweis: Das Spendenformular auf der Ergebnisseite ist hier eine Nachbildung. Das echte Formular lässt sich nur unter aktivertierschutz.at einbetten und erscheint dort automatisch. Fragen 3–5, Ergebnis- und FAQ-Texte sowie die Tierheim-Hunde (außer Moritz) sind Platzhalter bzw. Vorschläge.</p>
 </main>
-<script src="daten.js?v=9"></script>
+<script src="daten.js?v=12"></script>
 <script>
 document.getElementById('dogs').innerHTML = HUNDE.map(h =>
   `<a class="dog" href="ergebnis.html?hund=${h.id}"><img src="${h.bild}" alt="" loading="lazy">${h.name}<small style="font-weight:400;opacity:.75">${h.ergebnis.tiername}</small></a>`).join('');
