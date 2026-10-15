@@ -217,10 +217,6 @@ a { color: inherit; }
 .bubble:nth-child(4) { transition-delay: 120ms; }
 .bubble:nth-child(5) { transition-delay: 160ms; }
 .bubble__pulse { will-change: transform, opacity; }
-.stage.is-jump .bubble { transition: none; }
-/* Übergang „bubbles": Kopien der Kreise liegen über dem Hund und wischen den Wechsel zu */
-.layer--wisch .bubble { transition: none; }
-.layer--wisch .bubble__pulse { opacity: 0; }
 .bubble svg { width: 100%; height: auto; animation: var(--float) var(--dur, 10s) ease-in-out var(--delay, 0s) infinite alternate; will-change: transform; }
 .bubble path { fill: currentColor; }
 .bubble--1 { color: var(--lime-200); --float: float-y;   --dur: 9s; }
@@ -658,7 +654,6 @@ a { color: inherit; }
           <div class="shadow" id="shadow" aria-hidden="true"></div>
           <div class="dogs" id="dogs"></div>
         </div>
-        <div class="layer layer--wisch" data-depth="-1" aria-hidden="true" id="wischLayer"></div>
         <div class="badge" role="img" aria-label="Schenke Hunden einen sicheren Platz">
           <svg class="badge__ring" viewBox="0 0 120 120"><defs><path id="badgeCircle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs><text textLength="274" lengthAdjust="spacing"><textPath href="#badgeCircle" textLength="274" lengthAdjust="spacing">SCHENKE HUNDEN EINEN SICHEREN PLATZ ♥</textPath></text></svg>
           <svg class="badge__heart" viewBox="0 0 48 48"><path d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1"/></svg>
@@ -805,9 +800,6 @@ const QUIZ = [
 const CONFIG = {
   intervall: 3500, parallax: true,     // ms bis zum nächsten Hund (Standbilder)
   dauerHund: 3200,                     // ms je bewegtem Hund – der Clip läuft als Schleife, der Hund steht nie still
-  // Übergang zwischen den Hunden: 'blende' (weiche Überblendung) oder 'bubbles' (neue Kreise wischen über das alte Tier).
-  // Zum Vergleichen auch per Adresse: index.html?uebergang=bubbles
-  uebergang: new URLSearchParams(location.search).get('uebergang') || 'blende',
   formularUrl: '',               // ← Adresse des echten Formulars (iframe). Leer = Platzhalter-Formular
   ergebnisSeite: 'ergebnis.html',
   analyseDauer: 6000,            // ms für „Dein Doppelgänger wird analysiert …" (Kunde: etwas langsamer)
@@ -911,14 +903,9 @@ const Slider = (() => {
     if (an) { v.play().catch(() => {}); }
     else { v.pause(); }
   }
-  // Flüssiger Wechsel (Kundenwunsch): Der Hund bewegt sich ohne Pause weiter, auch während er aus- und der
-  // nächste schon eingeblendet wird. Zwei Übergänge: 'blende' und 'bubbles' (siehe CONFIG.uebergang).
+  // Flüssiger Wechsel (Kundenwunsch): weiche Überblendung, der Hund bewegt sich dabei ohne Pause weiter –
+  // auch während er aus- und der nächste schon eingeblendet wird.
   const T = { hund: 150 };
-  const wisch = (() => {
-    const layer = document.getElementById('wischLayer');
-    bubbles.forEach(b => layer.appendChild(b.cloneNode(true)));
-    return [...layer.children];
-  })();
   function dogOut(fig, dauer = 800) {
     const media = fig.firstElementChild;
     fig.classList.remove('is-active');
@@ -936,27 +923,6 @@ const Slider = (() => {
     if (reduce()) return play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
     play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: dauer, delay, easing: 'cubic-bezier(.45, 0, .55, 1)' });
     play(media, [{ transform: 'scale(.985)' }, { transform: 'none' }], { duration: dauer + 100, delay, easing: 'cubic-bezier(.22, 1, .36, 1)' });
-  }
-  // Übergang „bubbles": die Kreise des neuen Hundes ploppen über dem alten auf, dahinter wird getauscht,
-  // dann lösen sie sich auf und geben den neuen Hund frei
-  function wischen(prev, i) {
-    KOMPOSITION[i].bubbles.forEach(([x, y, w, r], k) => {
-      const b = wisch[k];
-      b.style.setProperty('--x', x); b.style.setProperty('--y', y); b.style.setProperty('--s', w / 100); b.style.setProperty('--r', r);
-      play(b.firstElementChild, [{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(1.04)', opacity: 1, offset: .7 }, { transform: 'scale(1)', opacity: 1 }],
-        { duration: 440, delay: k * 50, easing: 'cubic-bezier(.3, 1.2, .6, 1)' });
-    });
-    iconsOut();
-    later(260, () => dogOut(slides[prev], 260));
-    later(480, () => {
-      stage.classList.add('is-jump'); setBubbles(i, false); void stage.offsetWidth;
-      requestAnimationFrame(() => stage.classList.remove('is-jump'));
-      dogIn(slides[i], 0, 200);
-    });
-    later(560, () => wisch.forEach((b, k) => play(b.firstElementChild,
-      [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.03)', opacity: 0 }],
-      { duration: 700, delay: k * 45, easing: 'cubic-bezier(.45, 0, .55, 1)' })));
-    later(950, () => iconsIn(i, 0));
   }
   function setBubbles(i, pulse) {
     KOMPOSITION[i].bubbles.forEach(([x, y, w, r], k) => {
@@ -1009,8 +975,6 @@ const Slider = (() => {
     if (first || reduce()) {
       if (!first) { dogOut(slides[prev]); iconsOut(); }
       setBubbles(i, false); dogIn(slides[i], 0); iconsIn(i, first ? 500 : 0);
-    } else if (CONFIG.uebergang === 'bubbles') {
-      wischen(prev, i);
     } else {
       dogOut(slides[prev]); iconsOut();
       setBubbles(i, false);                                 // Kreise gleiten langsam an den neuen Platz (CSS)
