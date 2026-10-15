@@ -266,6 +266,16 @@ a { color: inherit; }
 .social a { text-decoration: none; font-weight: 500; }
 .claim { font-family: var(--font-head); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 
+/* Testmenü (nur Testseite, nicht auf aktivertierschutz.at): Ergebnisse und Varianten umschalten */
+.testmenue { position: fixed; left: 12px; bottom: 12px; z-index: 90; max-width: calc(100vw - 24px); font-size: .82rem; }
+.testmenue summary { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 99px; background: var(--forest); color: var(--cream); font-weight: 700; cursor: pointer; list-style: none; box-shadow: var(--shadow-lg); }
+.testmenue summary::-webkit-details-marker { display: none; }
+.testmenue__box { margin-top: 8px; padding: 12px; border-radius: 14px; background: var(--white); box-shadow: var(--shadow-lg); display: grid; gap: 8px; }
+.testmenue__box p { margin: 0; font-weight: 700; opacity: .7; }
+.testmenue__reihe { display: flex; flex-wrap: wrap; gap: 6px; }
+.testmenue a { padding: 5px 10px; border-radius: 99px; border: 1.5px solid var(--forest); text-decoration: none; font-weight: 700; color: var(--forest); }
+.testmenue a[aria-current="true"] { background: var(--forest); color: var(--cream); }
+
 /* Ankunft nach dem Quiz: Seite „öffnet sich" aus der Creme-Fläche */
 .arrival { position: fixed; inset: 0; z-index: 100; background: var(--cream); pointer-events: none; }
 
@@ -619,6 +629,22 @@ function auftritt() {
   }
 }
 auftritt();
+
+/* ---------- Testmenü: nur auf der Testseite (vor dem Livegang entfernen) ---------- */
+if (!/(^|\.)aktivertierschutz\.at$/.test(location.hostname)) {
+  const stilJetzt = new URLSearchParams(location.search).get('stil') === 'natur' ? 'natur' : 'bubbles';
+  const url = (hund, stil) => `ergebnis.html?hund=${hund}${stil === 'natur' ? '&stil=natur' : ''}`;
+  const m = document.createElement('details');
+  m.className = 'testmenue';
+  m.innerHTML = `<summary>Testansicht</summary><div class="testmenue__box">
+    <p>Ergebnis</p><div class="testmenue__reihe">${HUNDE.map(x => `<a href="${url(x.id, stilJetzt)}" aria-current="${x.id === h.id}">${x.name.replace(' Terrier', '').replace(' Retriever', '')}</a>`).join('')}</div>
+    <p>Darstellung</p><div class="testmenue__reihe"><a href="${url(h.id, 'bubbles')}" aria-current="${stilJetzt === 'bubbles'}">Bubbles</a><a href="${url(h.id, 'natur')}" aria-current="${stilJetzt === 'natur'}">Natur</a></div>
+  </div>`;
+  // offen lassen, wenn man gerade darüber umgeschaltet hat
+  try { if (sessionStorage.getItem('tdg-testmenue') === '1') m.open = true; } catch (_) {}
+  m.addEventListener('toggle', () => { try { sessionStorage.setItem('tdg-testmenue', m.open ? '1' : '0'); } catch (_) {} });
+  document.body.appendChild(m);
+}
 
 const header = document.querySelector('.site-header');
 addEventListener('scroll', () => header.classList.toggle('is-scrolled', scrollY > 8), { passive: true });

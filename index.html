@@ -561,7 +561,6 @@ a { color: inherit; }
 @media (max-width: 520px) {
   .gate__fields { grid-template-columns: 1fr; }
   .gate__fields > [aria-hidden] { display: none; }
-  .site-nav .btn--ghost { display: none; }
   .steps .step__text { font-size: 0; }
   .steps .step__text::after { content: attr(data-short); font-size: .82rem; }
   .footer-grid { grid-template-columns: 1fr; }
@@ -589,9 +588,9 @@ a { color: inherit; }
     <a class="brand" href="#top" aria-label="Arche Noah – Aktiver Tierschutz Austria, zum Seitenanfang">
       <img src="bilder/logo-offwhite.svg" alt="" width="215" height="48">
     </a>
+    <!-- Nur „Über uns" (Vertrauen) – öffnet die Kontaktseite in neuem Tab, die Landingpage bleibt offen -->
     <nav class="site-nav" aria-label="Hauptnavigation">
-      <a class="btn btn--small btn--ghost" href="#faq">FAQ</a>
-      <a class="btn btn--small" href="#quiz" data-start>Zum Quiz</a>
+      <a class="btn btn--small btn--ghost" href="https://www.aktivertierschutz.at/oeffnungszeiten-und-kontakt/" target="_blank" rel="noopener">Über uns<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a>
     </nav>
   </div>
 </header>
