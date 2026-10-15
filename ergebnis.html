@@ -418,7 +418,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=21"></script>
+<script src="daten.js?v=24"></script>
 <script>
 document.documentElement.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -461,9 +461,20 @@ if (h.video && !reduce) {
   $('r-dog').replaceWith(c);
   clipStart(c.firstElementChild);
 } else $('r-dog').src = h.bild;
-$('r-icons').innerHTML = h.icons.map((name, k) => {
-  const [x, y, r] = iconPos(idx, k);
-  return `<div class="icon-slot" style="--x:${x};--y:${y};--r:${r};--w:${iconWidth(name)}"><div class="icon-pop">${iconSVG(name)}</div></div>`;
+// Nur zwei Icons, bei jedem Hund gleich (Romans Wunsch): Herz oben rechts, Pfote unten links – diagonal
+// gegenüber. Sie sitzen außen am Rand der Bubbles und berühren ihn leicht.
+const ERG_ICONS = [{ name: 'herz', richtung: [1, -1], r: 8 }, { name: 'pfote', richtung: [-1, 1], r: -10 }];
+$('r-icons').innerHTML = ERG_ICONS.map(({ name, richtung, r }) => {
+  const [dx, dy] = richtung.map(v => v / Math.SQRT2);
+  // äußerster Punkt aller (größeren) Bubbles in dieser Richtung; Bubble ≈ Kreis mit Radius .32 × Breite (wie iconPos)
+  let best = null;
+  KOMPOSITION[idx].bubbles.filter(b => b[2] >= 20).forEach(([bx, by, bw]) => {
+    const R = .32 * bw, px = bx + dx * R, py = by + dy * R, wert = px * dx + py * dy;
+    if (!best || wert > best.wert) best = { px, py, wert };
+  });
+  const abst = iconWidth(name) * .42;
+  const x = best.px + dx * abst, y = best.py + dy * abst;
+  return `<div class="icon-slot" style="--x:${x.toFixed(1)};--y:${y.toFixed(1)};--r:${r};--w:${iconWidth(name)}"><div class="icon-pop">${iconSVG(name)}</div></div>`;
 }).join('');
 
 // Variante „Natur": nur mit ?stil=natur (zum Vergleich mit der Bubble-Fassung)
@@ -481,12 +492,12 @@ if (natur) {
   // Icons sitzen am Rand der Bubble und berühren ihn leicht (Umriss der Bubble-Form, je 5°, Werte 0…1)
   const UMRISS = [[.980,.505],[.980,.541],[.977,.587],[.971,.622],[.959,.667],[.942,.710],[.927,.741],[.903,.781],[.875,.819],[.852,.845],[.819,.878],[.782,.908],[.753,.928],[.713,.952],[.670,.973],[.626,.989],[.593,.998],[.547,1.007],[.501,1.012],[.455,1.013],[.409,1.010],[.365,1.002],[.322,.990],[.281,.975],[.241,.954],[.205,.930],[.164,.894],[.134,.861],[.108,.826],[.085,.787],[.065,.747],[.049,.704],[.040,.671],[.031,.627],[.025,.581],[.024,.547],[.027,.502],[.033,.456],[.040,.423],[.053,.379],[.065,.347],[.084,.306],[.107,.266],[.126,.238],[.154,.202],[.177,.178],[.210,.147],[.237,.126],[.275,.101],[.305,.085],[.345,.066],[.377,.054],[.419,.042],[.462,.033],[.505,.029],[.536,.028],[.578,.031],[.626,.039],[.666,.048],[.703,.060],[.740,.080],[.775,.110],[.802,.138],[.828,.166],[.859,.200],[.881,.228],[.908,.268],[.925,.300],[.944,.343],[.956,.377],[.969,.423],[.975,.458]];
   const SZ = { l: -2, t: 3, s: 104 };            // Lage der Szene in cqw (wie im CSS)
-  const WINKEL = [218, 332, 142];                 // oben links, oben rechts, unten links (frei vom Hund)
+  const WINKEL = [315, 135];                      // Herz oben rechts, Pfote unten links (diagonal)
   [...$('r-icons').children].forEach((slot, k) => {
     const [px, py0] = UMRISS[Math.round(WINKEL[k] / 5) % 72];
     const py = .0152 + py0 * 160 / 165;           // Maske ist im Seitenverhältnis 165:160 eingepasst
     const dx = px - .5, dy = py - .5, len = Math.hypot(dx, dy);
-    const abst = iconWidth(h.icons[k]) * .42;     // etwas weniger als halbe Icon-Breite -> berührt den Rand
+    const abst = iconWidth(ERG_ICONS[k].name) * .42;   // etwas weniger als halbe Icon-Breite -> berührt den Rand
     const x = SZ.l + px * SZ.s + dx / len * abst, y = SZ.t + py * SZ.s + dy / len * abst;
     slot.style.cssText += `;--x:${x.toFixed(1)};--y:${y.toFixed(1)}`;
   });

@@ -16,16 +16,22 @@
 // start = Sekunde, an der der Hund im Slider einsetzt. Die Schleifen sind aus der Mitte der KI-Clips geschnitten
 // (Anfang/Ende der KI-Clips frieren kurz ein und sind heller) und am Übergang weich verbunden.
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
-const CLIP_VERSION = 4;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
-const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000) => ({
+const CLIP_VERSION = 7;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+// lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
+const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
   webm: `bilder/hunde/video/${datei}.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-hevc.mp4?v=${CLIP_VERSION}`,
   poster: `bilder/hunde/video/${datei}-poster.webp?v=${CLIP_VERSION}`, box: boxSkaliert(box, groesse), start, dauer,
+  lang: langBox && {
+    webm: `bilder/hunde/video/${datei}-lang.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-lang-hevc.mp4?v=${CLIP_VERSION}`,
+    poster: `bilder/hunde/video/${datei}-lang-poster.webp?v=${CLIP_VERSION}`, box: langBox,
+  },
 });
 
 const HUNDE = [
   { id: 'schaeferhund', name: 'Schäferhund', bild: 'bilder/hunde/schaeferhund.webp', fokus: '68% 15%',
     // nur die Stehphase (wachsam umherschauen), vor- und rückwärts als nahtlose 4,3-s-Schleife (Romans Wunsch)
-    video: hundeClip('schaeferhund', [-15.93, -22.75, 114.83, 122.75], 0.88, 0, 4330),
+    video: hundeClip('schaeferhund', [-15.93, -22.75, 114.83, 122.75], 0.88, 0, 4330,
+      [-7.55, -6.37, 106.28, 106.37]),
     eigenschaften: ['loyal', 'beschützend', 'zuverlässig', 'verantwortungsbewusst', 'diszipliniert', 'zielstrebig'],
     icons: ['arche', 'hakerl', 'haus'],
     ergebnis: { platzhalter: true, tiername: 'Bruno', er: 'er',
@@ -34,7 +40,8 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bruno und ich pass auf dich auf',
       foto: null, foto2: null } },
   { id: 'jack', name: 'Jack Russell Terrier', bild: 'bilder/hunde/jack-russell.webp', fokus: '56% 36%',
-    video: hundeClip('jack-russell', [-3.25, -17.09, 98.75, 117.09], 1.185, 0, 3125),
+    video: hundeClip('jack-russell', [-3.25, -17.09, 98.75, 117.09], 1.18, 0, 3750,
+      [-21.52, -27.28, 157.38, 127.28]),
     eigenschaften: ['energiegeladen', 'mutig', 'abenteuerlustig', 'spontan', 'temperamentvoll', 'unerschrocken'],
     icons: ['funken', 'wellen', 'pfeil'],
     ergebnis: { platzhalter: true, tiername: 'Flitzi', er: 'sie',
@@ -43,7 +50,8 @@ const HUNDE = [
       sagt: 'Hi, ich bin Flitzi und ich bin immer startklar',
       foto: 'bilder/quiz/frage-2.jpg', fokus: '62% 40%', foto2: 'bilder/quiz/ergebnis.jpg', fokus2: '60% 40%' } },
   { id: 'dackel', name: 'Dackel', bild: 'bilder/hunde/dackel-links.webp', fokus: '23% 21%',
-    video: hundeClip('dackel', [-19.27, -9.27, 141.65, 109.27], 0.895, 0, 3958),
+    video: hundeClip('dackel', [-19.27, -9.27, 141.65, 109.27], 0.895, 0, 3958,
+      [-4.19, 3.2, 120.88, 96.8]),
     eigenschaften: ['selbstbewusst', 'charmant', 'eigenwillig', 'hartnäckig', 'clever', 'unabhängig'],
     icons: ['knochen', 'schlaufe', 'paragraf'],
     ergebnis: { platzhalter: true, tiername: 'Fritzi', er: 'sie',
@@ -52,7 +60,8 @@ const HUNDE = [
       sagt: 'Hi, ich bin Fritzi und ich hab meinen eigenen Kopf',
       foto: null, foto2: null } },
   { id: 'havaneser', name: 'Havaneser', bild: 'bilder/hunde/havaneser.webp', fokus: '67% 32%',
-    video: hundeClip('havaneser', [-22.0, -25.85, 135.13, 125.85], 0.769, 0, 4583),
+    video: hundeClip('havaneser', [-22.0, -25.85, 135.13, 125.85], 0.769, 0, 4583,
+      [-18.4, 1.07, 131.58, 98.93]),
     eigenschaften: ['herzlich', 'feinfühlig', 'lebensfroh', 'gesellig', 'harmoniebedürftig', 'anhänglich'],
     icons: ['herz', 'pfote', 'sprechblasen'],
     ergebnis: { platzhalter: true, tiername: 'Bella', er: 'sie',
@@ -61,7 +70,8 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bella und ich kuschle für mein Leben gern',
       foto: null, foto2: null } },
   { id: 'collie', name: 'Border Collie', bild: 'bilder/hunde/border-collie.webp', fokus: '64% 36%',
-    video: hundeClip('border-collie', [3.61, -22.46, 93.7, 122.46], 1.078, 0, 2500),
+    video: hundeClip('border-collie', [3.61, -22.46, 93.7, 122.46], 1.078, 0, 2500,
+      [-0.89, -16.53, 92.73, 116.53]),
     eigenschaften: ['intelligent', 'aufmerksam', 'fokussiert', 'ehrgeizig', 'lernfreudig', 'perfektionistisch'],
     icons: ['gluehbirne', 'lupe', 'kalender'],
     ergebnis: { platzhalter: false, tiername: 'Moritz', er: 'er',      // aus dem Figma-Entwurf
@@ -70,7 +80,8 @@ const HUNDE = [
       sagt: 'Hi, ich bin Moritz und ich liebe Abenteuer',
       foto: 'bilder/quiz/frage-3.jpg', fokus: '55% 45%', foto2: 'bilder/ergebnis/collie-2.jpg', fokus2: '45% 50%' } },
   { id: 'labrador', name: 'Labrador Retriever', bild: 'bilder/hunde/labrador.webp', fokus: '62% 22%',
-    video: hundeClip('labrador', [0.76, -28.78, 98.52, 128.78], 0.992, 0, 3833),
+    video: hundeClip('labrador', [0.76, -28.78, 98.52, 128.78], 0.988, 0, 3833,
+      [-17.43, -27.97, 121.39, 127.97]),
     eigenschaften: ['kontaktfreudig', 'gutmütig', 'genussfreudig', 'offen', 'unkompliziert', 'begeisterungsfähig'],
     icons: ['koerner', 'telefon', 'hund'],
     ergebnis: { platzhalter: true, tiername: 'Balu', er: 'er',
@@ -111,9 +122,10 @@ const ICONS = {
    nur als HEVC, alle anderen nur als WebM – Chrome am Mac spielt HEVC ohne Transparenz, daher nach Engine wählen. */
 const clipQuelle = v => ('GestureEvent' in window) ? v.hevc : v.webm;
 function clipHTML(h, cls = '') {
-  const [l, t, w, hh] = h.video.box;
+  const c = h.video.lang || h.video;              // lange Schleife, falls vorhanden
+  const [l, t, w, hh] = c.box;
   return `<div class="dog__media ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}">` +
-    `<img class="dog__clip" src="${h.video.poster}" alt=""><video class="dog__clip" muted loop playsinline preload="auto" aria-hidden="true" src="${clipQuelle(h.video)}"></video></div>`;
+    `<img class="dog__clip" src="${c.poster}" alt=""><video class="dog__clip" muted loop playsinline preload="auto" aria-hidden="true" src="${clipQuelle(c)}"></video></div>`;
 }
 function clipStart(media) {
   const v = media && media.querySelector('video');
