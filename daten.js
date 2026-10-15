@@ -15,14 +15,16 @@
 // skaliert wird um die Bodenmitte (50 % / 100 %), die Pfoten bleiben also auf dem Schatten.
 // start = Sekunde in der 5-s-Schleife, an der der Hund im Slider einsetzt (seine typischste Bewegung).
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
+const CLIP_VERSION = 3;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000) => ({
-  webm: `bilder/hunde/video/${datei}.webm`, hevc: `bilder/hunde/video/${datei}-hevc.mp4`,
-  poster: `bilder/hunde/video/${datei}-poster.webp`, box: boxSkaliert(box, groesse), start, dauer,
+  webm: `bilder/hunde/video/${datei}.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-hevc.mp4?v=${CLIP_VERSION}`,
+  poster: `bilder/hunde/video/${datei}-poster.webp?v=${CLIP_VERSION}`, box: boxSkaliert(box, groesse), start, dauer,
 });
 
 const HUNDE = [
   { id: 'schaeferhund', name: 'Schäferhund', bild: 'bilder/hunde/schaeferhund.webp', fokus: '68% 15%',
-    video: hundeClip('schaeferhund', [-15.93, -22.75, 114.83, 122.75], 0.895, 1.75),
+    // nur die Stehphase (wachsam umherschauen), vor- und rückwärts als nahtlose 4,3-s-Schleife (Romans Wunsch)
+    video: hundeClip('schaeferhund', [-15.93, -22.75, 114.83, 122.75], 0.88, 0, 4330),
     eigenschaften: ['loyal', 'beschützend', 'zuverlässig', 'verantwortungsbewusst', 'diszipliniert', 'zielstrebig'],
     icons: ['arche', 'hakerl', 'haus'],
     ergebnis: { platzhalter: true, tiername: 'Bruno', er: 'er',
