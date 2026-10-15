@@ -26,6 +26,8 @@
   --lime-300:    #c7de8f;
   --lime-200:    #dbeab6;
   --lime-100:    #eaf3d4;
+  --red:         #c3443f;   /* CI-Akzentfarbe (Web) */
+  --red-700:     #a5352f;
   --cream:       #f6f9ed;
   --sand:        #e9e8db;
   --paper:       #f1f2e8;
@@ -259,18 +261,18 @@ a { color: inherit; }
 .dog.is-active { opacity: 1; }
 .dog img { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 94%; will-change: transform; -webkit-user-drag: none; }
 
-/* „True Love Quiz"-Plakette */
+/* Siegel „Schenke Hunden einen sicheren Platz" – in der CI-Akzentfarbe */
 .badge {
   position: absolute; right: -6%; top: -2%; z-index: 3;
   width: clamp(92px, 24cqw, 132px); aspect-ratio: 1;
   border-radius: 50%;
-  background: var(--white);
+  background: var(--red);
   box-shadow: var(--shadow-sm);
-  color: var(--forest);
+  color: var(--cream);
   pointer-events: none;
 }
 .badge__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: spin 26s linear infinite; }
-.badge__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 13px; fill: currentColor; }
+.badge__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 11.5px; fill: currentColor; }
 .badge__heart { position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; animation: heartbeat 2.4s ease-in-out infinite; }
 .badge__heart path { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -397,19 +399,27 @@ a { color: inherit; }
 .form-slot { position: relative; }
 .form-frame { display: block; width: 100%; min-height: 340px; border: 0; border-radius: 12px; background: transparent; }
 .gate__form { display: grid; gap: 12px; justify-items: center; }
-.gate__form input[type="email"] {
-  width: 100%; max-width: 420px; min-height: 54px; padding: .7em 1.1em;
+.gate__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; width: 100%; max-width: 460px; text-align: left; }
+.gate__fields .full { grid-column: 1 / -1; }
+.gate__fields label { display: block; margin: 0 0 4px; font-size: .88rem; font-weight: 700; }
+.gate__fields label small { font-weight: 500; opacity: .75; }
+.gate__fields input, .gate__fields select {
+  width: 100%; min-height: 50px; padding: .6em .95em;
   border: 2px solid var(--forest); border-radius: 12px; background: var(--white);
-  font: inherit; font-weight: 500; color: var(--forest); text-align: center;
+  font: inherit; font-weight: 500; color: var(--forest);
   transition: box-shadow 200ms, border-color 200ms;
 }
-.gate__form input[type="email"]::placeholder { color: rgba(19, 73, 42, .55); }
-.gate__form input[type="email"]:focus { outline: none; border-color: var(--lime-600); box-shadow: 0 0 0 4px rgba(161, 199, 80, .35); }
+.gate__fields select { appearance: none; -webkit-appearance: none; padding-right: 2.4em; background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2313492a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' d='m3 6 5 5 5-5'/%3E%3C/svg%3E") no-repeat right .9em center / 14px; }
+.gate__fields input::placeholder { color: rgba(19, 73, 42, .45); }
+.gate__fields input:focus, .gate__fields select:focus { outline: none; border-color: var(--lime-600); box-shadow: 0 0 0 4px rgba(161, 199, 80, .35); }
+.gate__fields [aria-invalid="true"] { border-color: var(--red); }
+.gate__note { margin: 0; max-width: 460px; width: 100%; text-align: left; font-size: .8rem; opacity: .75; }
 .check { display: flex; align-items: flex-start; gap: 10px; max-width: 460px; text-align: left; font-size: .9rem; line-height: 1.4; cursor: pointer; }
 .check input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--forest); cursor: pointer; }
 .check a { text-underline-offset: 2px; }
-.gate__error { min-height: 1.3em; margin: 0; font-size: .9rem; font-weight: 700; color: #b23a35; }
+.gate__error { min-height: 1.3em; margin: 0; font-size: .9rem; font-weight: 700; color: var(--red-700); }
 .gate__form .btn { margin-top: 2px; }
+.gate__form .check { width: 100%; }
 .gate .q__back { margin-top: 18px; }
 
 /* Übergang „Dein Doppelgänger wird analysiert …" */
@@ -437,7 +447,7 @@ a { color: inherit; }
 .analyse__blob path { fill: currentColor; }
 .analyse__ring { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; animation: spin 6s linear infinite; }
 .analyse__ring circle { fill: none; stroke: var(--forest); stroke-width: 1.6; stroke-dasharray: 2 9; stroke-linecap: round; opacity: .5; }
-.analyse__dog { position: absolute; inset: 6% 5% 0; width: 90%; height: 94%; object-fit: contain; opacity: 0; transform: scale(.85) rotate(-4deg); transition: opacity 120ms linear, transform 260ms var(--spring); }
+.analyse__dog { position: absolute; inset: 6% 5% 0; width: 90%; height: 94%; object-fit: contain; opacity: 0; transform: scale(.85) rotate(-4deg); transition: opacity 180ms linear, transform 340ms var(--spring); }
 .analyse__dog.is-on { opacity: 1; transform: none; }
 .analyse__title { margin: 0; font-size: clamp(1.7rem, 4.6vw, 2.6rem); line-height: 1.05; }
 .analyse__title .nowrap { white-space: nowrap; }
@@ -549,6 +559,8 @@ a { color: inherit; }
   .quote .deco--squiggle { right: 5%; top: 80%; }
 }
 @media (max-width: 520px) {
+  .gate__fields { grid-template-columns: 1fr; }
+  .gate__fields > [aria-hidden] { display: none; }
   .site-nav .btn--ghost { display: none; }
   .steps .step__text { font-size: 0; }
   .steps .step__text::after { content: attr(data-short); font-size: .82rem; }
@@ -632,8 +644,8 @@ a { color: inherit; }
           <div class="shadow" id="shadow" aria-hidden="true"></div>
           <div class="dogs" id="dogs"></div>
         </div>
-        <div class="badge" aria-hidden="true">
-          <svg class="badge__ring" viewBox="0 0 120 120"><defs><path id="badgeCircle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs><text textLength="272" lengthAdjust="spacing"><textPath href="#badgeCircle" textLength="272" lengthAdjust="spacing">TRUE LOVE ♥ QUIZ ♥ TRUE LOVE ♥ QUIZ ♥</textPath></text></svg>
+        <div class="badge" role="img" aria-label="Schenke Hunden einen sicheren Platz">
+          <svg class="badge__ring" viewBox="0 0 120 120"><defs><path id="badgeCircle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs><text textLength="274" lengthAdjust="spacing"><textPath href="#badgeCircle" textLength="274" lengthAdjust="spacing">SCHENKE HUNDEN EINEN SICHEREN PLATZ ♥</textPath></text></svg>
           <svg class="badge__heart" viewBox="0 0 48 48"><path d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1"/></svg>
         </div>
       </div>
@@ -727,7 +739,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=12"></script>
+<script src="daten.js?v=13"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -778,7 +790,7 @@ const CONFIG = {
   intervall: 3500, parallax: true,     // ms bis zum nächsten Hund
   formularUrl: '',               // ← Adresse des echten Formulars (iframe). Leer = Platzhalter-Formular
   ergebnisSeite: 'ergebnis.html',
-  analyseDauer: 2800,            // ms für „Dein Doppelgänger wird analysiert …"
+  analyseDauer: 6000,            // ms für „Dein Doppelgänger wird analysiert …" (Kunde: etwas langsamer)
 };
 
 /* ==================================================================
@@ -1043,16 +1055,24 @@ const Quiz = (() => {
      einen Platzhalter, der wie das spätere Formular aussieht.
      Mit Adresse wird stattdessen das iframe eingebunden; das Ergebnis geht
      als ?hund=… mit. Nach dem Absenden muss das Formular der Seite Bescheid
-     geben:  parent.postMessage({ type: 'tdg:formular-gesendet' }, '*')      */
+     geben:  parent.postMessage({ type: 'tdg:formular-gesendet', vorname }, '*')  */
   function formHTML(h) {
     const url = CONFIG.formularUrl;
     const slot = url
       ? `<iframe class="form-frame" src="${url}${url.includes('?') ? '&' : '?'}hund=${h.id}" title="Anmeldung, um dein Ergebnis zu sehen" loading="lazy"></iframe>`
       : `<form class="gate__form" novalidate>
-          <label class="visually-hidden" for="gMail">E-Mail-Adresse</label>
-          <input id="gMail" type="email" name="email" autocomplete="email" placeholder="Deine E-Mail-Adresse" required>
-          <label class="check"><input type="checkbox" name="datenschutz" required><span>Ich habe die <a href="#">Datenschutzerklärung</a> gelesen und stimme zu.</span></label>
-          <label class="check"><input type="checkbox" name="speicherung" required><span>Ich bin mit der Übermittlung und Speicherung meiner E-Mail-Adresse einverstanden.</span></label>
+          <div class="gate__fields">
+            <div><label for="gAnrede">Anrede*</label>
+              <select id="gAnrede" name="anrede" autocomplete="honorific-prefix" required><option value="">Bitte wählen</option><option>Frau</option><option>Herr</option><option>Divers</option></select></div>
+            <div aria-hidden="true"></div>
+            <div><label for="gVorname">Vorname*</label><input id="gVorname" name="vorname" autocomplete="given-name" required></div>
+            <div><label for="gNachname">Nachname*</label><input id="gNachname" name="nachname" autocomplete="family-name" required></div>
+            <div class="full"><label for="gMail">E-Mail-Adresse*</label><input id="gMail" type="email" name="email" autocomplete="email" placeholder="maria.muster@beispiel.at" required></div>
+            <div class="full"><label for="gTel">Telefonnummer <small>(optional)</small></label><input id="gTel" type="tel" name="telefon" autocomplete="tel"></div>
+          </div>
+          <label class="check"><input type="checkbox" name="newsletter"><span>Ja, ich möchte den Newsletter der Arche Noah erhalten. <small>(optional)</small></span></label>
+          <label class="check"><input type="checkbox" name="datenschutz" required><span>Ich habe die <a href="#">Datenschutzbestimmungen</a> gelesen und stimme zu.*</span></label>
+          <p class="gate__note">* Pflichtfeld</p>
           <p class="gate__error" role="alert"></p>
           <button class="btn btn--big" type="submit">Ergebnis anzeigen <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5h13M13 6.5l6 6-6 6"/></svg></span></button>
         </form>`;
@@ -1060,7 +1080,7 @@ const Quiz = (() => {
       <div class="gate">
         <p class="display gate__juhu">Juhu!</p>
         <h3 class="gate__title" id="gateTitle" tabindex="-1">Wir haben dein Ergebnis</h3>
-        <p class="gate__text">Trag hier deine E-Mail-Adresse ein und lerne deinen tierischen Doppelgänger kennen.</p>
+        <p class="gate__text">Trag hier deine Daten ein und lerne deinen tierischen Doppelgänger kennen.</p>
         <div class="form-slot">${slot}</div>
         <button type="button" class="btn btn--small btn--outline q__back">Zurück</button>
       </div>`;
@@ -1095,8 +1115,8 @@ const Quiz = (() => {
   function showForm() {
     step = QUIZ.length;
     swap(formHTML(scoreResult()), 1, '#gateTitle');
-    live.textContent = 'Geschafft! Wir haben dein Ergebnis. Bitte gib deine E-Mail-Adresse ein, um es zu sehen.';
-    setTimeout(() => { if (!wantFocus) return; view.querySelector('#gMail')?.focus({ preventScroll: true }); }, reduce() ? 0 : 300);
+    live.textContent = 'Geschafft! Wir haben dein Ergebnis. Bitte gib deine Daten ein, um es zu sehen.';
+    setTimeout(() => { if (!wantFocus) return; view.querySelector('#gAnrede')?.focus({ preventScroll: true }); }, reduce() ? 0 : 300);
   }
 
   /* ---------- Übergang: „Dein Doppelgänger wird analysiert …" ---------- */
@@ -1148,16 +1168,16 @@ const Quiz = (() => {
 
     // „Glücksrad": Hunde wechseln, werden langsamer und bleiben beim Ergebnis stehen
     const order = HUNDE.map(x => x.id);
-    const takte = [110, 110, 110, 120, 130, 140, 160, 180, 210, 250, 300, 360];
-    let idx = 0, t = 380;
+    const takte = [200, 200, 210, 220, 240, 260, 290, 330, 380, 450, 540, 650];
+    let idx = 0, t = 500;
     const zeige = id => dogs.forEach(d => d.classList.toggle('is-on', d.dataset.id === id));
     const end = order.indexOf(h.id);
     const start = (((end - (takte.length - 1)) % order.length) + order.length) % order.length;   // letzter Takt = Ergebnis
     takte.forEach((ms, n) => { t += ms; const id = order[(start + n) % order.length]; setTimeout(() => zeige(id), t); });
-    const tMatch = t + 300;
+    const tMatch = t + 350;
 
     // Texte & Pfoten als Fortschritt
-    const texte = [[0, 'Antworten werden ausgewertet'], [850, 'Charakterzüge werden verglichen'], [1700, 'Fast geschafft …']];
+    const texte = [[0, 'Antworten werden ausgewertet'], [1300, 'Charakterzüge werden verglichen'], [2700, 'Fast geschafft …']];
     texte.forEach(([ms, txt]) => setTimeout(() => { stepEl.textContent = txt; stepEl.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: .85, transform: 'none' }], { duration: 300, fill: 'both' }); }, 300 + ms));
     paws.forEach((p, n) => setTimeout(() => p.classList.add('is-on'), 500 + n * ((tMatch - 600) / paws.length)));
 
@@ -1177,7 +1197,7 @@ const Quiz = (() => {
         ], { duration: 1000, delay: n * 25, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
       });
     }, tMatch);
-    setTimeout(go, Math.max(CONFIG.analyseDauer, tMatch + 900));
+    setTimeout(go, Math.max(CONFIG.analyseDauer, tMatch + 1300));
   }
   // Beim Zurückblättern vom Ergebnis den Übergang wieder entfernen
   addEventListener('pageshow', e => {
@@ -1186,8 +1206,15 @@ const Quiz = (() => {
     document.documentElement.style.overflow = '';
     analysing = false;
   });
-  // Echtes Formular (iframe) meldet „gesendet"
-  addEventListener('message', e => { if (e.data && e.data.type === 'tdg:formular-gesendet') analyse(view.querySelector('.form-slot')); });
+  // Vorname für die persönliche Ergebnisseite – nur in dieser Sitzung, nie in der Adresse
+  function merkeVorname(v) { try { sessionStorage.setItem('tdg-vorname', String(v || '').trim().slice(0, 40)); } catch (_) {} }
+  // Echtes Formular (iframe) meldet „gesendet" – optional mit Vornamen:
+  // parent.postMessage({ type: 'tdg:formular-gesendet', vorname: 'Maria' }, '*')
+  addEventListener('message', e => {
+    if (!e.data || e.data.type !== 'tdg:formular-gesendet') return;
+    if (e.data.vorname) merkeVorname(e.data.vorname);
+    analyse(view.querySelector('.form-slot'));
+  });
 
   view.addEventListener('click', async e => {
     const a = e.target.closest('.answer');
@@ -1210,11 +1237,20 @@ const Quiz = (() => {
     if (!form) return;
     e.preventDefault();
     const err = form.querySelector('.gate__error');
-    const mail = form.querySelector('input[type="email"]');
-    if (!mail.value.trim() || !mail.checkValidity()) { err.textContent = 'Bitte gib eine gültige E-Mail-Adresse ein.'; mail.focus(); return; }
-    const offen = [...form.querySelectorAll('input[type="checkbox"]')].find(c => !c.checked);
-    if (offen) { err.textContent = 'Bitte bestätige beide Häkchen.'; offen.focus(); return; }
+    const felder = [
+      ['anrede', 'Bitte wähle eine Anrede.'],
+      ['vorname', 'Bitte gib deinen Vornamen ein.'],
+      ['nachname', 'Bitte gib deinen Nachnamen ein.'],
+      ['email', 'Bitte gib eine gültige E-Mail-Adresse ein.'],
+    ];
+    form.querySelectorAll('[aria-invalid]').forEach(f => f.removeAttribute('aria-invalid'));
+    for (const [name, text] of felder) {
+      const f = form.elements[name];
+      if (!f.value.trim() || !f.checkValidity()) { err.textContent = text; f.setAttribute('aria-invalid', 'true'); f.focus(); return; }
+    }
+    if (!form.elements.datenschutz.checked) { err.textContent = 'Bitte stimme den Datenschutzbestimmungen zu.'; form.elements.datenschutz.focus(); return; }
     err.textContent = '';
+    merkeVorname(form.elements.vorname.value);
     analyse(form.querySelector('[type="submit"]'));
   });
 
