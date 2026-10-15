@@ -209,15 +209,14 @@ a { color: inherit; }
   transform:
     translate(calc(var(--x, 50) * 1cqw - 50%), calc(var(--y, 50) * 1cqw - 50%))
     rotate(calc(var(--r, 0) * 1deg)) scale(var(--s, .5));
-  transition: transform 1300ms var(--spring);
+  transition: transform 1400ms cubic-bezier(.45, 0, .2, 1);   /* ruhiges Gleiten, kein Nachfedern */
   will-change: transform;
 }
-.bubble:nth-child(2) { transition-delay: 60ms; }
-.bubble:nth-child(3) { transition-delay: 120ms; }
-.bubble:nth-child(4) { transition-delay: 180ms; }
-.bubble:nth-child(5) { transition-delay: 240ms; }
+.bubble:nth-child(2) { transition-delay: 40ms; }
+.bubble:nth-child(3) { transition-delay: 80ms; }
+.bubble:nth-child(4) { transition-delay: 120ms; }
+.bubble:nth-child(5) { transition-delay: 160ms; }
 .bubble__pulse { will-change: transform, opacity; }
-.stage.is-jump .bubble { transition: none; }   /* Kreise springen unsichtbar an den neuen Platz, dann ploppen sie auf */
 .bubble svg { width: 100%; height: auto; animation: var(--float) var(--dur, 10s) ease-in-out var(--delay, 0s) infinite alternate; will-change: transform; }
 .bubble path { fill: currentColor; }
 .bubble--1 { color: var(--lime-200); --float: float-y;   --dur: 9s; }
@@ -751,7 +750,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=17"></script>
+<script src="daten.js?v=18"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -890,49 +889,28 @@ const Slider = (() => {
     if (an) { v.play().catch(() => {}); }
     else { v.pause(); }
   }
-  // Ablauf je Hund (Kundenwunsch): Kreise ploppen nacheinander auf, dann der Hund mit seiner Bewegung,
-  // danach ploppt alles weg und das nächste Tier kommt.
-  const T = { weg: 260, kreis: 85, hund: 360 };   // ms: Abbau, Abstand zwischen den Kreisen, Hund nach dem ersten Kreis
+  // Ruhiger Wechsel (Kundenwunsch): Der Hund blendet weich über, die Kreise gleiten langsam an ihren
+  // neuen Platz, die Icons blenden nur ein und aus. Die einzige auffällige Bewegung ist die des Hundes selbst.
+  const T = { hund: 250, icons: 750 };   // ms: neuer Hund nach Wechselbeginn, Icons nach Wechselbeginn
   function dogOut(fig) {
     const media = fig.firstElementChild;
     const v = fig.querySelector('video');
     fig.classList.remove('is-active');
     fig.setAttribute('aria-hidden', 'true');
-    play(fig, [{ opacity: snapO(fig) }, { opacity: 0 }], { duration: reduce() ? 400 : 220, delay: reduce() ? 0 : 50, easing: 'ease-in' });
-    if (v) setTimeout(() => { v.pause(); v.currentTime = 0; media.classList.remove('is-playing'); }, 450);
+    play(fig, [{ opacity: snapO(fig) }, { opacity: 0 }], { duration: reduce() ? 400 : 500, easing: 'cubic-bezier(.4, 0, .2, 1)' });
+    if (v) setTimeout(() => { v.pause(); v.currentTime = 0; media.classList.remove('is-playing'); }, 600);
     if (reduce()) return;
-    play(media, [{ transform: snapT(media) }, { transform: 'scale(1.04)', offset: .3 }, { transform: 'scale(.6)' }],
-      { duration: 280, easing: 'cubic-bezier(.5, 0, .75, 0)' });
+    play(media, [{ transform: snapT(media) }, { transform: 'translate3d(0, -.6cqw, 0) scale(.985)' }], { duration: 500, easing: 'cubic-bezier(.4, 0, .2, 1)' });
   }
   function dogIn(fig, delay = 0) {
     const media = fig.firstElementChild;
     fig.classList.add('is-active');
     fig.removeAttribute('aria-hidden');
     if (reduce()) return play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
-    play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay, easing: 'linear' });
-    play(media, [
-      { transform: 'translate3d(0, 4cqw, 0) scale(.55)' },
-      { transform: 'translate3d(0, -1cqw, 0) scale(1.05)', offset: .6 },
-      { transform: 'none' },
-    ], { duration: 560, delay, easing: 'cubic-bezier(.34, 1.3, .64, 1)' });
-    play(shadow, [{ transform: 'scaleX(.3)', opacity: 0 }, { transform: 'scaleX(1.06)', opacity: 1, offset: .6 }, { transform: 'scaleX(1)', opacity: 1 }],
-      { duration: 560, delay, easing: 'ease-out' });
+    play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 600, delay, easing: 'cubic-bezier(.4, 0, .2, 1)' });
+    play(media, [{ transform: 'translate3d(0, 1.2cqw, 0) scale(.97)' }, { transform: 'none' }], { duration: 700, delay, easing: 'cubic-bezier(.22, 1, .36, 1)' });
     const v = fig.querySelector('video');
-    if (v) { v.currentTime = 0; later(delay + 120, () => { if (!clipPause()) clip(fig, true); }); }
-  }
-  function bubblesOut() {
-    bubbles.forEach((b, k) => {
-      const p = b.firstElementChild;
-      play(p, [{ transform: snapT(p), opacity: snapO(p) }, { transform: 'scale(0)', opacity: 0 }],
-        { duration: 240, delay: (bubbles.length - 1 - k) * 20, easing: 'cubic-bezier(.5, 0, .75, 0)' });
-    });
-  }
-  function bubblesIn(base = 0) {
-    bubbles.forEach((b, k) => play(b.firstElementChild, [
-      { transform: 'scale(0)', opacity: 0 },
-      { transform: 'scale(1.1)', opacity: 1, offset: .55 },
-      { transform: 'scale(1)', opacity: 1 },
-    ], { duration: 520, delay: base + k * T.kreis, easing: 'cubic-bezier(.34, 1.4, .64, 1)' }));
+    if (v) { v.currentTime = 0; later(delay + 150, () => { if (!clipPause()) clip(fig, true); }); }
   }
   function setBubbles(i, pulse) {
     KOMPOSITION[i].bubbles.forEach(([x, y, w, r], k) => {
@@ -945,10 +923,9 @@ const Slider = (() => {
     });
   }
   function iconsOut() {
-    slots.forEach((s, k) => {
+    slots.forEach(s => {
       const pop = s.firstElementChild;
-      play(pop, [{ opacity: snapO(pop), transform: snapT(pop) }, { opacity: 0, transform: reduce() ? 'none' : 'scale(.4) rotate(-12deg)' }],
-        { duration: 260, delay: k * 30, easing: 'cubic-bezier(.5, 0, .75, 0)' });
+      play(pop, [{ opacity: snapO(pop) }, { opacity: 0 }], { duration: 300, easing: 'ease-in' });
     });
   }
   function iconsIn(i, base = 0) {
@@ -957,15 +934,9 @@ const Slider = (() => {
       const s = slots[k];
       s.style.setProperty('--x', x); s.style.setProperty('--y', y); s.style.setProperty('--r', r);
       const pop = s.firstElementChild;
-      const delay = base + k * 110;
       s.style.setProperty('--w', iconWidth(HUNDE[i].icons[k]));
-      drawIcon(pop, HUNDE[i].icons[k], delay + 60);
-      if (reduce()) return play(pop, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
-      play(pop, [
-        { opacity: 0, transform: 'scale(.3) rotate(-18deg)' },
-        { opacity: 1, transform: 'scale(1.12) rotate(4deg)', offset: .6 },
-        { opacity: 1, transform: 'none' },
-      ], { duration: 640, delay, easing: 'cubic-bezier(.34, 1.4, .64, 1)' });
+      drawIcon(pop, HUNDE[i].icons[k]);
+      play(pop, [{ opacity: 0 }, { opacity: 1 }], { duration: reduce() ? 400 : 700, delay: base + k * 120, easing: 'ease-out' });
     });
   }
   // Rassenname: kurz ausblenden, wechseln, wenn der Hund „landet" wieder einblenden
@@ -976,7 +947,7 @@ const Slider = (() => {
       return;
     }
     play(breed, [{ opacity: snapO(breed), transform: 'none' }, { opacity: 0, transform: 'translateY(-4px)' }], { duration: 200, easing: 'ease-in' });
-    later(T.weg + T.hund, () => {
+    later(T.hund + 150, () => {
       breed.textContent = HUNDE[i].name;
       play(breed, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.22, 1, .36, 1)' });
     });
@@ -989,19 +960,11 @@ const Slider = (() => {
     const prev = current, first = prev === -1;
     seq++;
     laden(slides[i]); laden(slides[(i + 1) % total]);
-    const weg = first || reduce() ? 0 : T.weg;
-    if (!first) { dogOut(slides[prev]); if (!reduce()) { bubblesOut(); iconsOut(); } }
-    const aufbau = () => {
-      // Kreise unsichtbar an den neuen Platz setzen, dann nacheinander aufploppen lassen
-      stage.classList.add('is-jump');
-      setBubbles(i, false);
-      void stage.offsetWidth;
-      requestAnimationFrame(() => stage.classList.remove('is-jump'));
-      if (!reduce()) bubblesIn();
-      dogIn(slides[i], reduce() ? 0 : T.hund);
-      iconsIn(i, reduce() ? 0 : T.hund + 300);
-    };
-    if (weg) later(weg, aufbau); else aufbau();
+    if (!first) { dogOut(slides[prev]); iconsOut(); }
+    setBubbles(i, false);                                   // Kreise gleiten langsam an den neuen Platz (CSS)
+    dogIn(slides[i], first || reduce() ? 0 : T.hund);       // Überblendung: neuer Hund kommt, während der alte geht
+    // Icons wechseln erst, wenn die alten ausgeblendet sind
+    if (first) iconsIn(i, 500); else later(reduce() ? 0 : 320, () => iconsIn(i, reduce() ? 0 : T.icons - 320));
     breedSwap(i, first);
     current = i;
     restartTimer();
@@ -1021,7 +984,7 @@ const Slider = (() => {
   // Hunde mit Clip bleiben so lange, bis ihre Bewegung einmal ganz abgelaufen ist
   const verweil = () => {
     const k = HUNDE[current] && HUNDE[current].video && HUNDE[current].video.kurz;
-    return (k && !reduce()) ? T.weg + T.hund + k.dauer + 250 : CONFIG.intervall;
+    return (k && !reduce()) ? T.hund + 150 + k.dauer + 450 : CONFIG.intervall;
   };
   function restartTimer() { clearTimeout(timer); timer = null; remaining = verweil(); sync(); }
   function sync() {
