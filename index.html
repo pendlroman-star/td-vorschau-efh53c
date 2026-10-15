@@ -216,7 +216,8 @@ a { color: inherit; }
 .bubble:nth-child(3) { transition-delay: 120ms; }
 .bubble:nth-child(4) { transition-delay: 180ms; }
 .bubble:nth-child(5) { transition-delay: 240ms; }
-.bubble__pulse { will-change: transform; }
+.bubble__pulse { will-change: transform, opacity; }
+.stage.is-jump .bubble { transition: none; }   /* Kreise springen unsichtbar an den neuen Platz, dann ploppen sie auf */
 .bubble svg { width: 100%; height: auto; animation: var(--float) var(--dur, 10s) ease-in-out var(--delay, 0s) infinite alternate; will-change: transform; }
 .bubble path { fill: currentColor; }
 .bubble--1 { color: var(--lime-200); --float: float-y;   --dur: 9s; }
@@ -750,7 +751,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=16"></script>
+<script src="daten.js?v=17"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -851,18 +852,19 @@ const Slider = (() => {
     const img = new Image();
     img.alt = `${h.name} – ${h.eigenschaften.slice(0, 3).join(', ')}`;
     img.decoding = 'async'; img.draggable = false;
-    if (h.video && !reduce()) {
-      // Bewegter Hund: Standbild = erstes Bild des Clips, darüber das Video (Safari: HEVC, sonst WebM)
-      const [l, t, w, hh] = h.video.box;
+    const k = h.video && h.video.kurz;
+    if (k && !reduce()) {
+      // Bewegter Hund: eine typische Bewegung (~2 s, keine Schleife). Standbild = erstes Bild des Clips, darüber das Video
+      const [l, t, w, hh] = k.box;
       media.style.cssText = `--l:${l};--t:${t};--w:${w};--h:${hh}`;
-      img.src = h.video.poster; img.className = 'dog__clip';
+      img.src = k.poster; img.className = 'dog__clip';
       const v = document.createElement('video');
-      v.className = 'dog__clip'; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
+      v.className = 'dog__clip'; v.muted = true; v.loop = false; v.playsInline = true; v.preload = 'none';
       v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true;
       // Durchsichtiges Video: Safari/iPhone (WebKit) kann das nur als HEVC, alle anderen nur als WebM (VP9).
       // Chrome am Mac spielt HEVC zwar ab, aber ohne Transparenz – daher nach Browser-Engine wählen.
       const webkit = 'GestureEvent' in window;
-      v.dataset.src = webkit ? h.video.hevc : h.video.webm;   // wird erst kurz vor dem Auftritt geladen (siehe laden())
+      v.dataset.src = webkit ? k.hevc : k.webm;   // wird erst kurz vor dem Auftritt geladen (siehe laden())
       v.addEventListener('playing', () => media.classList.add('is-playing'));
       media.append(img, v);
     } else {
@@ -888,37 +890,49 @@ const Slider = (() => {
     if (an) { v.play().catch(() => {}); }
     else { v.pause(); }
   }
+  // Ablauf je Hund (Kundenwunsch): Kreise ploppen nacheinander auf, dann der Hund mit seiner Bewegung,
+  // danach ploppt alles weg und das nächste Tier kommt.
+  const T = { weg: 260, kreis: 85, hund: 360 };   // ms: Abbau, Abstand zwischen den Kreisen, Hund nach dem ersten Kreis
   function dogOut(fig) {
-    const img = fig.firstElementChild;
+    const media = fig.firstElementChild;
     const v = fig.querySelector('video');
-    if (v) setTimeout(() => { v.pause(); v.currentTime = 0; fig.firstElementChild.classList.remove('is-playing'); }, 650);
     fig.classList.remove('is-active');
     fig.setAttribute('aria-hidden', 'true');
-    play(fig, [{ opacity: snapO(fig) }, { opacity: 0 }], { duration: reduce() ? 400 : 320, easing: 'cubic-bezier(.4, 0, .6, 1)' });
+    play(fig, [{ opacity: snapO(fig) }, { opacity: 0 }], { duration: reduce() ? 400 : 220, delay: reduce() ? 0 : 50, easing: 'ease-in' });
+    if (v) setTimeout(() => { v.pause(); v.currentTime = 0; media.classList.remove('is-playing'); }, 450);
     if (reduce()) return;
-    play(img, [{ transform: snapT(img) }, { transform: 'translate3d(-16cqw, .5cqw, 0) rotate(-6deg) scale(.9)' }],
-      { duration: 620, easing: 'cubic-bezier(.5, 0, .75, .2)' });
+    play(media, [{ transform: snapT(media) }, { transform: 'scale(1.04)', offset: .3 }, { transform: 'scale(.6)' }],
+      { duration: 280, easing: 'cubic-bezier(.5, 0, .75, 0)' });
   }
-  function dogIn(fig, first) {
-    const img = fig.firstElementChild;
+  function dogIn(fig, delay = 0) {
+    const media = fig.firstElementChild;
     fig.classList.add('is-active');
     fig.removeAttribute('aria-hidden');
-    if (!clipPause()) clip(fig, true);
     if (reduce()) return play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
-    const delay = first ? 250 : 150;
-    play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 360, delay, easing: 'cubic-bezier(.33, 0, .2, 1)' });
-    play(img, [
-      { transform: 'translate3d(20cqw, 3.5cqw, 0) rotate(7deg) scale(.86)' },
-      { transform: 'translate3d(-1.4cqw, -1.6cqw, 0) rotate(-1.6deg) scale(1.02)', offset: .62, easing: 'ease-in-out' },
+    play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay, easing: 'linear' });
+    play(media, [
+      { transform: 'translate3d(0, 4cqw, 0) scale(.55)' },
+      { transform: 'translate3d(0, -1cqw, 0) scale(1.05)', offset: .6 },
       { transform: 'none' },
-    ], { duration: 1100, delay, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+    ], { duration: 560, delay, easing: 'cubic-bezier(.34, 1.3, .64, 1)' });
+    play(shadow, [{ transform: 'scaleX(.3)', opacity: 0 }, { transform: 'scaleX(1.06)', opacity: 1, offset: .6 }, { transform: 'scaleX(1)', opacity: 1 }],
+      { duration: 560, delay, easing: 'ease-out' });
+    const v = fig.querySelector('video');
+    if (v) { v.currentTime = 0; later(delay + 120, () => { if (!clipPause()) clip(fig, true); }); }
   }
-  function shadowBeat() {
-    if (reduce()) return;
-    play(shadow, [
-      { transform: 'scaleX(1)', opacity: 1 }, { transform: 'scaleX(.55)', opacity: .35, offset: .3 },
-      { transform: 'scaleX(1.08)', opacity: 1, offset: .72 }, { transform: 'scaleX(1)', opacity: 1 },
-    ], { duration: 1200, easing: 'ease-in-out' });
+  function bubblesOut() {
+    bubbles.forEach((b, k) => {
+      const p = b.firstElementChild;
+      play(p, [{ transform: snapT(p), opacity: snapO(p) }, { transform: 'scale(0)', opacity: 0 }],
+        { duration: 240, delay: (bubbles.length - 1 - k) * 20, easing: 'cubic-bezier(.5, 0, .75, 0)' });
+    });
+  }
+  function bubblesIn(base = 0) {
+    bubbles.forEach((b, k) => play(b.firstElementChild, [
+      { transform: 'scale(0)', opacity: 0 },
+      { transform: 'scale(1.1)', opacity: 1, offset: .55 },
+      { transform: 'scale(1)', opacity: 1 },
+    ], { duration: 520, delay: base + k * T.kreis, easing: 'cubic-bezier(.34, 1.4, .64, 1)' }));
   }
   function setBubbles(i, pulse) {
     KOMPOSITION[i].bubbles.forEach(([x, y, w, r], k) => {
@@ -962,7 +976,7 @@ const Slider = (() => {
       return;
     }
     play(breed, [{ opacity: snapO(breed), transform: 'none' }, { opacity: 0, transform: 'translateY(-4px)' }], { duration: 200, easing: 'ease-in' });
-    later(420, () => {
+    later(T.weg + T.hund, () => {
       breed.textContent = HUNDE[i].name;
       play(breed, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.22, 1, .36, 1)' });
     });
@@ -975,10 +989,19 @@ const Slider = (() => {
     const prev = current, first = prev === -1;
     seq++;
     laden(slides[i]); laden(slides[(i + 1) % total]);
-    if (!first) { dogOut(slides[prev]); shadowBeat(); }
-    dogIn(slides[i], first);
-    setBubbles(i, !first);
-    if (first) iconsIn(i, 700); else { iconsOut(); later(reduce() ? 0 : 620, () => iconsIn(i)); }
+    const weg = first || reduce() ? 0 : T.weg;
+    if (!first) { dogOut(slides[prev]); if (!reduce()) { bubblesOut(); iconsOut(); } }
+    const aufbau = () => {
+      // Kreise unsichtbar an den neuen Platz setzen, dann nacheinander aufploppen lassen
+      stage.classList.add('is-jump');
+      setBubbles(i, false);
+      void stage.offsetWidth;
+      requestAnimationFrame(() => stage.classList.remove('is-jump'));
+      if (!reduce()) bubblesIn();
+      dogIn(slides[i], reduce() ? 0 : T.hund);
+      iconsIn(i, reduce() ? 0 : T.hund + 300);
+    };
+    if (weg) later(weg, aufbau); else aufbau();
     breedSwap(i, first);
     current = i;
     restartTimer();
@@ -996,7 +1019,10 @@ const Slider = (() => {
   function run() { clearTimeout(timer); startedAt = performance.now(); timer = setTimeout(() => { timer = null; next(); }, remaining); }
   function halt() { if (timer === null) return; clearTimeout(timer); timer = null; remaining = Math.max(0, remaining - (performance.now() - startedAt)); }
   // Hunde mit Clip bleiben so lange, bis ihre Bewegung einmal ganz abgelaufen ist
-  const verweil = () => Math.max(CONFIG.intervall, (HUNDE[current] && HUNDE[current].video && !reduce()) ? HUNDE[current].video.dauer : 0);
+  const verweil = () => {
+    const k = HUNDE[current] && HUNDE[current].video && HUNDE[current].video.kurz;
+    return (k && !reduce()) ? T.weg + T.hund + k.dauer + 250 : CONFIG.intervall;
+  };
   function restartTimer() { clearTimeout(timer); timer = null; remaining = verweil(); sync(); }
   function sync() {
     if (isPaused()) halt(); else if (timer === null) run();
