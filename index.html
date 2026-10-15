@@ -217,6 +217,10 @@ a { color: inherit; }
 .bubble:nth-child(4) { transition-delay: 120ms; }
 .bubble:nth-child(5) { transition-delay: 160ms; }
 .bubble__pulse { will-change: transform, opacity; }
+.stage.is-jump .bubble { transition: none; }
+/* Übergang „bubbles": Kopien der Kreise liegen über dem Hund und wischen den Wechsel zu */
+.layer--wisch .bubble { transition: none; }
+.layer--wisch .bubble__pulse { opacity: 0; }
 .bubble svg { width: 100%; height: auto; animation: var(--float) var(--dur, 10s) ease-in-out var(--delay, 0s) infinite alternate; will-change: transform; }
 .bubble path { fill: currentColor; }
 .bubble--1 { color: var(--lime-200); --float: float-y;   --dur: 9s; }
@@ -654,6 +658,7 @@ a { color: inherit; }
           <div class="shadow" id="shadow" aria-hidden="true"></div>
           <div class="dogs" id="dogs"></div>
         </div>
+        <div class="layer layer--wisch" data-depth="-1" aria-hidden="true" id="wischLayer"></div>
         <div class="badge" role="img" aria-label="Schenke Hunden einen sicheren Platz">
           <svg class="badge__ring" viewBox="0 0 120 120"><defs><path id="badgeCircle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs><text textLength="274" lengthAdjust="spacing"><textPath href="#badgeCircle" textLength="274" lengthAdjust="spacing">SCHENKE HUNDEN EINEN SICHEREN PLATZ ♥</textPath></text></svg>
           <svg class="badge__heart" viewBox="0 0 48 48"><path d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1"/></svg>
@@ -750,7 +755,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=18"></script>
+<script src="daten.js?v=19"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -798,7 +803,11 @@ const QUIZ = [
 ];
 
 const CONFIG = {
-  intervall: 3500, parallax: true,     // ms bis zum nächsten Hund
+  intervall: 3500, parallax: true,     // ms bis zum nächsten Hund (Standbilder)
+  dauerHund: 3200,                     // ms je bewegtem Hund – der Clip läuft als Schleife, der Hund steht nie still
+  // Übergang zwischen den Hunden: 'blende' (weiche Überblendung) oder 'bubbles' (neue Kreise wischen über das alte Tier).
+  // Zum Vergleichen auch per Adresse: index.html?uebergang=bubbles
+  uebergang: new URLSearchParams(location.search).get('uebergang') || 'blende',
   formularUrl: '',               // ← Adresse des echten Formulars (iframe). Leer = Platzhalter-Formular
   ergebnisSeite: 'ergebnis.html',
   analyseDauer: 6000,            // ms für „Dein Doppelgänger wird analysiert …" (Kunde: etwas langsamer)
@@ -851,20 +860,23 @@ const Slider = (() => {
     const img = new Image();
     img.alt = `${h.name} – ${h.eigenschaften.slice(0, 3).join(', ')}`;
     img.decoding = 'async'; img.draggable = false;
-    const k = h.video && h.video.kurz;
+    const k = h.video;
     if (k && !reduce()) {
-      // Bewegter Hund: eine typische Bewegung (~2 s, keine Schleife). Standbild = erstes Bild des Clips, darüber das Video
+      // Bewegter Hund: nahtlose Schleife, beginnt an der typischsten Stelle (k.start) – der Hund steht nie still.
       const [l, t, w, hh] = k.box;
       media.style.cssText = `--l:${l};--t:${t};--w:${w};--h:${hh}`;
       img.src = k.poster; img.className = 'dog__clip';
       const v = document.createElement('video');
-      v.className = 'dog__clip'; v.muted = true; v.loop = false; v.playsInline = true; v.preload = 'none';
+      v.className = 'dog__clip'; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
       v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true;
       // Durchsichtiges Video: Safari/iPhone (WebKit) kann das nur als HEVC, alle anderen nur als WebM (VP9).
       // Chrome am Mac spielt HEVC zwar ab, aber ohne Transparenz – daher nach Browser-Engine wählen.
       const webkit = 'GestureEvent' in window;
       v.dataset.src = webkit ? k.hevc : k.webm;   // wird erst kurz vor dem Auftritt geladen (siehe laden())
-      v.addEventListener('playing', () => media.classList.add('is-playing'));
+      v.dataset.start = k.start || 0;
+      // Sobald das Startbild bereitsteht, ersetzt das Video das Platzhalterbild
+      const bereit = () => media.classList.add('is-playing');
+      v.addEventListener('seeked', bereit); v.addEventListener('playing', bereit);
       media.append(img, v);
     } else {
       img.src = h.bild; img.width = 800; img.height = 880;
@@ -880,7 +892,17 @@ const Slider = (() => {
   // Clips erst laden, wenn der Hund dran oder als nächster an der Reihe ist (spart Datenvolumen)
   function laden(fig) {
     const v = fig && fig.querySelector('video');
-    if (v && !v.getAttribute('src')) { v.src = v.dataset.src; v.preload = 'auto'; v.load(); }
+    if (!v || v.getAttribute('src')) return;
+    v.src = v.dataset.src; v.preload = 'auto';
+    v.addEventListener('loadedmetadata', () => { v.currentTime = +v.dataset.start; }, { once: true });
+    v.load();
+  }
+  // Clip für den nächsten Auftritt wieder an seinen Startpunkt setzen
+  function zurueck(fig) {
+    const v = fig.querySelector('video');
+    if (!v) return;
+    v.pause();
+    if (v.readyState >= 1) v.currentTime = +v.dataset.start;
   }
   // Clip des aktiven Hundes abspielen / anhalten (nur wenn Bewegung erlaubt ist)
   function clip(fig, an) {
@@ -889,28 +911,52 @@ const Slider = (() => {
     if (an) { v.play().catch(() => {}); }
     else { v.pause(); }
   }
-  // Ruhiger Wechsel (Kundenwunsch): Der Hund blendet weich über, die Kreise gleiten langsam an ihren
-  // neuen Platz, die Icons blenden nur ein und aus. Die einzige auffällige Bewegung ist die des Hundes selbst.
-  const T = { hund: 250, icons: 750 };   // ms: neuer Hund nach Wechselbeginn, Icons nach Wechselbeginn
-  function dogOut(fig) {
+  // Flüssiger Wechsel (Kundenwunsch): Der Hund bewegt sich ohne Pause weiter, auch während er aus- und der
+  // nächste schon eingeblendet wird. Zwei Übergänge: 'blende' und 'bubbles' (siehe CONFIG.uebergang).
+  const T = { hund: 150 };
+  const wisch = (() => {
+    const layer = document.getElementById('wischLayer');
+    bubbles.forEach(b => layer.appendChild(b.cloneNode(true)));
+    return [...layer.children];
+  })();
+  function dogOut(fig, dauer = 800) {
     const media = fig.firstElementChild;
-    const v = fig.querySelector('video');
     fig.classList.remove('is-active');
     fig.setAttribute('aria-hidden', 'true');
-    play(fig, [{ opacity: snapO(fig) }, { opacity: 0 }], { duration: reduce() ? 400 : 500, easing: 'cubic-bezier(.4, 0, .2, 1)' });
-    if (v) setTimeout(() => { v.pause(); v.currentTime = 0; media.classList.remove('is-playing'); }, 600);
+    play(fig, [{ opacity: snapO(fig) }, { opacity: 0 }], { duration: reduce() ? 400 : dauer, easing: 'cubic-bezier(.45, 0, .55, 1)' });
+    setTimeout(() => zurueck(fig), dauer + 100);
     if (reduce()) return;
-    play(media, [{ transform: snapT(media) }, { transform: 'translate3d(0, -.6cqw, 0) scale(.985)' }], { duration: 500, easing: 'cubic-bezier(.4, 0, .2, 1)' });
+    play(media, [{ transform: snapT(media) }, { transform: 'scale(.985)' }], { duration: dauer, easing: 'cubic-bezier(.45, 0, .55, 1)' });
   }
-  function dogIn(fig, delay = 0) {
+  function dogIn(fig, delay = 0, dauer = 800) {
     const media = fig.firstElementChild;
     fig.classList.add('is-active');
     fig.removeAttribute('aria-hidden');
+    if (!clipPause()) clip(fig, true);                       // läuft schon, bevor er sichtbar wird
     if (reduce()) return play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
-    play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: 600, delay, easing: 'cubic-bezier(.4, 0, .2, 1)' });
-    play(media, [{ transform: 'translate3d(0, 1.2cqw, 0) scale(.97)' }, { transform: 'none' }], { duration: 700, delay, easing: 'cubic-bezier(.22, 1, .36, 1)' });
-    const v = fig.querySelector('video');
-    if (v) { v.currentTime = 0; later(delay + 150, () => { if (!clipPause()) clip(fig, true); }); }
+    play(fig, [{ opacity: 0 }, { opacity: 1 }], { duration: dauer, delay, easing: 'cubic-bezier(.45, 0, .55, 1)' });
+    play(media, [{ transform: 'scale(.985)' }, { transform: 'none' }], { duration: dauer + 100, delay, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+  }
+  // Übergang „bubbles": die Kreise des neuen Hundes ploppen über dem alten auf, dahinter wird getauscht,
+  // dann lösen sie sich auf und geben den neuen Hund frei
+  function wischen(prev, i) {
+    KOMPOSITION[i].bubbles.forEach(([x, y, w, r], k) => {
+      const b = wisch[k];
+      b.style.setProperty('--x', x); b.style.setProperty('--y', y); b.style.setProperty('--s', w / 100); b.style.setProperty('--r', r);
+      play(b.firstElementChild, [{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(1.04)', opacity: 1, offset: .7 }, { transform: 'scale(1)', opacity: 1 }],
+        { duration: 440, delay: k * 50, easing: 'cubic-bezier(.3, 1.2, .6, 1)' });
+    });
+    iconsOut();
+    later(260, () => dogOut(slides[prev], 260));
+    later(480, () => {
+      stage.classList.add('is-jump'); setBubbles(i, false); void stage.offsetWidth;
+      requestAnimationFrame(() => stage.classList.remove('is-jump'));
+      dogIn(slides[i], 0, 200);
+    });
+    later(560, () => wisch.forEach((b, k) => play(b.firstElementChild,
+      [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.03)', opacity: 0 }],
+      { duration: 700, delay: k * 45, easing: 'cubic-bezier(.45, 0, .55, 1)' })));
+    later(950, () => iconsIn(i, 0));
   }
   function setBubbles(i, pulse) {
     KOMPOSITION[i].bubbles.forEach(([x, y, w, r], k) => {
@@ -960,16 +1006,29 @@ const Slider = (() => {
     const prev = current, first = prev === -1;
     seq++;
     laden(slides[i]); laden(slides[(i + 1) % total]);
-    if (!first) { dogOut(slides[prev]); iconsOut(); }
-    setBubbles(i, false);                                   // Kreise gleiten langsam an den neuen Platz (CSS)
-    dogIn(slides[i], first || reduce() ? 0 : T.hund);       // Überblendung: neuer Hund kommt, während der alte geht
-    // Icons wechseln erst, wenn die alten ausgeblendet sind
-    if (first) iconsIn(i, 500); else later(reduce() ? 0 : 320, () => iconsIn(i, reduce() ? 0 : T.icons - 320));
+    if (first || reduce()) {
+      if (!first) { dogOut(slides[prev]); iconsOut(); }
+      setBubbles(i, false); dogIn(slides[i], 0); iconsIn(i, first ? 500 : 0);
+    } else if (CONFIG.uebergang === 'bubbles') {
+      wischen(prev, i);
+    } else {
+      dogOut(slides[prev]); iconsOut();
+      setBubbles(i, false);                                 // Kreise gleiten langsam an den neuen Platz (CSS)
+      dogIn(slides[i], T.hund);                             // Überblendung: beide Hunde bewegen sich dabei weiter
+      later(320, () => iconsIn(i, 450));
+    }
     breedSwap(i, first);
     current = i;
     restartTimer();
   }
-  const next = () => goTo(current + 1);
+  function next() {
+    const i = (current + 1) % total, v = slides[i].querySelector('video');
+    if (!v || reduce() || v.readyState >= 3) return goTo(i);
+    let los = false;
+    const go = () => { if (!los) { los = true; goTo(i); } };
+    v.addEventListener('canplay', go, { once: true });
+    setTimeout(go, 1500);
+  }
 
   // Automatischer Wechsel. Hält an, wenn die Maus darauf ruht, der Slider
   // nicht zu sehen ist oder der Tab im Hintergrund liegt (Restzeit bleibt erhalten).
@@ -982,10 +1041,7 @@ const Slider = (() => {
   function run() { clearTimeout(timer); startedAt = performance.now(); timer = setTimeout(() => { timer = null; next(); }, remaining); }
   function halt() { if (timer === null) return; clearTimeout(timer); timer = null; remaining = Math.max(0, remaining - (performance.now() - startedAt)); }
   // Hunde mit Clip bleiben so lange, bis ihre Bewegung einmal ganz abgelaufen ist
-  const verweil = () => {
-    const k = HUNDE[current] && HUNDE[current].video && HUNDE[current].video.kurz;
-    return (k && !reduce()) ? T.hund + 150 + k.dauer + 450 : CONFIG.intervall;
-  };
+  const verweil = () => (HUNDE[current] && HUNDE[current].video && !reduce()) ? CONFIG.dauerHund : CONFIG.intervall;
   function restartTimer() { clearTimeout(timer); timer = null; remaining = verweil(); sync(); }
   function sync() {
     if (isPaused()) halt(); else if (timer === null) run();
