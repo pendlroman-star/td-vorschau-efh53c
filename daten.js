@@ -19,6 +19,9 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bruno und ich pass auf dich auf',
       foto: null, foto2: null } },
   { id: 'jack', name: 'Jack Russell Terrier', bild: 'bilder/hunde/jack-russell.webp', fokus: '56% 36%',
+    // Bewegter Hund (KI-Clip, Test): box = Lage des Videos in % des Standbild-Rahmens [links, oben, Breite, Höhe]
+    video: { webm: 'bilder/hunde/video/jack-russell.webm', hevc: 'bilder/hunde/video/jack-russell-hevc.mp4',
+             poster: 'bilder/hunde/video/jack-russell-poster.webp', box: [-3.25, -17.09, 98.75, 117.09], dauer: 5000 },
     eigenschaften: ['energiegeladen', 'mutig', 'abenteuerlustig', 'spontan', 'temperamentvoll', 'unerschrocken'],
     icons: ['funken', 'wellen', 'pfeil'],
     ergebnis: { platzhalter: true, tiername: 'Flitzi', er: 'sie',
