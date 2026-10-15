@@ -124,6 +124,13 @@ a { color: inherit; }
 @keyframes b-r { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
 .r-shadow { position: absolute; left: 19%; bottom: .5%; width: 62%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, rgba(13, 58, 32, .26), rgba(13, 58, 32, .08) 60%, transparent); }
 .r-dog { position: absolute; inset: 6% 5% 0 5%; width: 90%; height: 94%; object-fit: contain; animation: breathe 3.6s ease-in-out infinite alternate; }
+/* Bewegter Hund (KI-Clip): Video und sein erstes Bild liegen exakt übereinander */
+.r-clip { position: absolute; inset: 6% 5% 0 5%; }
+.dog__media { position: absolute; inset: 0; margin: auto; width: 100%; height: auto; max-height: 100%; aspect-ratio: 1000 / 1100; }
+.dog__media > .dog__clip { position: absolute; left: calc(var(--l) * 1%); top: calc(var(--t) * 1%); width: calc(var(--w) * 1%); height: calc(var(--h) * 1%); object-fit: fill; }
+.dog__media > video.dog__clip { opacity: 0; transition: opacity 120ms linear; }
+.dog__media.is-playing > video.dog__clip { opacity: 1; }
+.dog__media.is-playing > img.dog__clip { opacity: 0; }
 @keyframes breathe { from { transform: none; } to { transform: translateY(-0.9cqw) rotate(-.35deg); } }
 .icon-slot { position: absolute; left: 0; top: 0; width: calc(var(--w, 11.5) * 1cqw); color: var(--forest); transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)); }
 .icon-slot svg { width: 100%; height: auto; overflow: visible; animation: float-y 6s ease-in-out infinite alternate; }
@@ -391,7 +398,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=14"></script>
+<script src="daten.js?v=16"></script>
 <script>
 document.documentElement.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -426,7 +433,14 @@ $('r-quip').textContent  = e.headline;
   const [x, y, w, r] = KOMPOSITION[idx].bubbles[k];
   b.style.cssText = `--x:${x};--y:${y};--s:${w / 100};--r:${r}`;
 });
-$('r-dog').src = h.bild;
+if (h.video && !reduce) {
+  // Bewegter Hund statt Standbild
+  const c = document.createElement('div');
+  c.className = 'r-clip';
+  c.innerHTML = clipHTML(h);
+  $('r-dog').replaceWith(c);
+  clipStart(c.firstElementChild);
+} else $('r-dog').src = h.bild;
 $('r-icons').innerHTML = h.icons.map((name, k) => {
   const [x, y, r] = iconPos(idx, k);
   return `<div class="icon-slot" style="--x:${x};--y:${y};--r:${r};--w:${iconWidth(name)}"><div class="icon-pop">${iconSVG(name)}</div></div>`;

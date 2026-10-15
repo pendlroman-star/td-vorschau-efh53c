@@ -455,6 +455,9 @@ a { color: inherit; }
 .analyse__ring circle { fill: none; stroke: var(--forest); stroke-width: 1.6; stroke-dasharray: 2 9; stroke-linecap: round; opacity: .5; }
 .analyse__dog { position: absolute; inset: 6% 5% 0; width: 90%; height: 94%; object-fit: contain; opacity: 0; transform: scale(.85) rotate(-4deg); transition: opacity 180ms linear, transform 340ms var(--spring); }
 .analyse__dog.is-on { opacity: 1; transform: none; }
+/* Bei „Match gefunden!" bewegt sich der passende Hund (KI-Clip) */
+.analyse__clip { position: absolute; inset: 6% 5% 0; opacity: 0; transition: opacity 160ms linear; }
+.analyse.is-match .analyse__clip { opacity: 1; }
 .analyse__title { margin: 0; font-size: clamp(1.7rem, 4.6vw, 2.6rem); line-height: 1.05; }
 .analyse__title .nowrap { white-space: nowrap; }
 .analyse__title .dots span { display: inline-block; animation: hop 1s ease-in-out infinite; }
@@ -747,7 +750,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=14"></script>
+<script src="daten.js?v=16"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -854,12 +857,12 @@ const Slider = (() => {
       media.style.cssText = `--l:${l};--t:${t};--w:${w};--h:${hh}`;
       img.src = h.video.poster; img.className = 'dog__clip';
       const v = document.createElement('video');
-      v.className = 'dog__clip'; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
+      v.className = 'dog__clip'; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
       v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.disablePictureInPicture = true;
       // Durchsichtiges Video: Safari/iPhone (WebKit) kann das nur als HEVC, alle anderen nur als WebM (VP9).
       // Chrome am Mac spielt HEVC zwar ab, aber ohne Transparenz – daher nach Browser-Engine wählen.
       const webkit = 'GestureEvent' in window;
-      v.src = webkit ? h.video.hevc : h.video.webm;
+      v.dataset.src = webkit ? h.video.hevc : h.video.webm;   // wird erst kurz vor dem Auftritt geladen (siehe laden())
       v.addEventListener('playing', () => media.classList.add('is-playing'));
       media.append(img, v);
     } else {
@@ -873,6 +876,11 @@ const Slider = (() => {
   let seq = 0;
   const later = (ms, fn) => { const s = seq; setTimeout(() => { if (s === seq) fn(); }, ms); };
 
+  // Clips erst laden, wenn der Hund dran oder als nächster an der Reihe ist (spart Datenvolumen)
+  function laden(fig) {
+    const v = fig && fig.querySelector('video');
+    if (v && !v.getAttribute('src')) { v.src = v.dataset.src; v.preload = 'auto'; v.load(); }
+  }
   // Clip des aktiven Hundes abspielen / anhalten (nur wenn Bewegung erlaubt ist)
   function clip(fig, an) {
     const v = fig.querySelector('video');
@@ -966,6 +974,7 @@ const Slider = (() => {
     if (i === current) return;
     const prev = current, first = prev === -1;
     seq++;
+    laden(slides[i]); laden(slides[(i + 1) % total]);
     if (!first) { dogOut(slides[prev]); shadowBeat(); }
     dogIn(slides[i], first);
     setBubbles(i, !first);
@@ -1183,6 +1192,7 @@ const Quiz = (() => {
           <svg class="analyse__blob" viewBox="0 0 200 200"><path d="M155.4 42.6c17.6 18.9 25.3 46.6 19.4 70.7-5.9 24.1-25.4 44.6-49.2 54.3-23.8 9.7-51.9 8.6-72.3-3.8C32.9 151.4 20.2 127.5 19.1 103.2 18 78.9 28.5 54.2 46.9 37.9 65.3 21.6 91.6 13.7 113.7 17.4c22.1 3.7 24.1 6.3 41.7 25.2z"/></svg>
           <svg class="analyse__blob analyse__blob--2" viewBox="0 0 200 200"><path d="M146.7 34.9c20.2 13.4 34.9 37.7 34.6 61.4-.3 23.7-15.6 46.8-35.6 61.6-20 14.8-44.7 21.3-66.4 15.1-21.7-6.2-40.4-25.1-48.6-47.2-8.2-22.1-5.9-47.4 6.6-65.4C49.8 42.4 72.7 31.7 95.4 26.6c22.7-5.1 31.1-5.1 51.3 8.3z"/></svg>
           ${HUNDE.map(x => `<img class="analyse__dog" src="${x.bild}" alt="" data-id="${x.id}">`).join('')}
+          ${h.video && !reduce() ? `<div class="analyse__clip">${clipHTML(h)}</div>` : ''}
         </div>
         <p class="display analyse__title"><span class="analyse__label">Dein Doppelgänger wird <span class="nowrap">analysiert<span class="dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></span></span></p>
         <p class="analyse__step">Antworten werden ausgewertet</p>
@@ -1229,6 +1239,8 @@ const Quiz = (() => {
     // Match!
     setTimeout(() => {
       ov.classList.add('is-match');
+      const clipEl = ov.querySelector('.analyse__clip');
+      if (clipEl) { zeige(null); clipStart(clipEl.firstElementChild); }
       ov.querySelector('.analyse__label').textContent = 'Match gefunden!';
       stepEl.textContent = 'Gleich lernst du deinen Doppelgänger kennen';
       ov.querySelector('.analyse__title').animate([{ transform: 'scale(.9)' }, { transform: 'scale(1.06)', offset: .6 }, { transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.34, 1.4, .64, 1)' });
@@ -1242,7 +1254,7 @@ const Quiz = (() => {
         ], { duration: 1000, delay: n * 25, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
       });
     }, tMatch);
-    setTimeout(go, Math.max(CONFIG.analyseDauer, tMatch + 1300));
+    setTimeout(go, Math.max(CONFIG.analyseDauer, tMatch + (h.video ? 2600 : 1300)));   // mit Clip: Bewegung kurz zeigen
   }
   // Beim Zurückblättern vom Ergebnis den Übergang wieder entfernen
   addEventListener('pageshow', e => {

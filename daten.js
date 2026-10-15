@@ -9,8 +9,16 @@
      Hund aus dem Tierheim. Nur „Moritz" stammt aus dem Figma-Entwurf –
      die anderen Namen, Fotos und Texte sind PLATZHALTER/Vorschläge.
    ================================================================== */
+// Bewegte Hunde (KI-Clips mit durchsichtigem Hintergrund): WebM für Chrome/Firefox, HEVC für Safari/iPhone,
+// poster = erstes Bild des Clips. box = Lage des Videos in % des Standbild-Rahmens 1000×1100 [links, oben, Breite, Höhe].
+const hundeClip = (datei, box, dauer = 5000) => ({
+  webm: `bilder/hunde/video/${datei}.webm`, hevc: `bilder/hunde/video/${datei}-hevc.mp4`,
+  poster: `bilder/hunde/video/${datei}-poster.webp`, box, dauer,
+});
+
 const HUNDE = [
   { id: 'schaeferhund', name: 'Schäferhund', bild: 'bilder/hunde/schaeferhund.webp', fokus: '68% 15%',
+    video: hundeClip('schaeferhund', [-15.93, -22.75, 114.83, 122.75]),
     eigenschaften: ['loyal', 'beschützend', 'zuverlässig', 'verantwortungsbewusst', 'diszipliniert', 'zielstrebig'],
     icons: ['arche', 'hakerl', 'haus'],
     ergebnis: { platzhalter: true, tiername: 'Bruno', er: 'er',
@@ -19,9 +27,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bruno und ich pass auf dich auf',
       foto: null, foto2: null } },
   { id: 'jack', name: 'Jack Russell Terrier', bild: 'bilder/hunde/jack-russell.webp', fokus: '56% 36%',
-    // Bewegter Hund (KI-Clip, Test): box = Lage des Videos in % des Standbild-Rahmens [links, oben, Breite, Höhe]
-    video: { webm: 'bilder/hunde/video/jack-russell.webm', hevc: 'bilder/hunde/video/jack-russell-hevc.mp4',
-             poster: 'bilder/hunde/video/jack-russell-poster.webp', box: [-3.25, -17.09, 98.75, 117.09], dauer: 5000 },
+    video: hundeClip('jack-russell', [-3.25, -17.09, 98.75, 117.09]),
     eigenschaften: ['energiegeladen', 'mutig', 'abenteuerlustig', 'spontan', 'temperamentvoll', 'unerschrocken'],
     icons: ['funken', 'wellen', 'pfeil'],
     ergebnis: { platzhalter: true, tiername: 'Flitzi', er: 'sie',
@@ -30,6 +36,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Flitzi und ich bin immer startklar',
       foto: 'bilder/quiz/frage-2.jpg', fokus: '62% 40%', foto2: 'bilder/quiz/ergebnis.jpg', fokus2: '60% 40%' } },
   { id: 'dackel', name: 'Dackel', bild: 'bilder/hunde/dackel-links.webp', fokus: '23% 21%',
+    video: hundeClip('dackel', [-19.27, -9.27, 141.65, 109.27]),
     eigenschaften: ['selbstbewusst', 'charmant', 'eigenwillig', 'hartnäckig', 'clever', 'unabhängig'],
     icons: ['knochen', 'schlaufe', 'paragraf'],
     ergebnis: { platzhalter: true, tiername: 'Fritzi', er: 'sie',
@@ -38,6 +45,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Fritzi und ich hab meinen eigenen Kopf',
       foto: null, foto2: null } },
   { id: 'havaneser', name: 'Havaneser', bild: 'bilder/hunde/havaneser.webp', fokus: '67% 32%',
+    video: hundeClip('havaneser', [-22.0, -25.85, 135.13, 125.85]),
     eigenschaften: ['herzlich', 'feinfühlig', 'lebensfroh', 'gesellig', 'harmoniebedürftig', 'anhänglich'],
     icons: ['herz', 'pfote', 'sprechblasen'],
     ergebnis: { platzhalter: true, tiername: 'Bella', er: 'sie',
@@ -46,6 +54,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bella und ich kuschle für mein Leben gern',
       foto: null, foto2: null } },
   { id: 'collie', name: 'Border Collie', bild: 'bilder/hunde/border-collie.webp', fokus: '64% 36%',
+    video: hundeClip('border-collie', [3.61, -22.46, 93.7, 122.46]),
     eigenschaften: ['intelligent', 'aufmerksam', 'fokussiert', 'ehrgeizig', 'lernfreudig', 'perfektionistisch'],
     icons: ['gluehbirne', 'lupe', 'kalender'],
     ergebnis: { platzhalter: false, tiername: 'Moritz', er: 'er',      // aus dem Figma-Entwurf
@@ -54,6 +63,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Moritz und ich liebe Abenteuer',
       foto: 'bilder/quiz/frage-3.jpg', fokus: '55% 45%', foto2: 'bilder/ergebnis/collie-2.jpg', fokus2: '45% 50%' } },
   { id: 'labrador', name: 'Labrador Retriever', bild: 'bilder/hunde/labrador.webp', fokus: '62% 22%',
+    video: hundeClip('labrador', [0.76, -28.78, 98.52, 128.78]),
     eigenschaften: ['kontaktfreudig', 'gutmütig', 'genussfreudig', 'offen', 'unkompliziert', 'begeisterungsfähig'],
     icons: ['koerner', 'telefon', 'hund'],
     ergebnis: { platzhalter: true, tiername: 'Balu', er: 'er',
@@ -90,6 +100,22 @@ const ICONS = {
   hund: { vb: '0 0 1179 917', w: 15.33, d: 'M612 911 543 910 507 905 479 899 441 887 407 873 385 861 349 838 313 809 284 780 268 761 248 734 229 703 213 671 203 646 191 608 161 602 143 596 124 587 107 576 92 564 72 543 56 521 45 502 32 473 22 444 14 412 8 375 6 350 6 306 9 273 16 235 29 193 38 171 52 144 71 115 90 92 114 69 129 57 161 37 198 21 232 12 263 8 299 8 333 13 364 22 393 35 421 52 461 34 507 22 558 16 624 16 665 20 704 28 739 41 769 59 806 35 829 24 855 15 897 7 916 6 944 7 975 12 1005 21 1040 37 1065 53 1085 69 1111 96 1131 124 1142 144 1158 185 1166 218 1172 267 1173 318 1170 353 1163 393 1152 434 1139 468 1125 496 1109 521 1093 541 1070 563 1051 577 1025 591 995 601 963 606 939 675 909 735 886 769 875 777 860 782 849 782 843 780 836 775 830 766 827 758 827 743 831 729 836 719 858 683 875 647 886 616 895 581 904 530 910 466 912 414 913 312 917 296 930 275 936 269 950 261 969 260 976 262 983 267 989 275 991 283 990 401 982 512 1008 507 1027 498 1039 489 1051 477 1065 457 1076 433 1083 411 1092 367 1095 333 1094 299 1088 260 1078 226 1060 189 1043 166 1023 146 997 127 980 118 960 110 921 101 886 100 848 107 818 120 796 135 770 160 754 167 744 167 735 164 728 158 714 143 705 136 678 123 647 115 594 109 537 109 486 116 462 123 447 130 415 152 408 154 394 154 382 149 354 127 322 111 298 104 280 101 252 100 234 102 207 108 174 122 145 142 135 151 120 169 104 197 96 221 90 253 87 292 89 331 94 365 102 398 112 425 128 455 142 473 163 492 178 500 178 397 180 261 184 248 190 236 203 221 213 215 222 212 235 212 244 215 254 225 258 237 258 467 260 509 267 552 272 571 283 602 306 648 334 688 357 714 372 728 390 743 417 762 464 787 501 801 532 809 559 814 603 818 654 815 703 805 727 797 767 781 781 781 786 782 793 787 800 796 803 807 803 820 799 836 794 846 785 858 774 867 734 885 693 898 655 906 612 911ZM458 471 433 471 415 468 400 463 387 457 370 446 352 429 347 416 348 396 352 384 362 369 376 356 390 350 400 349 406 350 415 354 433 368 445 374 463 378 474 378 490 374 510 362 525 357 533 357 541 359 550 366 555 373 557 381 557 399 552 415 541 432 530 442 505 458 480 467 458 471ZM725 471 698 470 671 463 651 453 635 440 628 425 628 407 634 388 646 370 653 363 663 357 670 355 682 355 690 358 702 366 716 373 734 377 745 377 765 371 787 354 799 349 814 349 826 355 834 365 836 372 837 385 831 406 818 425 800 442 772 459 753 466 725 471ZM577 662 563 662 557 660 474 608 468 594 468 574 473 558 485 539 499 527 516 522 679 523 688 525 694 529 699 535 702 543 702 556 696 576 680 602 667 613 593 655 577 662Z' },
 };
 // <svg>-Markup für ein Icon (Füllung in currentColor)
+/* Bewegter Hund als Baustein (Analyse, Ergebnisseite). Safari/iPhone (WebKit) kann durchsichtige Videos
+   nur als HEVC, alle anderen nur als WebM – Chrome am Mac spielt HEVC ohne Transparenz, daher nach Engine wählen. */
+const clipQuelle = v => ('GestureEvent' in window) ? v.hevc : v.webm;
+function clipHTML(h, cls = '') {
+  const [l, t, w, hh] = h.video.box;
+  return `<div class="dog__media ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}">` +
+    `<img class="dog__clip" src="${h.video.poster}" alt=""><video class="dog__clip" muted loop playsinline preload="auto" aria-hidden="true" src="${clipQuelle(h.video)}"></video></div>`;
+}
+function clipStart(media) {
+  const v = media && media.querySelector('video');
+  if (!v) return;
+  v.muted = true;
+  v.addEventListener('playing', () => media.classList.add('is-playing'));
+  v.play().catch(() => {});
+}
+
 function iconSVG(name, cls = 'ai') {
   const i = ICONS[name]; if (!i) return '';
   return `<svg class="${cls}" viewBox="${i.vb}" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="${i.d}"/></svg>`;
