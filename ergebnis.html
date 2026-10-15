@@ -126,13 +126,21 @@ a { color: inherit; }
 .r-dog { position: absolute; inset: 6% 5% 0 5%; width: 90%; height: 94%; object-fit: contain; animation: breathe 3.6s ease-in-out infinite alternate; }
 /* Bewegter Hund (KI-Clip): Video und sein erstes Bild liegen exakt übereinander */
 .r-clip { position: absolute; inset: 6% 5% 0 5%; }
-/* Variante „Natur" (ergebnis.html?…&stil=natur): Hund bewegt sich in einer angedeuteten Naturszene,
-   die organisch und weich ins Transparente ausläuft – statt der grünen Bubbles */
-.r-szene { position: absolute; left: 0; top: 5cqw; width: 100cqw; aspect-ratio: 1; }
-.r-szene > img, .r-szene > video { position: absolute; inset: 0; width: 100%; height: 100%; }
-.r-szene > video { opacity: 0; transition: opacity 160ms linear; }
-.r-szene.is-playing > video { opacity: 1; }
-.r-szene.is-playing > img { opacity: 0; }
+/* Variante „Natur" (ergebnis.html?…&stil=natur): Hund bewegt sich in einer Naturszene,
+   die in einer klaren organischen Bubble-Form sitzt; dahinter blitzt eine grüne Bubble hervor */
+.r-szene { position: absolute; left: 2cqw; top: 7cqw; width: 96cqw; aspect-ratio: 1; }
+.r-szene::before {
+  content: ""; position: absolute; inset: -4% -6% 1% 4%; background: var(--lime);
+  -webkit-mask: var(--blob) center / 100% 100% no-repeat; mask: var(--blob) center / 100% 100% no-repeat;
+  transform: rotate(-14deg); animation: b-r 12s ease-in-out infinite alternate;
+}
+.r-szene__bild {
+  position: absolute; inset: 0;
+  -webkit-mask: var(--blob) center / 100% 100% no-repeat; mask: var(--blob) center / 100% 100% no-repeat;
+}
+.r-szene__bild > img, .r-szene__bild > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.r-szene__bild > video { opacity: 0; transition: opacity 160ms linear; }
+.r-szene.is-playing video { opacity: 1; }
 .dog__media { position: absolute; inset: 0; margin: auto; width: 100%; height: auto; max-height: 100%; aspect-ratio: 1000 / 1100; }
 .dog__media > .dog__clip { position: absolute; left: calc(var(--l) * 1%); top: calc(var(--t) * 1%); width: calc(var(--w) * 1%); height: calc(var(--h) * 1%); object-fit: fill; }
 .dog__media > video.dog__clip { opacity: 0; transition: opacity 120ms linear; }
@@ -405,7 +413,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=20"></script>
+<script src="daten.js?v=21"></script>
 <script>
 document.documentElement.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -462,11 +470,11 @@ if (natur) {
   const szene = document.createElement('div');
   szene.className = 'r-szene';
   const q = `bilder/hunde/natur/${h.id}`, ver = `?v=${CLIP_VERSION}`;
-  szene.innerHTML = `<img src="${q}-poster.webp${ver}" alt=""><video muted loop playsinline preload="auto" aria-hidden="true" src="${clipQuelle({ webm: `${q}.webm${ver}`, hevc: `${q}-hevc.mp4${ver}` })}"></video>`;
+  szene.innerHTML = `<div class="r-szene__bild"><img src="${q}-poster.webp${ver}" alt=""><video muted loop playsinline preload="auto" aria-hidden="true" src="${q}.mp4${ver}"></video></div>`;
   (vis.querySelector('.r-clip') || $('r-dog')).replaceWith(szene);
   clipStart(szene);
   // Icons in die freien Ecken rund um die Szene (auf hellem Grund gut lesbar)
-  [[8, 12, -8], [93, 22, 6], [7, 101, -4]].forEach(([x, y, r], k) => {
+  [[7, 10, -8], [95, 30, 6], [8, 104, -4]].forEach(([x, y, r], k) => {
     const slot = $('r-icons').children[k];
     if (slot) slot.style.cssText += `;--x:${x};--y:${y};--r:${r}`;
   });
