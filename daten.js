@@ -16,13 +16,14 @@
 // start = Sekunde, an der der Hund im Slider einsetzt. Die Schleifen sind aus der Mitte der KI-Clips geschnitten
 // (Anfang/Ende der KI-Clips frieren kurz ein und sind heller) und am Übergang weich verbunden.
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
-const CLIP_VERSION = 8;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+const CLIP_VERSION = 9;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+// Safari/iPhone: HEVC mit Alphakanal als .mov, erzeugt mit Apples AVAssetWriter (ffmpeg-Dateien kann Safari nicht abspielen)
 // lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
-  webm: `bilder/hunde/video/${datei}.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-hevc.mp4?v=${CLIP_VERSION}`,
+  webm: `bilder/hunde/video/${datei}.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-hevc.mov?v=${CLIP_VERSION}`,
   poster: `bilder/hunde/video/${datei}-poster.webp?v=${CLIP_VERSION}`, box: boxSkaliert(box, groesse), start, dauer,
   lang: langBox && {
-    webm: `bilder/hunde/video/${datei}-lang.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-lang-hevc.mp4?v=${CLIP_VERSION}`,
+    webm: `bilder/hunde/video/${datei}-lang.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-lang-hevc.mov?v=${CLIP_VERSION}`,
     poster: `bilder/hunde/video/${datei}-lang-poster.webp?v=${CLIP_VERSION}`, box: langBox,
   },
 });
