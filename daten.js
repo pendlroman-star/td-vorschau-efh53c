@@ -81,7 +81,7 @@ const HUNDE = [
       foto: 'bilder/quiz/frage-3.jpg', fokus: '55% 45%', foto2: 'bilder/ergebnis/collie-2.jpg', fokus2: '45% 50%' } },
   { id: 'labrador', name: 'Labrador Retriever', bild: 'bilder/hunde/labrador.webp', fokus: '62% 22%',
     video: hundeClip('labrador', [0.76, -28.78, 98.52, 128.78], 0.988, 0, 3833,
-      [-10.86, -2.69, 99.24, 102.69])   // Ergebnisseite: ruhige Variante A (wedelt, setzt sich, steht auf); B liegt als labrador-lang-b bereit,
+      [-10.86, -2.69, 99.24, 102.69]),   // Ergebnisseite: ruhige Variante A (wedelt, setzt sich, steht auf); B liegt als labrador-lang-b bereit
     eigenschaften: ['kontaktfreudig', 'gutmütig', 'genussfreudig', 'offen', 'unkompliziert', 'begeisterungsfähig'],
     icons: ['koerner', 'telefon', 'hund'],
     ergebnis: { platzhalter: true, tiername: 'Balu', er: 'er',
