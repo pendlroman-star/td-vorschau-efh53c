@@ -18,7 +18,7 @@
 // start = Sekunde, an der der Hund im Slider einsetzt. Die Schleifen sind aus der Mitte der KI-Clips geschnitten
 // (Anfang/Ende der KI-Clips frieren kurz ein und sind heller) und am Übergang weich verbunden.
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
-const CLIP_VERSION = 10;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+const CLIP_VERSION = 11;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
 // Safari/iPhone: HEVC mit Alphakanal als .mov, erzeugt mit Apples AVAssetWriter (ffmpeg-Dateien kann Safari nicht abspielen)
 // lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
@@ -63,7 +63,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Fritzi und ich hab meinen eigenen Kopf',
       foto: null, foto2: null } },
   { id: 'havaneser', name: 'Havaneser', bild: 'bilder/hunde/havaneser.webp', fokus: '67% 32%',
-    video: hundeClip('havaneser', [-3.54, 23.05, 102.51, 76.95], 1, 0, 6625,
+    video: hundeClip('havaneser', [-1.43, 26.53, 98.77, 73.47], 1, 0, 3500,
       [-18.4, 1.07, 131.58, 98.93]),
     eigenschaften: ['herzlich', 'feinfühlig', 'lebensfroh', 'gesellig', 'harmoniebedürftig', 'anhänglich'],
     icons: ['herz', 'pfote', 'sprechblasen'],
@@ -83,7 +83,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Moritz und ich liebe Abenteuer',
       foto: 'bilder/quiz/frage-3.jpg', fokus: '55% 45%', foto2: 'bilder/ergebnis/collie-2.jpg', fokus2: '45% 50%' } },
   { id: 'labrador', name: 'Labrador Retriever', bild: 'bilder/hunde/labrador.webp', fokus: '62% 22%',
-    video: hundeClip('labrador', [-2.78, -30.15, 97.41, 130.15], 0.95, 0, 3833,
+    video: hundeClip('labrador', [2.17, -11.17, 90.5, 111.17], 0.95, 0, 3167,
       [-10.86, -2.69, 99.24, 102.69]),   // Ergebnisseite: ruhige Variante A (wedelt, setzt sich, steht auf); B liegt als labrador-lang-b bereit
     eigenschaften: ['kontaktfreudig', 'gutmütig', 'genussfreudig', 'offen', 'unkompliziert', 'begeisterungsfähig'],
     icons: ['koerner', 'telefon', 'hund'],
