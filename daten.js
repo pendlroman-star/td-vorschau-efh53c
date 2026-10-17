@@ -18,7 +18,7 @@
 // start = Sekunde, an der der Hund im Slider einsetzt. Die Schleifen sind aus der Mitte der KI-Clips geschnitten
 // (Anfang/Ende der KI-Clips frieren kurz ein und sind heller) und am Übergang weich verbunden.
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
-const CLIP_VERSION = 11;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+const CLIP_VERSION = 12;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
 // Safari/iPhone: HEVC mit Alphakanal als .mov, erzeugt mit Apples AVAssetWriter (ffmpeg-Dateien kann Safari nicht abspielen)
 // lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
@@ -43,7 +43,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bruno und ich pass auf dich auf',
       foto: null, foto2: null } },
   { id: 'jack', name: 'Jack Russell Terrier', bild: 'bilder/hunde/jack-russell.webp', fokus: '56% 36%',
-    video: hundeClip('jack-russell', [0.95, -10.39, 95.47, 110.39], 1, 0, 3750,
+    video: hundeClip('jack-russell', [1.69, -12.64, 95.08, 112.64], 1, 0, 4250,
       [-21.52, -27.28, 157.38, 127.28]),
     eigenschaften: ['energiegeladen', 'mutig', 'abenteuerlustig', 'spontan', 'temperamentvoll', 'unerschrocken'],
     icons: ['funken', 'wellen', 'pfeil'],
@@ -53,7 +53,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Flitzi und ich bin immer startklar',
       foto: 'bilder/quiz/frage-2.jpg', fokus: '62% 40%', foto2: 'bilder/quiz/ergebnis.jpg', fokus2: '60% 40%' } },
   { id: 'dackel', name: 'Dackel', bild: 'bilder/hunde/dackel-links.webp', fokus: '23% 21%',
-    video: hundeClip('dackel', [6.76, 24.91, 97.22, 75.09], 1, 0, 3958,
+    video: hundeClip('dackel', [6.85, 25.12, 96.95, 74.88], 1, 0, 4250,
       [-4.19, 3.2, 120.88, 96.8]),
     eigenschaften: ['selbstbewusst', 'charmant', 'eigenwillig', 'hartnäckig', 'clever', 'unabhängig'],
     icons: ['knochen', 'schlaufe', 'paragraf'],
@@ -63,7 +63,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Fritzi und ich hab meinen eigenen Kopf',
       foto: null, foto2: null } },
   { id: 'havaneser', name: 'Havaneser', bild: 'bilder/hunde/havaneser.webp', fokus: '67% 32%',
-    video: hundeClip('havaneser', [-1.43, 26.53, 98.77, 73.47], 1, 0, 3500,
+    video: hundeClip('havaneser', [-1.75, 25.22, 98.31, 74.78], 1, 0, 4250,
       [-18.4, 1.07, 131.58, 98.93]),
     eigenschaften: ['herzlich', 'feinfühlig', 'lebensfroh', 'gesellig', 'harmoniebedürftig', 'anhänglich'],
     icons: ['herz', 'pfote', 'sprechblasen'],
@@ -73,7 +73,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Bella und ich kuschle für mein Leben gern',
       foto: null, foto2: null } },
   { id: 'collie', name: 'Border Collie', bild: 'bilder/hunde/border-collie.webp', fokus: '64% 36%',
-    video: hundeClip('border-collie', [8.57, -31.62, 84.78, 131.62], 1, 0, 2500,
+    video: hundeClip('border-collie', [-6.42, -30.61, 99.87, 130.61], 1, 0, 4167,
       [-0.89, -16.53, 92.73, 116.53]),
     eigenschaften: ['intelligent', 'aufmerksam', 'fokussiert', 'ehrgeizig', 'lernfreudig', 'perfektionistisch'],
     icons: ['gluehbirne', 'lupe', 'kalender'],
@@ -83,7 +83,7 @@ const HUNDE = [
       sagt: 'Hi, ich bin Moritz und ich liebe Abenteuer',
       foto: 'bilder/quiz/frage-3.jpg', fokus: '55% 45%', foto2: 'bilder/ergebnis/collie-2.jpg', fokus2: '45% 50%' } },
   { id: 'labrador', name: 'Labrador Retriever', bild: 'bilder/hunde/labrador.webp', fokus: '62% 22%',
-    video: hundeClip('labrador', [2.17, -11.17, 90.5, 111.17], 0.95, 0, 3167,
+    video: hundeClip('labrador', [-0.11, -12.86, 97.81, 112.86], 0.95, 0, 4250,
       [-10.86, -2.69, 99.24, 102.69]),   // Ergebnisseite: ruhige Variante A (wedelt, setzt sich, steht auf); B liegt als labrador-lang-b bereit
     eigenschaften: ['kontaktfreudig', 'gutmütig', 'genussfreudig', 'offen', 'unkompliziert', 'begeisterungsfähig'],
     icons: ['koerner', 'telefon', 'hund'],

@@ -734,7 +734,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=29"></script>
+<script src="daten.js?v=30"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -783,7 +783,8 @@ const QUIZ = [
 
 const CONFIG = {
   intervall: 3500, parallax: true,     // ms bis zum nächsten Hund (Standbilder)
-  dauerHund: 3200,                     // ms je bewegtem Hund – der Clip läuft als Schleife, der Hund steht nie still
+  dauerHund: 3000,                     // ms je bewegtem Hund – kürzer als das durchgehende Clip-Stück (~4,2 s inkl. Überblendung),
+                                       // so ist im Slider nie ein Schleifenschnitt zu sehen
   formularUrl: '',               // ← Adresse des echten Formulars (iframe). Leer = Platzhalter-Formular
   ergebnisSeite: 'ergebnis.html',
   analyseDauer: 6000,            // ms für „Dein Doppelgänger wird analysiert …" (Kunde: etwas langsamer)
