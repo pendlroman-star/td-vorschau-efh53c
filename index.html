@@ -734,7 +734,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=27"></script>
+<script src="daten.js?v=28"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -882,7 +882,7 @@ const Slider = (() => {
   function clip(fig, an) {
     const v = fig.querySelector('video');
     if (!v) return;
-    if (an) { v.play().catch(() => {}); }
+    if (an) spielen(v);
     else { v.pause(); }
   }
   // Flüssiger Wechsel (Kundenwunsch): weiche Überblendung, der Hund bewegt sich dabei ohne Pause weiter –

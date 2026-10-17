@@ -130,12 +130,21 @@ function clipHTML(h, cls = '') {
   return `<div class="dog__media ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}">` +
     `<img class="dog__clip" src="${c.poster}" alt=""><video class="dog__clip" muted loop playsinline preload="auto" aria-hidden="true" src="${clipQuelle(c)}"></video></div>`;
 }
+// Blockiert der Browser das automatische Abspielen (z. B. Stromsparmodus am iPhone/MacBook),
+// starten die Videos bei der ersten Berührung, dem ersten Klick oder Tastendruck auf der Seite.
+function spielen(v) {
+  const p = v.play();
+  if (p && p.catch) p.catch(() => {
+    const los = () => { v.play().catch(() => {}); ['pointerdown', 'touchend', 'keydown'].forEach(e => removeEventListener(e, los)); };
+    ['pointerdown', 'touchend', 'keydown'].forEach(e => addEventListener(e, los, { once: true, passive: true }));
+  });
+}
 function clipStart(media) {
   const v = media && media.querySelector('video');
   if (!v) return;
   v.muted = true;
   v.addEventListener('playing', () => media.classList.add('is-playing'));
-  v.play().catch(() => {});
+  spielen(v);
 }
 
 function iconSVG(name, cls = 'ai') {
