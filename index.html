@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tierischer Doppelgänger – Arche Noah</title>
-<meta name="description" content="5 Fragen. 6 Charaktere. Ein tierisches Match. Finde heraus, welcher Hund zu dir passt – ein Quiz der Arche Noah – Aktiver Tierschutz Austria.">
+<meta name="description" content="Dickkopf, Wirbelwind oder treue Seele? 5 Fragen, 6 Charaktere: Finde heraus, welcher Hund aus der Arche Noah genauso tickt wie du – das Hundequiz von Aktiver Tierschutz Austria.">
 <meta name="theme-color" content="#13492a">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="bilder/arche-icon.svg" type="image/svg+xml">
@@ -79,6 +79,11 @@ a { color: inherit; }
 
 .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
 
+/* Pfote und Herz im Text (statt Emojis – sehen auf jedem Gerät gleich aus) */
+.z { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.16em; }
+.z--herz { color: var(--red); }
+.z--pfote { color: var(--lime-600); }
+
 /* ---------- Buttons ---------- */
 .btn {
   --bg: var(--lime); --fg: var(--forest);
@@ -151,6 +156,7 @@ a { color: inherit; }
   letter-spacing: .16em; text-transform: uppercase; color: var(--forest);
 }
 .eyebrow svg { width: 1.4em; height: 1.4em; color: var(--lime-600); }
+.eyebrow svg:last-child { transform: rotate(18deg); }
 
 .display {
   margin: 0;
@@ -178,16 +184,20 @@ a { color: inherit; }
 @keyframes marker-in { from { transform: rotate(-1.2deg) scaleX(0); } to { transform: rotate(-1.2deg) scaleX(1); } }
 
 .hero__sub {
-  margin: 1.4rem 0 2rem;
+  margin: 1.4rem 0 1.8rem;
+  max-width: 34rem;
   font-size: clamp(1.15rem, 1.7vw, 1.4rem);
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.3;
   color: var(--forest);
 }
-.hero__sub span { display: block; font-weight: 500; }
-.hero__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
-.hero__note { display: inline-flex; align-items: center; gap: .5em; font-size: .92rem; color: var(--forest); opacity: .8; }
-.hero__note svg { width: 18px; height: 18px; }
+.hero__sub span { display: block; margin-top: .5rem; font-size: clamp(1.02rem, 1.25vw, 1.12rem); font-weight: 400; line-height: 1.5; text-wrap: pretty; }
+.hero__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
+/* Drei kurze Fakten neben dem Startknopf */
+.hero__facts { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; font-size: .95rem; line-height: 1.35; }
+.hero__facts li { display: flex; align-items: center; gap: .4em; }
+.hero__facts strong { font-weight: 700; }
+.hero__uhr { width: 1.05em; height: 1.05em; flex: none; }
 
 /* ==========================================================================
    SLIDER (Hunde)
@@ -265,10 +275,12 @@ a { color: inherit; }
   background: var(--red);
   box-shadow: var(--shadow-sm);
   color: var(--cream);
-  pointer-events: none;
+  transition: transform 400ms var(--spring), background-color 200ms;
 }
+.badge:hover { transform: scale(1.06) rotate(-4deg); background: var(--red-700); }
+.badge:focus-visible { outline: 3px solid var(--forest); outline-offset: 4px; border-radius: 50%; }
 .badge__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: spin 26s linear infinite; }
-.badge__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 11.5px; fill: currentColor; }
+.badge__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 14.5px; fill: currentColor; }
 .badge__heart { position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; animation: heartbeat 2.4s ease-in-out infinite; }
 .badge__heart path { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -287,6 +299,8 @@ a { color: inherit; }
 .slider-bar .breed { margin: 0; }
 /* Anhalten/Abspielen – dezent, aber für alle erreichbar (Barrierefreiheit) */
 .still-btn {
+  position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%;
+  opacity: 0; pointer-events: none;                 /* kein sichtbares Pausezeichen (Kundenwunsch) … */
   display: grid; place-items: center; flex: none;
   width: 34px; height: 34px; padding: 0; border-radius: 50%;
   border: 1.5px solid rgba(19, 73, 42, .25); background: rgba(255, 255, 255, .75);
@@ -294,7 +308,7 @@ a { color: inherit; }
   transition: background-color 200ms, border-color 200ms, transform 300ms var(--ease);
 }
 .still-btn:hover { background: var(--lime); border-color: var(--lime); transform: scale(1.06); }
-.still-btn:focus-visible { outline: 3px solid var(--forest); outline-offset: 3px; }
+.still-btn:focus-visible { opacity: 1; pointer-events: auto; outline: 3px solid var(--forest); outline-offset: 3px; }   /* … außer bei Tastaturbedienung */
 .still-btn svg { width: 14px; height: 14px; }
 .still-btn .i-play { display: none; }
 .showcase.is-still .still-btn .i-play { display: block; }
@@ -348,7 +362,7 @@ a { color: inherit; }
 
 .q {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   grid-template-areas: "head head" "answers media" "back .";
   column-gap: clamp(20px, 3.5vw, 40px);
   align-items: start;
@@ -357,16 +371,15 @@ a { color: inherit; }
 .q .answers { grid-area: answers; }
 .q .q__back { grid-area: back; justify-self: start; }
 .q__kicker { margin: 0 0 .3rem; font-family: var(--font-head); font-weight: 700; font-size: .95rem; }
-.q__title { margin: 0 0 1.2rem; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 1.9rem); line-height: 1.15; outline: none; text-wrap: balance; }
-.q__note { display: inline-block; margin-left: .4em; padding: .1em .55em; border-radius: 6px; background: var(--lime-100); font-family: var(--font-body); font-weight: 700; font-size: .7rem; letter-spacing: .04em; text-transform: uppercase; vertical-align: middle; }
-.answers { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.q__title { margin: 0 0 1.3rem; max-width: 34em; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.3rem, 2.3vw, 1.7rem); line-height: 1.2; outline: none; text-wrap: balance; }
+.answers { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .answer {
   position: relative;
   display: flex; align-items: center; gap: 14px; width: 100%;
-  min-height: 56px; padding: .8em 1em;
+  min-height: 56px; padding: .7em 1em;
   border: 1.5px solid rgba(19, 73, 42, .35); border-radius: 14px;
   background: var(--white);
-  font-weight: 700; font-size: 1.02rem; text-align: left; line-height: 1.3;
+  font-weight: 500; font-size: 1rem; text-align: left; line-height: 1.35;   /* ganze Sätze: ruhiger als fett */
   cursor: pointer;
   transition: background-color 200ms, transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
@@ -390,8 +403,9 @@ a { color: inherit; }
 /* Formular-Schritt („Juhu! Wir haben dein Ergebnis") */
 .gate { max-width: 560px; margin: 0 auto; text-align: center; padding-block: 4px 6px; }
 .gate__juhu { margin: 0; font-size: clamp(2.6rem, 6vw, 3.6rem); }
-.gate__title { margin: .1rem 0 .6rem; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 1.9rem); text-transform: uppercase; letter-spacing: .01em; outline: none; }
-.gate__text { margin: 0 auto 1.4rem; max-width: 42ch; }
+.gate__title { margin: .2rem auto .6rem; max-width: 30ch; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.3rem, 2.4vw, 1.75rem); line-height: 1.15; text-transform: uppercase; letter-spacing: .01em; outline: none; text-wrap: balance; }
+.gate__text { margin: 0 auto .5rem; max-width: 42ch; }
+.gate__frage { margin-bottom: 1.4rem; font-weight: 700; }
 .form-slot { position: relative; }
 .form-frame { display: block; width: 100%; min-height: 340px; border: 0; border-radius: 12px; background: transparent; }
 .gate__form { display: grid; gap: 12px; justify-items: center; }
@@ -549,7 +563,8 @@ a { color: inherit; }
   .stage { width: min(calc(100% + 2 * clamp(16px, 4vw, 40px)), 540px); min-width: 0; }
   .badge { right: 2%; }
   .q { grid-template-columns: 1fr; grid-template-areas: "head" "media" "answers" "back"; }
-  .q__media { aspect-ratio: 16 / 9; min-height: 0; margin-bottom: 18px; }
+  .q__media { aspect-ratio: 5 / 2; min-height: 0; margin-bottom: 16px; }
+  .still-btn { left: auto; right: 0; top: auto; bottom: calc(100% + 8px); translate: none; }
   .result { grid-template-columns: 1fr; text-align: center; }
   .result .chips, .result__actions { justify-content: center; }
   .result__stage { max-width: 320px; }
@@ -559,6 +574,7 @@ a { color: inherit; }
   .quote .deco--squiggle { right: 5%; top: 80%; }
 }
 @media (max-width: 520px) {
+  .hero__meta .btn { width: 100%; }
   .gate__fields { grid-template-columns: 1fr; }
   .gate__fields > [aria-hidden] { display: none; }
   .steps .step__text { font-size: 0; }
@@ -604,23 +620,25 @@ a { color: inherit; }
     <div class="hero__copy">
       <p class="eyebrow" data-reveal>
         <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><ellipse cx="16" cy="21.5" rx="7" ry="6"/><ellipse cx="7" cy="13.5" rx="2.8" ry="3.4" transform="rotate(-18 7 13.5)"/><ellipse cx="12.5" cy="8" rx="2.8" ry="3.6" transform="rotate(-6 12.5 8)"/><ellipse cx="19.5" cy="8" rx="2.8" ry="3.6" transform="rotate(6 19.5 8)"/><ellipse cx="25" cy="13.5" rx="2.8" ry="3.4" transform="rotate(18 25 13.5)"/></g></svg>
-        Jeder Hund hat eine Geschichte
+        Hundequiz
+        <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><ellipse cx="16" cy="21.5" rx="7" ry="6"/><ellipse cx="7" cy="13.5" rx="2.8" ry="3.4" transform="rotate(-18 7 13.5)"/><ellipse cx="12.5" cy="8" rx="2.8" ry="3.6" transform="rotate(-6 12.5 8)"/><ellipse cx="19.5" cy="8" rx="2.8" ry="3.6" transform="rotate(6 19.5 8)"/><ellipse cx="25" cy="13.5" rx="2.8" ry="3.4" transform="rotate(18 25 13.5)"/></g></svg>
       </p>
       <h1 class="display hero__title" id="hero-title" data-reveal style="--d: 80ms">
         <span class="line">Wer ist dein</span>
         <span class="line"><span class="marker">tierischer</span></span>
         <span class="line">Doppelgänger?</span>
       </h1>
-      <p class="hero__sub" data-reveal style="--d: 160ms">5 Fragen. 6 Charaktere. <span>Ein tierisches Match.</span></p>
+      <p class="hero__sub" data-reveal style="--d: 160ms">Dickkopf, Wirbelwind oder treue Seele? <span>In jedem von uns steckt ein bisschen Hund. Aber welcher Vierbeiner aus unserer Arche Noah tickt genauso wie du?</span></p>
       <div class="hero__meta" data-reveal style="--d: 240ms">
         <a class="btn btn--big" href="#quiz" data-start>
           Jetzt starten
           <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5h13M13 6.5l6 6-6 6"/></svg></span>
         </a>
-        <span class="hero__note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          dauert nur 1 Minute
-        </span>
+        <ul class="hero__facts">
+          <li><strong>5 Fragen · 6 Charaktere</strong></li>
+          <li>Ein tierisches Match! <svg class="z z--herz" viewBox="0 0 48 48" aria-hidden="true"><path fill="currentColor" d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1z"/></svg></li>
+          <li><svg class="hero__uhr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Dauert nur 1 Minute</li>
+        </ul>
       </div>
     </div>
 
@@ -638,14 +656,16 @@ a { color: inherit; }
           <div class="shadow" id="shadow" aria-hidden="true"></div>
           <div class="dogs" id="dogs"></div>
         </div>
-        <div class="badge" role="img" aria-label="Schenke Hunden einen sicheren Platz">
-          <svg class="badge__ring" viewBox="0 0 120 120"><defs><path id="badgeCircle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs><text textLength="274" lengthAdjust="spacing"><textPath href="#badgeCircle" textLength="274" lengthAdjust="spacing">SCHENKE HUNDEN EINEN SICHEREN PLATZ ♥</textPath></text></svg>
-          <svg class="badge__heart" viewBox="0 0 48 48"><path d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1"/></svg>
-        </div>
+        <a class="badge" href="#quiz" data-start aria-label="Dein Hunde-Match wartet! Jetzt Quiz starten">
+          <svg class="badge__ring" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="badgeCircle" d="M60 60m-43 0a43 43 0 1 1 86 0a43 43 0 1 1-86 0"/></defs><text textLength="258" lengthAdjust="spacing"><textPath href="#badgeCircle" textLength="258" lengthAdjust="spacing">DEIN HUNDE-MATCH WARTET! ♥</textPath></text></svg>
+          <svg class="badge__heart" viewBox="0 0 48 48" aria-hidden="true"><path d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1"/></svg>
+        </a>
       </div>
 
       <div class="slider-bar">
         <p class="breed" aria-hidden="true"><span id="breedName"></span></p>
+        <!-- Kundenwunsch 11.11.: kein sichtbares Pausezeichen. Der Knopf bleibt für Tastatur und Screenreader
+             erhalten und erscheint nur, wenn er den Fokus hat (Barrierefreiheit: Bewegung muss anhaltbar sein). -->
         <button type="button" class="still-btn" id="stillBtn" aria-controls="dogs" aria-label="Bewegung anhalten" title="Bewegung anhalten">
           <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>
           <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.4 0-1.8l-10-6.4C8.9 4.3 8 4.8 8 5.6z"/></svg>
@@ -659,8 +679,8 @@ a { color: inherit; }
 <section class="quiz-section" id="quiz" aria-labelledby="quiz-title">
   <div class="wrap">
     <div class="section-head" data-reveal>
-      <h2 class="display section-title" id="quiz-title">Dein <span class="marker">tierisches</span> Quiz</h2>
-      <p>Mit <strong>nur fünf Fragen</strong> erfährst du, wer dein <strong>tierischer Doppelgänger</strong> ist.</p>
+      <h2 class="display section-title" id="quiz-title">Dein <span class="marker">Hundequiz</span></h2>
+      <p>Mit nur fünf Fragen erfährst du, wer dein tierischer Doppelgänger ist.</p>
     </div>
 
     <div class="quiz-card" data-reveal>
@@ -734,51 +754,64 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=30"></script>
+<script src="daten.js?v=31"></script>
 <script>
 document.documentElement.classList.add('js');
 
 
 /* ------------------------------------------------------------------
-   QUIZ – je Antwort Punkte für die Hunde (2 = passt sehr, 1 = passt auch)
-   Fragen 1–2 aus dem Entwurf; 3–5 sind Vorschläge (vorschlag: true).
+   QUIZ – Kundenfassung vom 11.11.2026 („ATA LC Quiz Text_final")
+   Fünf Fragen, je sechs Antworten. Jede Antwort gehört genau einer Rasse
+   und zählt einen Punkt. Die Rasse mit den meisten Punkten gewinnt;
+   bei Gleichstand entscheidet die Antwort in Frage 5, sonst Frage 4, 3 …
+   Die Reihenfolge der Antworten wird bei jedem Durchlauf neu gemischt.
    ------------------------------------------------------------------ */
 const QUIZ = [
-  { frage: 'Wenn etwas schwierig wird …', bild: 'bilder/quiz/frage-1.jpg', fokus: '50% 30%',
-    antworten: [
-      ['Ich kämpfe weiter.',          { schaeferhund: 2, jack: 1 }],
-      ['Ich suche einen neuen Weg.',  { dackel: 2, collie: 1 }],
-      ['Ich beobachte erst.',         { collie: 2, havaneser: 1 }],
-      ['Gemeinsam gelingt mehr.',     { havaneser: 2, labrador: 1 }],
-    ] },
-  { frage: 'Freunde würden dich beschreiben als …', bild: 'bilder/quiz/frage-2.jpg', fokus: '60% 40%',
-    antworten: [
-      ['mutig',             { jack: 2, schaeferhund: 1 }],
-      ['geduldig',          { havaneser: 2, labrador: 1 }],
-      ['clever',            { collie: 2, dackel: 1 }],
-      ['freiheitsliebend',  { dackel: 2, jack: 1 }],
-    ] },
-  { frage: 'Dein perfekter freier Tag …', vorschlag: true, bild: 'bilder/quiz/frage-3.jpg', fokus: '50% 45%',
-    antworten: [
-      ['Raus ins Abenteuer – Hauptsache Bewegung!',        { jack: 2, collie: 1 }],
-      ['Freunde, gutes Essen und viel Lachen.',            { labrador: 2, havaneser: 1 }],
-      ['Etwas Neues lernen oder tüfteln.',                 { collie: 2, schaeferhund: 1 }],
-      ['Ich mache genau das, worauf ich Lust habe.',       { dackel: 2, jack: 1 }],
-    ] },
-  { frage: 'In einer Gruppe bist du meistens …', vorschlag: true, bild: 'bilder/quiz/frage-4.jpg', fokus: '35% 50%',
-    antworten: [
-      ['die Person, auf die sich alle verlassen.',  { schaeferhund: 2, collie: 1 }],
-      ['die gute Seele, die alle zusammenhält.',    { havaneser: 2, labrador: 1 }],
-      ['die Stimmungskanone.',                      { labrador: 2, jack: 1 }],
-      ['die Person mit dem eigenen Kopf.',          { dackel: 2 }],
-    ] },
-  { frage: 'Was zählt für dich am meisten?', vorschlag: true, bild: 'bilder/quiz/frage-5.jpg', fokus: '40% 60%',
-    antworten: [
-      ['Treue und Verlässlichkeit.',   { schaeferhund: 2, havaneser: 1 }],
-      ['Freiheit und Abenteuer.',      { jack: 2, dackel: 1 }],
-      ['Wissen und Fortschritt.',      { collie: 2, schaeferhund: 1 }],
-      ['Das Leben genießen.',          { labrador: 2, havaneser: 1 }],
-    ] },
+  { frage: 'Gruppenchat, 17:42 Uhr: „Hat heute Abend jemand Lust auf irgendwas?“ Dein erster Gedanke:', bild: 'bilder/quiz/frage-1.jpg', fokus: '50% 30%',
+    antworten: {
+      schaeferhund: '„Ich überlege und frag erst mal: Wer fährt? Und wer bringt alle sicher heim?“',
+      jack:         '„Ich war schon ready, als die Nachricht ankam. Wohin es geht, erfahre ich unterwegs.“',
+      dackel:       '„Heute nicht. Ich hab’s mir gerade gemütlich gemacht.“',
+      havaneser:    '„Hauptsache, alle sind dabei und keiner bleibt außen vor.“',
+      collie:       '„Ich hab schon drei Vorschläge recherchiert. Mit Öffnungszeiten.“',
+      labrador:     '„Gibt’s was zu essen/trinken?“',
+    } },
+  { frage: 'Im Karton: ein Regal. 143 Schrauben. Eine Anleitung. Was machst du?', bild: 'bilder/quiz/frage-2.jpg', fokus: '60% 40%',
+    antworten: {
+      schaeferhund: '„Ich fang an und hör erst auf, wenn es steht.“',
+      jack:         '„Akkuschrauber her und Musik aufdrehen, das wird schon!“',
+      dackel:       '„Ich bau das Ding auf meine Art. Wenn zwei Schrauben übrig bleiben, nenne ich das Design.“',
+      havaneser:    '„Ich setz mich dazu und sorge für gute Stimmung. Hauptsache kein Streit.“',
+      collie:       '„Ich lese erst ausführlich die Anleitung. Mindestens zweimal.“',
+      labrador:     '„Ich ruf Verstärkung an. Besonders freu ich mich aber auf die Pizza.“',
+    } },
+  { frage: 'Jemand sagt dir ins Gesicht: „Da hast du dich jetzt im Ton vergriffen!“ Wie reagierst du?', bild: 'bilder/quiz/frage-3.jpg', fokus: '50% 45%',
+    antworten: {
+      schaeferhund: '„Stimmt vermutlich. Ich bring’s in Ordnung.“',
+      jack:         '„Moooment! Das lass ich so nicht stehen!“',
+      dackel:       '„Interessante Meinung. Ich seh das trotzdem anders und erklär dir eindrücklich, wieso.“',
+      havaneser:    '„Autsch. Das beschäftigt mich jetzt noch drei Tage.“',
+      collie:       '„Wie genau? Ich will’s verstehen und beim nächsten Mal besser machen.“',
+      labrador:     '„Haha, fair. Passiert. Bock auf Kino?“',
+    } },
+  { frage: 'Zombie-Alarm! Die Welt, wie wir sie kennen, ist vorbei. Was machst du?', bild: 'bilder/quiz/frage-4.jpg', fokus: '35% 50%',
+    antworten: {
+      schaeferhund: '„Ich organisiere die Gruppe. Keiner wird zurückgelassen.“',
+      jack:         '„Ich renne laut schreiend auf die Zombies zu. Irgendwer muss ja anfangen.“',
+      dackel:       '„Ich schleiche mich unauffällig davon und such mir ein cleveres Versteck.“',
+      havaneser:    '„Hauptsache, meine Lieblingsmenschen sind bei mir.“',
+      collie:       '„Ich hab einen Plan, einen Plan B, zwei längst gepackte Überlebenskits und einen Plan C.“',
+      labrador:     '„Ich freunde mich mit den Zombies an und wir gehen was trinken.“',
+    } },
+  { frage: 'Mitten in der Nacht schreibt dein Lieblingsmensch: „Ich steck in der Patsche.“ Du so?', bild: 'bilder/quiz/frage-5.jpg', fokus: '40% 60%',
+    antworten: {
+      schaeferhund: '„Schick mir deinen Standort, ich kümmere mich drum.“',
+      jack:         '„Keine Ahnung was los ist, aber ich spring ins Auto und bin unterwegs, egal wie wild es wird.“',
+      dackel:       '„Ich seh die Nachricht erst morgen früh. Dann steh ich mit Kaffee und einer klaren Meinung vor deiner Tür.“',
+      havaneser:    '„Ich ruf sofort an und bleib dran, bis du ruhiger bist. Wir reden, bis du zuhause bist.“',
+      collie:       '„Ich hör zu, sortiere die Lage und hab in fünf Minuten eine saubere Lösung parat.“',
+      labrador:     '„Ich schicke ein Taxi zu dir mit deinen Lieblingssnacks. Für die innere Balance.“',
+    } },
 ];
 
 const CONFIG = {
@@ -1024,8 +1057,12 @@ const Quiz = (() => {
   const steps = document.getElementById('steps');
   const live  = document.getElementById('quizLive');
   const card  = document.getElementById('quizInner');
-  const answers = [];       // gewählte Antwort je Frage
+  const answers = [];       // gewählte Antwort je Frage = Kürzel der Rasse (z. B. 'dackel')
   let step = 0;
+  // Antworten je Durchlauf zufällig mischen – keine Rasse wird durch ihren Platz bevorzugt.
+  // Beim Zurückblättern bleibt die Reihenfolge gleich.
+  const mischen = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const REIHENFOLGE = QUIZ.map(q => mischen(Object.keys(q.antworten)));
 
   steps.innerHTML = QUIZ.map((_, i) => `
     <li class="step" data-i="${i}">
@@ -1050,34 +1087,34 @@ const Quiz = (() => {
       <div class="q">
         <div class="q__head">
           <p class="q__kicker">Frage ${i + 1} von ${QUIZ.length}</p>
-          <h3 class="q__title" id="qTitle" tabindex="-1">${q.frage}${q.vorschlag ? '<span class="q__note" title="Textvorschlag – bitte freigeben">Entwurf</span>' : ''}</h3>
+          <h3 class="q__title" id="qTitle" tabindex="-1">${q.frage}</h3>
         </div>
           <ul class="answers" role="list" aria-labelledby="qTitle">
-            ${q.antworten.map(([t], k) => `
-              <li><button type="button" class="answer" data-k="${k}" aria-pressed="${answers[i] === k}">
+            ${REIHENFOLGE[i].map(id => `
+              <li><button type="button" class="answer" data-k="${id}" aria-pressed="${answers[i] === id}">
                 <span class="answer__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-                <span>${t}</span>
+                <span>${q.antworten[id]}</span>
               </button></li>`).join('')}
           </ul>
         <figure class="q__media">
           <img src="${q.bild}" alt="" style="object-position:${q.fokus}" decoding="async">
         </figure>
-        <button type="button" class="btn btn--small btn--outline q__back" ${i === 0 ? 'hidden' : ''}>Zurück</button>
+        <button type="button" class="btn btn--small btn--outline q__back">Zurück</button>
       </div>`;
   }
 
-  function scoreResult() {
-    const score = Object.fromEntries(HUNDE.map(h => [h.id, 0]));
-    let last = null;
-    answers.forEach((k, i) => {
-      const pts = QUIZ[i].antworten[k][1];
-      for (const [id, p] of Object.entries(pts)) score[id] += p;
-      last = Object.keys(pts)[0];
-    });
-    const max = Math.max(...Object.values(score));
-    const top = HUNDE.filter(h => score[h.id] === max);
-    return top.find(h => h.id === last) || top[0];
+  // Auswertung: 1 Punkt je Antwort. Bei Gleichstand entscheidet die späteste Frage,
+  // deren Antwort zu einer der führenden Rassen gehört (Frage 5, sonst 4, 3 …).
+  function sieger() {
+    const punkte = {};
+    answers.forEach(id => { punkte[id] = (punkte[id] || 0) + 1; });
+    const max = Math.max(...Object.values(punkte));
+    for (let i = answers.length - 1; i >= 0; i--) if (punkte[answers[i]] === max) return answers[i];
+    return HUNDE[0].id;
   }
+  const scoreResult = () => HUNDE.find(h => h.id === sieger());
+  // Echo-Zeile auf der Ergebnisseite: greift die späteste Antwort auf, die zur Sieger-Rasse gehört (Nummer der Frage, 1–5)
+  const echoFrage = () => answers.lastIndexOf(sieger()) + 1;
 
   /* Formular-Schritt. Solange CONFIG.formularUrl leer ist, zeigt die Seite
      einen Platzhalter, der wie das spätere Formular aussieht.
@@ -1091,26 +1128,26 @@ const Quiz = (() => {
       : `<form class="gate__form" novalidate>
           <div class="gate__fields">
             <div><label for="gAnrede">Anrede*</label>
-              <select id="gAnrede" name="anrede" autocomplete="honorific-prefix" required><option value="">Bitte wählen</option><option>Frau</option><option>Herr</option><option>Divers</option></select></div>
+              <select id="gAnrede" name="anrede" autocomplete="honorific-prefix" required><option value="">Bitte wählen</option><option>Frau</option><option>Mann</option><option>Divers</option></select></div>
             <div aria-hidden="true"></div>
-            <div><label for="gVorname">Vorname*</label><input id="gVorname" name="vorname" autocomplete="given-name" required></div>
-            <div><label for="gNachname">Nachname*</label><input id="gNachname" name="nachname" autocomplete="family-name" required></div>
-            <div class="full"><label for="gMail">E-Mail-Adresse*</label><input id="gMail" type="email" name="email" autocomplete="email" placeholder="maria.muster@beispiel.at" required></div>
-            <div class="full"><label for="gTel">Telefonnummer <small>(optional)</small></label><input id="gTel" type="tel" name="telefon" autocomplete="tel"></div>
+            <div><label for="gVorname">Vorname*</label><input id="gVorname" name="vorname" autocomplete="given-name" autocapitalize="words" required></div>
+            <div><label for="gNachname">Nachname*</label><input id="gNachname" name="nachname" autocomplete="family-name" autocapitalize="words" required></div>
+            <div class="full"><label for="gMail">E-Mail-Adresse*</label><input id="gMail" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="maria.muster@beispiel.at" required></div>
+            <div class="full"><label for="gTel">Telefonnummer</label><input id="gTel" type="tel" name="telefon" autocomplete="tel" inputmode="tel"></div>
           </div>
           <label class="check"><input type="checkbox" name="newsletter"><span>Ja, ich möchte den Newsletter der Arche Noah erhalten. <small>(optional)</small></span></label>
           <label class="check"><input type="checkbox" name="datenschutz" required><span>Ich habe die <a href="#">Datenschutzbestimmungen</a> gelesen und stimme zu.*</span></label>
           <p class="gate__note">* Pflichtfeld</p>
-          <p class="gate__error" role="alert"></p>
-          <button class="btn btn--big" type="submit">Ergebnis anzeigen <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5h13M13 6.5l6 6-6 6"/></svg></span></button>
+          <p class="gate__error" id="gFehler" role="alert"></p>
+          <button class="btn btn--big" type="submit">Ergebnis bekommen <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5h13M13 6.5l6 6-6 6"/></svg></span></button>
         </form>`;
     return `
       <div class="gate">
-        <p class="display gate__juhu">Juhu!</p>
-        <h3 class="gate__title" id="gateTitle" tabindex="-1">Wir haben dein Ergebnis</h3>
-        <p class="gate__text">Trag hier deine Daten ein und lerne deinen tierischen Doppelgänger kennen.</p>
+        <p class="display gate__juhu">Wuff!</p>
+        <h3 class="gate__title" id="gateTitle" tabindex="-1">Wir haben deinen tierischen Doppelgänger gefunden!</h3>
+        <p class="gate__text">Und ihr zwei habt mehr gemeinsam, als du vielleicht denkst.</p>
+        <p class="gate__text gate__frage">${textHTML('Neugierig? Dann trage hier deine Daten ein! 🐾')}</p>
         <div class="form-slot">${slot}</div>
-        <button type="button" class="btn btn--small btn--outline q__back">Zurück</button>
       </div>`;
   }
 
@@ -1119,6 +1156,9 @@ const Quiz = (() => {
     const render = () => {
       view.innerHTML = html;
       updateSteps();
+      // Mit sechs Antworten ist der Kasten am Handy höher als der Bildschirm: nach der Wahl zurück zum Anfang der nächsten Frage
+      const karte = card.closest('.quiz-card');
+      if (karte.getBoundingClientRect().top < 0) karte.scrollIntoView({ behavior: reduce() ? 'auto' : 'smooth', block: 'start' });
       // Fokus mitnehmen: bei Tastaturbedienung immer, beim Formular immer (Screenreader)
       const f = view.querySelector(focusSel);
       if (f && (wantFocus || focusSel === '#gateTitle')) f.focus({ preventScroll: true });
@@ -1143,7 +1183,7 @@ const Quiz = (() => {
   function showForm() {
     step = QUIZ.length;
     swap(formHTML(scoreResult()), 1, '#gateTitle');
-    live.textContent = 'Geschafft! Wir haben dein Ergebnis. Bitte gib deine Daten ein, um es zu sehen.';
+    live.textContent = 'Wuff! Wir haben deinen tierischen Doppelgänger gefunden. Trage deine Daten ein, um dein Ergebnis zu bekommen.';
     setTimeout(() => { if (!wantFocus) return; view.querySelector('#gAnrede')?.focus({ preventScroll: true }); }, reduce() ? 0 : 300);
   }
 
@@ -1153,7 +1193,7 @@ const Quiz = (() => {
     if (analysing) return;
     analysing = true;
     const h = scoreResult();
-    const ziel = `${CONFIG.ergebnisSeite}?hund=${encodeURIComponent(h.id)}`;
+    const ziel = `${CONFIG.ergebnisSeite}?hund=${encodeURIComponent(h.id)}&echo=${echoFrage()}`;
     const paw = `<svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><ellipse cx="16" cy="21.5" rx="7" ry="6"/><ellipse cx="7" cy="13.5" rx="2.8" ry="3.4" transform="rotate(-18 7 13.5)"/><ellipse cx="12.5" cy="8" rx="2.8" ry="3.6" transform="rotate(-6 12.5 8)"/><ellipse cx="19.5" cy="8" rx="2.8" ry="3.6" transform="rotate(6 19.5 8)"/><ellipse cx="25" cy="13.5" rx="2.8" ry="3.4" transform="rotate(18 25 13.5)"/></g></svg>`;
     const heart = `<svg viewBox="0 0 48 48"><path fill="currentColor" d="M24.3 40.5c-6.8-4.6-15.6-11.2-17.6-18.4-1.6-5.6 1.6-11.4 7-12.1 4.3-.6 8.4 2.4 10.4 6.6 1.9-4.6 6-7.6 10.6-6.9 5.6.9 8.3 7 6.3 12.6-2.4 6.9-10.5 13.3-16.9 18.1z"/></svg>`;
     const ov = document.createElement('div');
@@ -1250,7 +1290,7 @@ const Quiz = (() => {
   view.addEventListener('click', async e => {
     const a = e.target.closest('.answer');
     if (a) {
-      const k = +a.dataset.k;
+      const k = a.dataset.k;
       answers[step] = k;
       answers.length = step + 1;
       view.querySelectorAll('.answer').forEach(b => b.setAttribute('aria-pressed', b === a ? 'true' : 'false'));
@@ -1259,7 +1299,13 @@ const Quiz = (() => {
       setTimeout(() => { if (step !== at) return; at + 1 < QUIZ.length ? showQuestion(at + 1, 1) : showForm(); }, reduce() ? 0 : 380);
       return;
     }
-    if (e.target.closest('.q__back')) { wantFocus = e.detail === 0; showQuestion(step - 1, -1); return; }
+    if (e.target.closest('.q__back')) {
+      wantFocus = e.detail === 0;
+      // „Zurück" steht bei jeder Frage; bei Frage 1 führt es zurück zum Anfang der Seite
+      if (step === 0) scrollTo({ top: 0, behavior: reduce() ? 'auto' : 'smooth' });
+      else showQuestion(step - 1, -1);
+      return;
+    }
   });
 
   // Platzhalter-Formular: prüfen, dann Übergang starten
@@ -1274,12 +1320,13 @@ const Quiz = (() => {
       ['nachname', 'Bitte gib deinen Nachnamen ein.'],
       ['email', 'Bitte gib eine gültige E-Mail-Adresse ein.'],
     ];
-    form.querySelectorAll('[aria-invalid]').forEach(f => f.removeAttribute('aria-invalid'));
+    form.querySelectorAll('[aria-invalid]').forEach(f => { f.removeAttribute('aria-invalid'); f.removeAttribute('aria-describedby'); });
+    const fehler = (f, text) => { err.textContent = text; f.setAttribute('aria-invalid', 'true'); f.setAttribute('aria-describedby', 'gFehler'); f.focus(); };
     for (const [name, text] of felder) {
       const f = form.elements[name];
-      if (!f.value.trim() || !f.checkValidity()) { err.textContent = text; f.setAttribute('aria-invalid', 'true'); f.focus(); return; }
+      if (!f.value.trim() || !f.checkValidity()) return fehler(f, text);
     }
-    if (!form.elements.datenschutz.checked) { err.textContent = 'Bitte stimme den Datenschutzbestimmungen zu.'; form.elements.datenschutz.focus(); return; }
+    if (!form.elements.datenschutz.checked) return fehler(form.elements.datenschutz, 'Bitte stimme den Datenschutzbestimmungen zu.');
     err.textContent = '';
     merkeVorname(form.elements.vorname.value);
     analyse(form.querySelector('[type="submit"]'));

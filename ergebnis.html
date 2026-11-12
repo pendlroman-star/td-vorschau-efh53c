@@ -54,7 +54,13 @@ a { color: inherit; }
 .btn--red { --bg: var(--red); --fg: var(--white); }
 .btn--red:hover { --bg: var(--red-700); }
 .btn--small { min-height: 40px; padding: .5em 1.1em; font-size: .92rem; border-radius: 10px; }
+.btn--big { min-height: 58px; padding: .8em 1.8em; font-size: 1.08rem; border-radius: 14px; }
 .btn svg { width: 18px; height: 18px; }
+
+/* Pfote und Herz im Text (statt Emojis – sehen auf jedem Gerät gleich aus) */
+.z { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.16em; }
+.z--herz { color: var(--red); }
+.z--pfote { color: var(--lime-600); }
 
 /* Header */
 .site-header { position: sticky; top: 0; z-index: 50; background: var(--forest); transition: box-shadow 300ms var(--ease); }
@@ -103,11 +109,19 @@ a { color: inherit; }
 }
 .pill { display: inline-block; margin: 0 0 1rem; padding: .35em .95em; border-radius: 99px; background: var(--forest); color: var(--lime); font-weight: 700; font-size: .9rem; }
 .r-kicker { margin: 0 0 .4rem; font-family: var(--font-head); font-weight: 700; font-size: 1rem; letter-spacing: .14em; text-transform: uppercase; }
-.r-type { font-size: clamp(2.5rem, 5.4vw, 4.4rem); text-wrap: balance; }
+.r-type { font-size: clamp(2.3rem, 4.8vw, 4rem); text-wrap: balance; }
+.r-type .z { width: .72em; height: .72em; vertical-align: -.02em; }
 .r-hallo { display: block; color: var(--red); }
 .r-traits { display: flex; flex-wrap: wrap; gap: 8px; margin: 1.3rem 0 1.2rem; padding: 0; list-style: none; }
 .r-traits li { padding: .35em .85em; border-radius: 99px; border: 1.5px solid var(--forest); background: var(--white); font-weight: 700; font-size: .9rem; }
-.r-quip { margin: 0; max-width: 30ch; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.3rem, 2.2vw, 1.7rem); line-height: 1.2; text-wrap: balance; }
+.r-charakter { margin: 0; max-width: 50ch; font-size: clamp(1.08rem, 1.35vw, 1.2rem); line-height: 1.5; text-wrap: pretty; }
+/* Echo-Zeile: greift eine Antwort aus dem Quiz wieder auf – als kleine Sprechblase „von dir" */
+.r-echo {
+  position: relative; margin: 1.3rem 0 0; max-width: 50ch; padding: .85em 1.1em;
+  border-radius: 4px 18px 18px 18px; background: var(--white); box-shadow: var(--shadow-sm);
+  font-size: 1rem; line-height: 1.45;
+}
+.r-echo strong { font-weight: 700; }
 
 /* Bild wie im Slider: Formen + freigestellter Hund + 3 Eigenschafts-Icons */
 .r-visual { position: relative; width: min(100%, 470px); justify-self: center; aspect-ratio: 1000 / 1100; container-type: inline-size; view-transition-name: match-hund; }
@@ -152,28 +166,37 @@ a { color: inherit; }
 @keyframes float-y { from { transform: translateY(-4px); } to { transform: translateY(4px); } }
 @keyframes float-rot { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
 
-/* Match-Karte: der echte Hund */
+/* Karte: der echte Hund erzählt (Begrüßung, Brief, Bitte, Knopf) */
 .mc {
-  position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  position: relative; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: clamp(20px, 3.4vw, 48px); align-items: start;
+  padding: clamp(14px, 2vw, 24px);
   border-radius: 26px; background: var(--white);
   box-shadow: 0 1px 2px rgba(13, 58, 32, .05), 0 30px 70px -34px rgba(13, 58, 32, .5);
 }
-.mc__photo { position: relative; margin: 0; min-height: 320px; border-radius: 26px 0 0 26px; overflow: hidden; background: var(--lime-100); }
+/* Das Foto bleibt beim Lesen des Briefs stehen */
+.mc__photo { position: sticky; top: calc(var(--header-h) + 20px); margin: 0; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; background: var(--lime-100); }
 .mc__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .mc__photo--leer { display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--forest); text-align: center; font-weight: 700; }
 .mc__photo--leer svg { width: 56px; height: 56px; opacity: .5; }
 .mc__photo--leer small { font-weight: 500; opacity: .7; }
-.mc__body { padding: clamp(24px, 3.4vw, 44px); }
-.mc__kicker { margin: 0 0 .3rem; font-weight: 700; font-size: 1.05rem; }
-.mc__name { font-size: clamp(3rem, 6vw, 4.6rem); margin: 0 0 .9rem; }
+.mc__body { padding: clamp(8px, 1.8vw, 24px) clamp(4px, 1.8vw, 24px) clamp(8px, 1.8vw, 24px) 0; }
+.mc__name { font-size: clamp(2rem, 4.2vw, 3.3rem); margin: 0 0 .9rem; text-wrap: balance; }
 .mc__says {
-  position: relative; display: inline-block; margin: 0 0 1.1rem; padding: .7em 1em;
-  border-radius: 18px 18px 18px 4px; background: var(--lime-100);
+  position: relative; display: inline-block; margin: 0 0 1.4rem; padding: .7em 1em;
+  border-radius: 4px 18px 18px 18px; background: var(--lime-100);
   font-family: var(--font-fun); font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.25; text-transform: uppercase;
 }
-.mc__text { margin: 0 0 1.5rem; max-width: 52ch; font-size: 1.05rem; }
+.brief { max-width: 56ch; font-size: 1.05rem; }
+.brief p { margin: 0 0 1rem; text-wrap: pretty; }
+.brief .brief__frage { margin-top: 1.5rem; font-weight: 700; }
+/* Der Wunsch des Hundes ist die Mitte des Briefs – die einzige hervorgehobene Stelle */
+.brief__wunsch { margin: 0 0 1.1rem; padding: .1rem 0 .1rem 1.1rem; border-left: 5px solid var(--lime); }
+.brief__wunsch p { margin: 0 0 .5rem; font-family: var(--font-fun); font-weight: 600; font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.25; text-wrap: balance; }
+.brief__wunsch p:last-child { margin-bottom: 0; }
+.brief .brief__wende { margin-bottom: 1.5rem; font-weight: 700; }
+.mc__appell { margin: 1.6rem 0 1.3rem; max-width: 30ch; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.25rem, 2.1vw, 1.6rem); line-height: 1.2; text-wrap: balance; }
 .mc__actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.mc__hint { min-height: 1.4em; margin: .7rem 0 0; font-size: .9rem; opacity: .8; }
 
 .true-love { position: absolute; left: -30px; top: -30px; z-index: 2; width: clamp(110px, 11.5vw, 138px); aspect-ratio: 1; border-radius: 50%; background: var(--red); color: var(--cream); box-shadow: var(--shadow-lg); }
 .true-love__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: spin 24s linear infinite; }
@@ -284,12 +307,14 @@ a { color: inherit; }
 
 @media (max-width: 900px) {
   :root { --header-h: 64px; }
-  .r-hero__inner { grid-template-columns: 1fr; }
+  .r-hero__inner { grid-template-columns: 1fr; padding-bottom: 32px; }
   .r-visual { order: -1; width: min(86%, 380px); }
   .r-hero__wave { height: 40%; }
   .mc { grid-template-columns: 1fr; }
-  .mc__photo { min-height: 0; aspect-ratio: 4 / 3; border-radius: 26px 26px 0 0; }
-  .true-love { left: auto; right: 14px; top: 14px; width: 92px; }
+  .mc__photo { position: relative; top: auto; aspect-ratio: 4 / 3; }
+  .mc__body { padding: 0 clamp(4px, 2vw, 16px) 12px; }
+  .mc__actions .btn { width: 100%; }
+  .true-love { left: auto; right: 4px; top: 4px; width: 88px; }
   .match__grid { grid-template-columns: 1fr; }
   .spende__grid { grid-template-columns: 1fr; }
   .spende__intro { position: static; }
@@ -326,9 +351,10 @@ a { color: inherit; }
       <!-- 1) Dein Charakter -->
       <div>
         <p class="pill" data-in>Dein Ergebnis</p>
-        <h1 class="display r-type" id="r-title" data-in><span class="r-hallo" id="r-hallo" hidden></span><span id="r-du">Du</span> bist ein <span class="marker" id="r-breed"></span></h1>
+        <h1 class="display r-type" id="r-title" data-in><span class="r-hallo" id="r-hallo" hidden></span><span id="r-in">In</span> dir steckt ein <span class="marker" id="r-breed"></span>.<span id="r-pfote"></span></h1>
         <ul class="r-traits" id="r-traits" aria-label="Deine Eigenschaften" data-in></ul>
-        <p class="r-quip" id="r-quip" data-in></p>
+        <p class="r-charakter" id="r-charakter" data-in></p>
+        <p class="r-echo" id="r-echo" data-in></p>
       </div>
       <div class="r-visual" id="r-visual" aria-hidden="true" data-in>
         <div id="r-bubbles"><div class="bubble"><svg viewBox="0 0 200 200"><path d="M155.4 42.6c17.6 18.9 25.3 46.6 19.4 70.7-5.9 24.1-25.4 44.6-49.2 54.3-23.8 9.7-51.9 8.6-72.3-3.8C32.9 151.4 20.2 127.5 19.1 103.2 18 78.9 28.5 54.2 46.9 37.9 65.3 21.6 91.6 13.7 113.7 17.4c22.1 3.7 24.1 6.3 41.7 25.2z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M146.7 34.9c20.2 13.4 34.9 37.7 34.6 61.4-.3 23.7-15.6 46.8-35.6 61.6-20 14.8-44.7 21.3-66.4 15.1-21.7-6.2-40.4-25.1-48.6-47.2-8.2-22.1-5.9-47.4 6.6-65.4C49.8 42.4 72.7 31.7 95.4 26.6c22.7-5.1 31.1-5.1 51.3 8.3z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M141.9 47.3c15.7 15.2 28.4 35.3 26.6 54.5-1.8 19.2-18.1 37.5-37.9 49.3-19.8 11.8-43.1 17.1-61.9 9.9-18.8-7.2-33.1-26.9-36.3-47.6-3.2-20.7 4.7-42.4 19.4-58.1C66.5 39.6 87.9 29.9 105.3 31c17.4 1.1 20.9 1.1 36.6 16.3z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M150.2 49.7c13.9 17.5 20.5 41.6 13.6 60.7-6.9 19.1-27.3 33.2-48.9 40.6-21.6 7.4-44.4 8.1-61.3-2.2C36.7 138.5 25.7 117.3 27 96.6 28.3 75.9 41.9 55.7 59.8 43.4 77.7 31.1 99.9 26.7 117.3 29.5c17.4 2.8 19 2.7 32.9 20.2z"/></svg></div><div class="bubble"><svg viewBox="0 0 200 200"><path d="M154.3 58.5c13.2 21.6 13.5 51.6-.9 71.2-14.4 19.6-43.5 28.8-68.4 24.3-24.9-4.5-45.6-22.7-52.3-44.5-6.7-21.8.6-47.2 17.4-63.5 16.8-16.3 43.1-23.5 63.3-19.5 20.2 4 27.7 10.4 40.9 32z"/></svg></div></div>
@@ -343,12 +369,12 @@ a { color: inherit; }
       <article class="mc" id="match-card" aria-labelledby="mc-name" data-in>
         <figure class="mc__photo" id="mc-photo"></figure>
         <div class="mc__body">
-          <p class="mc__kicker" id="mc-kicker">Genau deshalb haben wir jemanden für dich. Dein tierischer Doppelgänger ist:</p>
-          <p class="display mc__name" id="mc-name"><span class="marker" id="r-name"></span></p>
+          <h2 class="display mc__name" id="mc-name"></h2>
           <p class="mc__says" id="r-says"></p>
-          <p class="mc__text" id="r-text"></p>
+          <div class="brief" id="r-brief"></div>
+          <p class="mc__appell" id="r-appell"></p>
           <div class="mc__actions">
-            <a class="btn btn--red" href="#spenden" data-dauer id="mc-donate">Monatlich helfen</a>
+            <a class="btn btn--red btn--big" href="#spenden" data-dauer id="mc-donate">Jetzt monatlich helfen</a>
           </div>
         </div>
         <div class="true-love" role="img" aria-label="Schenke Hunden einen sicheren Platz">
@@ -394,7 +420,7 @@ a { color: inherit; }
         <p id="m-text"></p>
         <p class="closing" id="m-closing"></p>
         <div class="match__actions">
-          <a class="btn btn--red" href="#spenden" data-dauer id="m-donate">Monatlich helfen</a>
+          <a class="btn btn--red" href="#spenden" data-dauer id="m-donate">Jetzt monatlich helfen</a>
         </div>
       </div>
     </div>
@@ -417,14 +443,17 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=30"></script>
+<script src="daten.js?v=31"></script>
 <script>
 document.documentElement.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- Welcher Hund? (aus ?hund=… – Standard: Border Collie wie im Entwurf) ---------- */
-const id = new URLSearchParams(location.search).get('hund');
+const adresse = new URLSearchParams(location.search);
+const id = adresse.get('hund');
 const h = HUNDE.find(x => x.id === id) || HUNDE.find(x => x.id === 'collie');
+// Echo-Zeile: Nummer der Quizfrage (1–5), deren Antwort aufgegriffen wird – kommt vom Quiz als ?echo=…
+const echoNr = Math.min(5, Math.max(1, parseInt(adresse.get('echo'), 10) || 5));
 const e = h.ergebnis;
 const sein = e.er === 'sie' ? 'ihre' : 'seine';
 const ihn  = e.er === 'sie' ? 'sie' : 'ihn';
@@ -439,14 +468,17 @@ try { vorname = (sessionStorage.getItem('tdg-vorname') || '').trim().slice(0, 40
 if (vorname) {
   $('r-hallo').textContent = vorname + ',';
   $('r-hallo').hidden = false;
-  $('r-du').textContent = 'du';
-  $('mc-kicker').textContent = `Genau deshalb haben wir jemanden für dich, ${vorname}. Dein tierischer Doppelgänger ist:`;
+  $('r-in').textContent = 'in';
 }
+const werte = { name: e.tiername, vorname };
 
 // 1) Dein Charakter
 $('r-breed').textContent = h.name;
 $('r-traits').innerHTML  = h.eigenschaften.map(t => `<li>${t}</li>`).join('');
-$('r-quip').textContent  = e.headline;
+$('r-pfote').innerHTML   = textHTML(' 🐾');
+$('r-charakter').textContent = e.charakter;
+// Echo: das Zitat aus dem Quiz hervorheben
+$('r-echo').innerHTML    = sicher(e.echo[echoNr - 1]).replace(/„[^“]*“/, z => `<strong>${z}</strong>`);
 // Bild wie im Slider – gleiche Anordnung von Formen und Icons (KOMPOSITION in daten.js)
 [...document.querySelectorAll('#r-bubbles .bubble')].forEach((b, k) => {
   const [x, y, w, r] = KOMPOSITION[idx].bubbles[k];
@@ -504,10 +536,20 @@ if (natur) {
 }
 
 // 2) Der echte Hund aus dem Tierheim
-$('r-name').textContent = e.tiername;
-$('r-says').textContent = `„${e.sagt}“`;
-$('r-text').textContent = e.text.replace(/^Genau deshalb haben wir jemanden für dich\.\s*/, '');
-$('mc-donate').textContent = $('m-donate').textContent = `Monatlich für ${e.tiername} da sein`;
+// Begrüßung: erster Satz groß mit markiertem Namen („Hey, ich bin Bruno!"), der Rest als Sprechblase
+const hallo = textFuellen(e.hallo, werte), ende = hallo.indexOf('!') + 1;
+$('mc-name').innerHTML  = sicher(hallo.slice(0, ende)).replace(sicher(e.tiername), `<span class="marker">${sicher(e.tiername)}</span>`);
+$('r-says').textContent = hallo.slice(ende).trim();
+// Brief: Absätze der Reihe nach; aufeinanderfolgende Wunsch-Zeilen bilden einen Block
+let brief = '', imWunsch = false;
+e.brief.forEach(([art, text]) => {
+  if (art === 'wunsch' && !imWunsch) { brief += '<div class="brief__wunsch">'; imWunsch = true; }
+  if (art !== 'wunsch' && imWunsch)  { brief += '</div>'; imWunsch = false; }
+  brief += `<p${art === 'frage' || art === 'wende' ? ` class="brief__${art}"` : ''}>${textHTML(text, werte)}</p>`;
+});
+$('r-brief').innerHTML  = brief + (imWunsch ? '</div>' : '');
+$('r-appell').innerHTML = textHTML(e.appell, werte);
+$('mc-donate').textContent = $('m-donate').textContent = e.button;
 const fig = $('mc-photo');
 if (e.foto) fig.innerHTML = `<img src="${e.foto}" alt="${e.tiername}, dein tierischer Doppelgänger" style="object-position:${e.fokus || '50% 50%'}">`;
 else { fig.classList.add('mc__photo--leer'); fig.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><ellipse cx="16" cy="21.5" rx="7" ry="6"/><ellipse cx="7" cy="13.5" rx="2.8" ry="3.4" transform="rotate(-18 7 13.5)"/><ellipse cx="12.5" cy="8" rx="2.8" ry="3.6" transform="rotate(-6 12.5 8)"/><ellipse cx="19.5" cy="8" rx="2.8" ry="3.6" transform="rotate(6 19.5 8)"/><ellipse cx="25" cy="13.5" rx="2.8" ry="3.4" transform="rotate(18 25 13.5)"/></g></svg>Foto von ${e.tiername}<small>Platzhalter – Foto folgt</small>`; }
@@ -643,11 +685,12 @@ auftritt();
 /* ---------- Testmenü: nur auf der Testseite (vor dem Livegang entfernen) ---------- */
 if (!/(^|\.)aktivertierschutz\.at$/.test(location.hostname)) {
   const stilJetzt = new URLSearchParams(location.search).get('stil') === 'natur' ? 'natur' : 'bubbles';
-  const url = (hund, stil) => `ergebnis.html?hund=${hund}${stil === 'natur' ? '&stil=natur' : ''}`;
+  const url = (hund, stil, echo = echoNr) => `ergebnis.html?hund=${hund}&echo=${echo}${stil === 'natur' ? '&stil=natur' : ''}`;
   const m = document.createElement('details');
   m.className = 'testmenue';
   m.innerHTML = `<summary>Testansicht</summary><div class="testmenue__box">
     <p>Ergebnis</p><div class="testmenue__reihe">${HUNDE.map(x => `<a href="${url(x.id, stilJetzt)}" aria-current="${x.id === h.id}">${x.name.replace(' Terrier', '').replace(' Retriever', '')}</a>`).join('')}</div>
+    <p>Echo-Zeile zu Frage</p><div class="testmenue__reihe">${[1, 2, 3, 4, 5].map(n => `<a href="${url(h.id, stilJetzt, n)}" aria-current="${n === echoNr}">${n}</a>`).join('')}</div>
   </div>`;
   // offen lassen, wenn man gerade darüber umgeschaltet hat
   try { if (sessionStorage.getItem('tdg-testmenue') === '1') m.open = true; } catch (_) {}
