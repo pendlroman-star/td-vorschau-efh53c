@@ -184,7 +184,7 @@ a { color: inherit; }
 .mc__photo--leer svg { width: 56px; height: 56px; opacity: .5; }
 .mc__photo--leer small { font-weight: 500; opacity: .7; }
 .mc__body { padding: clamp(8px, 1.8vw, 24px) clamp(4px, 1.8vw, 24px) clamp(8px, 1.8vw, 24px) 0; }
-.mc__name { font-size: clamp(2rem, 4.2vw, 3.3rem); margin: 0 0 1.4rem; text-wrap: balance; }
+.mc__name { font-size: clamp(2rem, 4.2vw, 3.3rem); margin: 0 0 1.4rem; padding-right: 64px; text-wrap: balance; }   /* rechts frei für das Siegel */
 /* Drei Textarten in der Karte: Überschrift, Fließtext, Hervorhebung (Wunsch des Hundes und Bitte) */
 .brief { max-width: 56ch; font-size: clamp(1.05rem, 1.4vw, 1.125rem); }
 .brief p { margin: 0 0 1rem; text-wrap: pretty; }
@@ -192,12 +192,12 @@ a { color: inherit; }
 .brief__wunsch { position: relative; margin: 0 0 1.5rem; padding: .35rem 0 .35rem 1.3rem; }
 .brief__wunsch::before { content: ""; position: absolute; left: 0; top: .15em; bottom: .15em; width: 5px; border-radius: 99px; background: var(--lime); }
 .brief__wunsch p, .mc__appell { font-weight: 700; font-size: clamp(1.2rem, 1.9vw, 1.5rem); line-height: 1.3; text-wrap: balance; }
-.brief__wunsch p { margin: 0 0 .5rem; }
-.brief__wunsch p:last-child { margin-bottom: 0; }
+.brief__wunsch p { margin: 0; }   /* kein Absatzabstand: alle Zeilen des Wunsches stehen im selben Zeilenabstand */
 .mc__appell { margin: 2.2rem 0 1.2rem; max-width: 34ch; }
 .mc__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
-.true-love { position: absolute; left: -30px; top: -30px; z-index: 2; width: clamp(110px, 11.5vw, 138px); aspect-ratio: 1; border-radius: 50%; background: var(--red); color: var(--cream); box-shadow: var(--shadow-lg); }
+/* Siegel sitzt rechts oben auf dem Kartenrand, neben der Begrüßung */
+.true-love { position: absolute; right: clamp(-46px, -3.2vw, -14px); top: clamp(-56px, -4vw, -34px); z-index: 2; width: clamp(110px, 11.5vw, 138px); aspect-ratio: 1; border-radius: 50%; background: var(--red); color: var(--cream); box-shadow: var(--shadow-lg); }
 .true-love__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: spin 24s linear infinite; }
 .true-love__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 11.5px; fill: currentColor; }
 .true-love__heart { position: absolute; left: 28%; top: 28%; width: 44%; height: 44%; }
@@ -311,7 +311,8 @@ a { color: inherit; }
   .brief__wunsch { padding-left: 1rem; }
   .brief__wunsch p { text-wrap: pretty; }
   .mc__actions .btn { width: 100%; }
-  .true-love { left: auto; right: 4px; top: 4px; width: 88px; }
+  .true-love { right: -6px; top: -22px; width: 88px; }
+  .mc__name { padding-right: 0; }
   .match__grid { grid-template-columns: 1fr; }
   .spende__grid { grid-template-columns: 1fr; }
   .spende__intro { position: static; }
@@ -348,7 +349,7 @@ a { color: inherit; }
       <!-- 1) Dein Charakter -->
       <div>
         <p class="pill" data-in>Dein Ergebnis</p>
-        <h1 class="display r-type" id="r-title" data-in><span class="r-hallo" id="r-hallo" hidden></span><span id="r-in">In</span> dir steckt ein <span class="marker" id="r-breed"></span>.<span id="r-pfote"></span></h1>
+        <h1 class="display r-type" id="r-title" data-in><span class="r-hallo" id="r-hallo" hidden></span><span id="r-in">In</span> dir steckt ein <span class="marker"><span id="r-breed"></span>.</span><span id="r-pfote"></span></h1>
         <ul class="r-traits" id="r-traits" aria-label="Deine Eigenschaften" data-in></ul>
         <p class="r-charakter" id="r-charakter" data-in></p>
         <p class="r-echo" id="r-echo" data-in></p>
@@ -528,7 +529,10 @@ if (natur) {
 // 2) Der echte Hund aus dem Tierheim
 // Begrüßung: erster Satz groß mit markiertem Namen („Hey, ich bin Bruno!"), der Rest als Sprechblase
 const hallo = textFuellen(e.hallo, werte), ende = hallo.indexOf('!') + 1;
-$('mc-name').innerHTML  = sicher(hallo.slice(0, ende)).replace(' ich bin', ' ich\u00a0bin').replace(sicher(e.tiername), `<span class="marker">${sicher(e.tiername)}</span>`);
+// Das Satzzeichen nach dem Namen gehört in die Markierung – sonst liegt der grüne Balken darüber
+const rufname = sicher(e.tiername), kopf = sicher(hallo.slice(0, ende)).replace(' ich bin', ' ich\u00a0bin');
+const markiert = kopf.includes(rufname + '!') ? rufname + '!' : rufname;
+$('mc-name').innerHTML  = kopf.replace(markiert, `<span class="marker">${markiert}</span>`);
 const halloRest = hallo.slice(ende).trim();   // zweiter Satz der Begrüßung: erster Absatz des Briefs
 // Brief: Absätze der Reihe nach; aufeinanderfolgende Wunsch-Zeilen bilden einen Block
 let brief = halloRest ? `<p>${sicher(halloRest)}</p>` : '', imWunsch = false;
