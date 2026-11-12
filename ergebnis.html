@@ -155,6 +155,9 @@ a { color: inherit; }
 .dog__media > video.dog__clip { opacity: 0; transition: opacity 120ms linear; }
 .dog__media.is-playing > video.dog__clip { opacity: 1; }
 .dog__media.is-playing > img.dog__clip { opacity: 0; }
+/* Einzelner Hund in Dauerschleife (Auswertung, Ergebnisseite): zwei Videos desselben Clips, der Rücksprung wird kurz überblendet */
+.dog__media--schleife.is-playing > video.dog__clip:not(.is-da) { opacity: 0; }
+.dog__media--schleife.is-ueberblendet > video.dog__clip { transition: opacity 100ms linear; }
 @keyframes breathe { from { transform: none; } to { transform: translateY(-0.9cqw) rotate(-.35deg); } }
 .icon-slot { position: absolute; left: 0; top: 0; width: calc(var(--w, 11.5) * 1cqw); color: var(--forest); transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)); }
 .icon-slot svg { width: 100%; height: auto; overflow: visible; animation: float-y 6s ease-in-out infinite alternate; }
@@ -168,34 +171,30 @@ a { color: inherit; }
 
 /* Karte: der echte Hund erzählt (Begrüßung, Brief, Bitte, Knopf) */
 .mc {
-  position: relative; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   gap: clamp(20px, 3.4vw, 48px); align-items: start;
   padding: clamp(14px, 2vw, 24px);
   border-radius: 26px; background: var(--white);
   box-shadow: 0 1px 2px rgba(13, 58, 32, .05), 0 30px 70px -34px rgba(13, 58, 32, .5);
 }
 /* Das Foto bleibt beim Lesen des Briefs stehen */
-.mc__photo { position: sticky; top: calc(var(--header-h) + 20px); margin: 0; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; background: var(--lime-100); }
+.mc__photo { position: sticky; top: calc(var(--header-h) + 20px); margin: 0; aspect-ratio: 3 / 4; max-height: calc(100svh - var(--header-h) - 40px); border-radius: 16px; overflow: hidden; background: var(--lime-100); }
 .mc__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .mc__photo--leer { display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--forest); text-align: center; font-weight: 700; }
 .mc__photo--leer svg { width: 56px; height: 56px; opacity: .5; }
 .mc__photo--leer small { font-weight: 500; opacity: .7; }
 .mc__body { padding: clamp(8px, 1.8vw, 24px) clamp(4px, 1.8vw, 24px) clamp(8px, 1.8vw, 24px) 0; }
-.mc__name { font-size: clamp(2rem, 4.2vw, 3.3rem); margin: 0 0 .9rem; text-wrap: balance; }
-.mc__says {
-  position: relative; display: inline-block; margin: 0 0 1.4rem; padding: .7em 1em;
-  border-radius: 4px 18px 18px 18px; background: var(--lime-100);
-  font-family: var(--font-fun); font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.25; text-transform: uppercase;
-}
-.brief { max-width: 56ch; font-size: 1.05rem; }
+.mc__name { font-size: clamp(2rem, 4.2vw, 3.3rem); margin: 0 0 1.4rem; text-wrap: balance; }
+/* Drei Textarten in der Karte: Überschrift, Fließtext, Hervorhebung (Wunsch des Hundes und Bitte) */
+.brief { max-width: 56ch; font-size: clamp(1.05rem, 1.4vw, 1.125rem); }
 .brief p { margin: 0 0 1rem; text-wrap: pretty; }
-.brief .brief__frage { margin-top: 1.5rem; font-weight: 700; }
-/* Der Wunsch des Hundes ist die Mitte des Briefs – die einzige hervorgehobene Stelle */
-.brief__wunsch { margin: 0 0 1.1rem; padding: .1rem 0 .1rem 1.1rem; border-left: 5px solid var(--lime); }
-.brief__wunsch p { margin: 0 0 .5rem; font-family: var(--font-fun); font-weight: 600; font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.25; text-wrap: balance; }
+.brief .brief__frage { margin: 1.9rem 0 .6rem; }   /* leitet den Wunsch ein: nur Abstand, keine eigene Auszeichnung */
+.brief__wunsch { position: relative; margin: 0 0 1.5rem; padding: .35rem 0 .35rem 1.3rem; }
+.brief__wunsch::before { content: ""; position: absolute; left: 0; top: .15em; bottom: .15em; width: 5px; border-radius: 99px; background: var(--lime); }
+.brief__wunsch p, .mc__appell { font-weight: 700; font-size: clamp(1.2rem, 1.9vw, 1.5rem); line-height: 1.3; text-wrap: balance; }
+.brief__wunsch p { margin: 0 0 .5rem; }
 .brief__wunsch p:last-child { margin-bottom: 0; }
-.brief .brief__wende { margin-bottom: 1.5rem; font-weight: 700; }
-.mc__appell { margin: 1.6rem 0 1.3rem; max-width: 30ch; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.25rem, 2.1vw, 1.6rem); line-height: 1.2; text-wrap: balance; }
+.mc__appell { margin: 2.2rem 0 1.2rem; max-width: 34ch; }
 .mc__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .true-love { position: absolute; left: -30px; top: -30px; z-index: 2; width: clamp(110px, 11.5vw, 138px); aspect-ratio: 1; border-radius: 50%; background: var(--red); color: var(--cream); box-shadow: var(--shadow-lg); }
@@ -228,10 +227,6 @@ a { color: inherit; }
 .spende__intro { position: sticky; top: calc(var(--header-h) + 32px); }
 .spende h2 { margin: 0 0 .8rem; font-family: var(--font-head); font-weight: 800; font-size: clamp(1.7rem, 3.2vw, 2.5rem); text-transform: uppercase; line-height: 1.08; text-wrap: balance; }
 .spende__text { margin: 0 0 1.4rem; font-size: 1.08rem; max-width: 46ch; }
-.impact { display: grid; gap: 10px; margin: 0 0 1.4rem; padding: 0; list-style: none; }
-.impact li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: var(--white); box-shadow: var(--shadow-sm); }
-.impact b { flex: none; display: grid; place-items: center; min-width: 64px; height: 40px; padding: 0 10px; border-radius: 10px; background: var(--red); color: var(--white); font-family: var(--font-head); font-weight: 800; font-size: 1.05rem; }
-.impact span { font-weight: 700; line-height: 1.3; }
 .spende__tax { display: flex; align-items: center; gap: 10px; margin: 0; font-size: .95rem; }
 .spende__tax svg { flex: none; width: 22px; height: 22px; color: var(--lime-600); }
 
@@ -311,8 +306,10 @@ a { color: inherit; }
   .r-visual { order: -1; width: min(86%, 380px); }
   .r-hero__wave { height: 40%; }
   .mc { grid-template-columns: 1fr; }
-  .mc__photo { position: relative; top: auto; aspect-ratio: 4 / 3; }
+  .mc__photo { position: relative; top: auto; aspect-ratio: 4 / 3; max-height: none; }
   .mc__body { padding: 0 clamp(4px, 2vw, 16px) 12px; }
+  .brief__wunsch { padding-left: 1rem; }
+  .brief__wunsch p { text-wrap: pretty; }
   .mc__actions .btn { width: 100%; }
   .true-love { left: auto; right: 4px; top: 4px; width: 88px; }
   .match__grid { grid-template-columns: 1fr; }
@@ -370,7 +367,6 @@ a { color: inherit; }
         <figure class="mc__photo" id="mc-photo"></figure>
         <div class="mc__body">
           <h2 class="display mc__name" id="mc-name"></h2>
-          <p class="mc__says" id="r-says"></p>
           <div class="brief" id="r-brief"></div>
           <p class="mc__appell" id="r-appell"></p>
           <div class="mc__actions">
@@ -391,12 +387,6 @@ a { color: inherit; }
         <p class="pill">Gemeinsam helfen</p>
         <h2 id="s-title"></h2>
         <p class="spende__text" id="s-text"></p>
-        <!-- Spendenbeispiele: Platzhalter – Beträge und Wirkung vom Kunden -->
-        <ul class="impact" aria-label="So hilft deine Spende">
-          <li><b>XX €</b><span>Platzhalter 1</span></li>
-          <li><b>XX €</b><span>Platzhalter 2</span></li>
-          <li><b>XX €</b><span>Platzhalter 3</span></li>
-        </ul>
         <p class="spende__tax"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Deine Spende ist steuerlich absetzbar.</p>
       </div>
 
@@ -443,7 +433,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=31"></script>
+<script src="daten.js?v=32"></script>
 <script>
 document.documentElement.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -538,14 +528,14 @@ if (natur) {
 // 2) Der echte Hund aus dem Tierheim
 // Begrüßung: erster Satz groß mit markiertem Namen („Hey, ich bin Bruno!"), der Rest als Sprechblase
 const hallo = textFuellen(e.hallo, werte), ende = hallo.indexOf('!') + 1;
-$('mc-name').innerHTML  = sicher(hallo.slice(0, ende)).replace(sicher(e.tiername), `<span class="marker">${sicher(e.tiername)}</span>`);
-$('r-says').textContent = hallo.slice(ende).trim();
+$('mc-name').innerHTML  = sicher(hallo.slice(0, ende)).replace(' ich bin', ' ich\u00a0bin').replace(sicher(e.tiername), `<span class="marker">${sicher(e.tiername)}</span>`);
+const halloRest = hallo.slice(ende).trim();   // zweiter Satz der Begrüßung: erster Absatz des Briefs
 // Brief: Absätze der Reihe nach; aufeinanderfolgende Wunsch-Zeilen bilden einen Block
-let brief = '', imWunsch = false;
+let brief = halloRest ? `<p>${sicher(halloRest)}</p>` : '', imWunsch = false;
 e.brief.forEach(([art, text]) => {
   if (art === 'wunsch' && !imWunsch) { brief += '<div class="brief__wunsch">'; imWunsch = true; }
   if (art !== 'wunsch' && imWunsch)  { brief += '</div>'; imWunsch = false; }
-  brief += `<p${art === 'frage' || art === 'wende' ? ` class="brief__${art}"` : ''}>${textHTML(text, werte)}</p>`;
+  brief += `<p${art === 'frage' ? ' class="brief__frage"' : ''}>${textHTML(text, werte)}</p>`;
 });
 $('r-brief').innerHTML  = brief + (imWunsch ? '</div>' : '');
 $('r-appell').innerHTML = textHTML(e.appell, werte);

@@ -26,7 +26,15 @@ const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f
 const CLIP_VERSION = 12;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
 // Safari/iPhone: HEVC mit Alphakanal als .mov, erzeugt mit Apples AVAssetWriter (ffmpeg-Dateien kann Safari nicht abspielen)
 // lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
+// Läuft ein Hund allein in Dauerschleife (Auswertung, Ergebnisseite), springt der Slider-Clip am Ende sichtbar zurück.
+// SCHLEIFE nennt je Clip zwei Stellen [von, bis] in Sekunden, an denen der Hund fast gleich dasteht (Bild für Bild
+// vermessen am 12.11.2026); zwischen ihnen läuft die Schleife. Ohne Eintrag ist der Clip selbst schon nahtlos.
+const SCHLEIFE = {
+  'jack-russell': [0.917, 3.417], 'dackel': [0.917, 3.167], 'havaneser': [0.292, 3.833],
+  'border-collie': [0.25, 4.125], 'labrador': [0.542, 3.708],   // Collie: keine bessere Stelle gefunden, fast ganzer Clip
+};
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
+  schleife: SCHLEIFE[datei] || null,
   webm: `bilder/hunde/video/${datei}.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-hevc.mov?v=${CLIP_VERSION}`,
   poster: `bilder/hunde/video/${datei}-poster.webp?v=${CLIP_VERSION}`, box: boxSkaliert(box, groesse), start, dauer,
   lang: langBox && {
@@ -233,10 +241,14 @@ const ICONS = {
    nur als HEVC, alle anderen nur als WebM – Chrome am Mac spielt HEVC ohne Transparenz, daher nach Engine wählen. */
 const clipQuelle = v => ('GestureEvent' in window) ? v.hevc : v.webm;
 function clipHTML(h, cls = '') {
-  const c = h.video.lang || h.video;              // lange Schleife, falls vorhanden
+  // Derselbe Clip wie im Slider der Startseite (Romans Wunsch 12.11.2026) – dort wechselt nach 3 s der Hund,
+  // hier läuft ein Hund durch. Für den Rücksprung liegen zwei Videos desselben Clips übereinander (siehe clipStart).
+  const c = h.video;
   const [l, t, w, hh] = c.box;
-  return `<div class="dog__media ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}">` +
-    `<img class="dog__clip" src="${c.poster}" alt=""><video class="dog__clip" muted loop playsinline preload="auto" aria-hidden="true" src="${clipQuelle(c)}"></video></div>`;
+  const video = `<video class="dog__clip" muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture src="${clipQuelle(c)}"></video>`;
+  const bereich = c.schleife ? ` data-von="${c.schleife[0]}" data-bis="${c.schleife[1]}"` : '';
+  return `<div class="dog__media dog__media--schleife ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}"${bereich}>` +
+    `<img class="dog__clip" src="${c.poster}" alt="">${video}${c.schleife ? video : ''}</div>`;
 }
 // Blockiert der Browser das automatische Abspielen (z. B. Stromsparmodus am iPhone/MacBook),
 // starten die Videos bei der ersten Berührung, dem ersten Klick oder Tastendruck auf der Seite.
@@ -247,12 +259,44 @@ function spielen(v) {
     ['pointerdown', 'touchend', 'keydown'].forEach(e => addEventListener(e, los, { once: true, passive: true }));
   });
 }
+// Rücksprung der Schleife: Der zweite Durchlauf startet CLIP_VORLAUF Sekunden vor „von", während der erste noch
+// CLIP_VORLAUF Sekunden vor „bis" steht – beide zeigen also dieselbe Bewegung. Erst blendet der neue über dem alten
+// ein, dann der alte darunter aus (je CLIP_BLENDE ms). Der Hund wird dabei nie durchsichtig.
+const CLIP_BLENDE = 100, CLIP_VORLAUF = .25;
 function clipStart(media) {
-  const v = media && media.querySelector('video');
-  if (!v) return;
-  v.muted = true;
-  v.addEventListener('playing', () => media.classList.add('is-playing'));
-  spielen(v);
+  const vs = media ? [...media.querySelectorAll('video')] : [];
+  if (!vs.length) return;
+  const von = +media.dataset.von || 0, bis = +media.dataset.bis || 0;
+  const bereit = Math.max(0, von - CLIP_VORLAUF);        // hier wartet der jeweils ruhende Durchlauf
+  vs.forEach(v => { v.muted = true; });
+  let aktiv = 0, blendet = false, einfach = vs.length < 2 || !bis;
+  vs[0].classList.add('is-da');
+  vs[0].addEventListener('playing', () => media.classList.add('is-playing'), { once: true });
+  if (einfach) vs[0].loop = true;
+  spielen(vs[0]);
+  if (einfach) return;
+  vs[1].addEventListener('loadedmetadata', () => { vs[1].currentTime = bereit; }, { once: true });
+  // Verweigert der Browser den zweiten Durchlauf (z. B. Stromsparmodus), läuft der erste als einfache Schleife weiter
+  const schlicht = v => { einfach = true; blendet = false; v.loop = true; if (v.ended || v.paused) spielen(v); };
+  function wechsel() {
+    const alt = vs[aktiv], neu = vs[1 - aktiv];
+    blendet = true;
+    if (Math.abs(neu.currentTime - bereit) > .08) neu.currentTime = bereit;   // falls er noch nicht bereitsteht
+    const p = neu.play();
+    (p && p.then ? p : Promise.resolve()).then(() => {
+      media.classList.add('is-ueberblendet');
+      neu.style.zIndex = 2; alt.style.zIndex = 1;
+      neu.classList.add('is-da');
+      setTimeout(() => alt.classList.remove('is-da'), CLIP_BLENDE);
+      setTimeout(() => { alt.pause(); alt.currentTime = bereit; aktiv = 1 - aktiv; blendet = false; }, CLIP_BLENDE * 2 + 60);
+    }).catch(() => schlicht(alt));
+  }
+  (function takt() {
+    if (einfach || !media.isConnected) return;
+    const v = vs[aktiv];
+    if (!blendet && v.duration && (v.ended || Math.min(bis, v.duration) - v.currentTime <= CLIP_VORLAUF)) wechsel();
+    requestAnimationFrame(takt);
+  })();
 }
 
 /* ------------------------------------------------------------------
@@ -273,7 +317,10 @@ function textFuellen(text, { name = '', vorname = '' } = {}) {
 }
 // … und als HTML: Eingaben entschärft, Zeichen als Grafik, das Zeichen bleibt beim letzten Wort (kein Umbruch davor)
 function textHTML(text, werte) {
-  return sicher(textFuellen(text, werte)).replace(/ ?(🐾|❤️)/g, (_, z) => '\u00a0' + ZEICHEN[z]);
+  // Das letzte Wort bleibt beim Zeichen am Absatzende (kein einzelnes Wort mit Herz in der letzten Zeile)
+  return sicher(textFuellen(text, werte))
+    .replace(/ (\S+ ?(?:🐾|❤️))$/u, '\u00a0$1')
+    .replace(/ ?(🐾|❤️)/g, (_, z) => '\u00a0' + ZEICHEN[z]);
 }
 
 function iconSVG(name, cls = 'ai') {
