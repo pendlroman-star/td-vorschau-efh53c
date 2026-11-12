@@ -157,7 +157,7 @@ a { color: inherit; }
 .dog__media.is-playing > img.dog__clip { opacity: 0; }
 /* Einzelner Hund in Dauerschleife (Auswertung, Ergebnisseite): zwei Videos desselben Clips, der Rücksprung wird kurz überblendet */
 .dog__media--schleife.is-playing > video.dog__clip:not(.is-da) { opacity: 0; }
-.dog__media--schleife.is-ueberblendet > video.dog__clip { transition: opacity 100ms linear; }
+.dog__media--schleife.is-ueberblendet > video.dog__clip { transition: opacity 60ms linear; }
 @keyframes breathe { from { transform: none; } to { transform: translateY(-0.9cqw) rotate(-.35deg); } }
 .icon-slot { position: absolute; left: 0; top: 0; width: calc(var(--w, 11.5) * 1cqw); color: var(--forest); transform: translate(calc(var(--x) * 1cqw - 50%), calc(var(--y) * 1cqw - 50%)) rotate(calc(var(--r) * 1deg)); }
 .icon-slot svg { width: 100%; height: auto; overflow: visible; animation: float-y 6s ease-in-out infinite alternate; }
@@ -433,7 +433,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=32"></script>
+<script src="daten.js?v=33"></script>
 <script>
 document.documentElement.classList.add('js');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

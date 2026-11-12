@@ -23,15 +23,16 @@
 // start = Sekunde, an der der Hund im Slider einsetzt. Die Schleifen sind aus der Mitte der KI-Clips geschnitten
 // (Anfang/Ende der KI-Clips frieren kurz ein und sind heller) und am Übergang weich verbunden.
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
-const CLIP_VERSION = 12;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+const CLIP_VERSION = 13;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
 // Safari/iPhone: HEVC mit Alphakanal als .mov, erzeugt mit Apples AVAssetWriter (ffmpeg-Dateien kann Safari nicht abspielen)
 // lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
 // Läuft ein Hund allein in Dauerschleife (Auswertung, Ergebnisseite), springt der Slider-Clip am Ende sichtbar zurück.
-// SCHLEIFE nennt je Clip zwei Stellen [von, bis] in Sekunden, an denen der Hund fast gleich dasteht (Bild für Bild
-// vermessen am 12.11.2026); zwischen ihnen läuft die Schleife. Ohne Eintrag ist der Clip selbst schon nahtlos.
+// SCHLEIFE nennt je Clip zwei Stellen [von, bis] in Sekunden, an denen Haltung UND Bewegung über mehrere Bilder
+// übereinstimmen (vermessen am 12.11.2026, alle 24 Bilder je Sekunde); zwischen ihnen läuft die Schleife. Ohne Eintrag ist der Clip selbst schon nahtlos.
 const SCHLEIFE = {
-  'jack-russell': [0.917, 3.417], 'dackel': [0.917, 3.167], 'havaneser': [0.292, 3.833],
-  'border-collie': [0.25, 4.125], 'labrador': [0.542, 3.708],   // Collie: keine bessere Stelle gefunden, fast ganzer Clip
+  'jack-russell': [0.583, 3.708], 'dackel': [1.417, 3.208], 'havaneser': [0.417, 3.708],
+  'border-collie': [1.125, 2.792],   // die Schleichphase: läuft herein, duckt sich und schleicht dann weiter
+  'labrador': [1.042, 3.167],
 };
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
   schleife: SCHLEIFE[datei] || null,
@@ -262,7 +263,7 @@ function spielen(v) {
 // Rücksprung der Schleife: Der zweite Durchlauf startet CLIP_VORLAUF Sekunden vor „von", während der erste noch
 // CLIP_VORLAUF Sekunden vor „bis" steht – beide zeigen also dieselbe Bewegung. Erst blendet der neue über dem alten
 // ein, dann der alte darunter aus (je CLIP_BLENDE ms). Der Hund wird dabei nie durchsichtig.
-const CLIP_BLENDE = 100, CLIP_VORLAUF = .25;
+const CLIP_BLENDE = 60, CLIP_VORLAUF = .125;
 function clipStart(media) {
   const vs = media ? [...media.querySelectorAll('video')] : [];
   if (!vs.length) return;

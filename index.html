@@ -268,7 +268,7 @@ a { color: inherit; }
 .dog__media.is-playing > img.dog__clip { opacity: 0; }
 /* Einzelner Hund in Dauerschleife (Auswertung, Ergebnisseite): zwei Videos desselben Clips, der Rücksprung wird kurz überblendet */
 .dog__media--schleife.is-playing > video.dog__clip:not(.is-da) { opacity: 0; }
-.dog__media--schleife.is-ueberblendet > video.dog__clip { transition: opacity 100ms linear; }
+.dog__media--schleife.is-ueberblendet > video.dog__clip { transition: opacity 60ms linear; }
 
 /* Siegel „Schenke Hunden einen sicheren Platz" – in der CI-Akzentfarbe */
 .badge {
@@ -757,7 +757,7 @@ a { color: inherit; }
   </div>
 </footer>
 
-<script src="daten.js?v=32"></script>
+<script src="daten.js?v=33"></script>
 <script>
 document.documentElement.classList.add('js');
 
