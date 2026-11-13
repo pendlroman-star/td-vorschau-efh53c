@@ -23,7 +23,7 @@
 // start = Sekunde, an der der Hund im Slider einsetzt. Die Schleifen sind aus der Mitte der KI-Clips geschnitten
 // (Anfang/Ende der KI-Clips frieren kurz ein und sind heller) und am Übergang weich verbunden.
 const boxSkaliert = ([l, t, w, h], f) => [50 + (l - 50) * f, 100 + (t - 100) * f, w * f, h * f].map(n => +n.toFixed(2));
-const CLIP_VERSION = 13;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
+const CLIP_VERSION = 14;   // bei neuen Clip-Dateien erhöhen, damit Browser nicht die alten aus dem Zwischenspeicher zeigen
 // Safari/iPhone: HEVC mit Alphakanal als .mov, erzeugt mit Apples AVAssetWriter (ffmpeg-Dateien kann Safari nicht abspielen)
 // lang = längere, abwechslungsreichere Schleife (5–7 s) für die Ergebnisseite; Größe dort schon ausgeglichen.
 // Läuft ein Hund allein in Dauerschleife (Auswertung, Ergebnisseite), springt der Slider-Clip am Ende sichtbar zurück.
@@ -36,6 +36,9 @@ const SCHLEIFE = {
 };
 const hundeClip = (datei, box, groesse = 1, start = 0, dauer = 5000, langBox = null) => ({
   schleife: SCHLEIFE[datei] || null,
+  // Ersatz, falls das Video auf einem Gerät nicht startet (siehe animZeigen): Slider bzw. nahtlose Schleife
+  anim: `bilder/hunde/video/${datei}-anim.webp?v=${CLIP_VERSION}`,
+  animSchleife: `bilder/hunde/video/${datei}-schleife-anim.webp?v=${CLIP_VERSION}`,
   webm: `bilder/hunde/video/${datei}.webm?v=${CLIP_VERSION}`, hevc: `bilder/hunde/video/${datei}-hevc.mov?v=${CLIP_VERSION}`,
   poster: `bilder/hunde/video/${datei}-poster.webp?v=${CLIP_VERSION}`, box: boxSkaliert(box, groesse), start, dauer,
   lang: langBox && {
@@ -248,8 +251,30 @@ function clipHTML(h, cls = '') {
   const [l, t, w, hh] = c.box;
   const video = `<video class="dog__clip" muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture src="${clipQuelle(c)}"></video>`;
   const bereich = c.schleife ? ` data-von="${c.schleife[0]}" data-bis="${c.schleife[1]}"` : '';
-  return `<div class="dog__media dog__media--schleife ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}"${bereich}>` +
+  return `<div class="dog__media dog__media--schleife ${cls}" style="--l:${l};--t:${t};--w:${w};--h:${hh}"${bereich} data-anim="${c.animSchleife}">` +
     `<img class="dog__clip" src="${c.poster}" alt="">${video}${c.schleife ? video : ''}</div>`;
+}
+// Ersatz für Geräte, auf denen die Videos nicht starten (manche Safari-Versionen, Macs/iPhones ohne passenden
+// Video-Baustein, Stromsparmodus): animiertes WebP (12 Bilder/s, läuft in jedem Browser, ist aber schwerer).
+// Startet ein Video nicht binnen 1,6 s, schaltet die Seite für alle Hunde auf den Ersatz um.
+let ANIM_ERSATZ = /[?&]ersatz=1/.test(location.search);   // ?ersatz=1 erzwingt den Ersatz (zum Testen)
+const animDaten = {};                                   // einmal geladen, je Auftritt neu gestartet (Blob-Adresse)
+function animZeigen(media, src) {
+  if (!media || !src) return;
+  media.querySelectorAll('video').forEach(v => { v.pause(); v.remove(); });
+  let a = media.querySelector('img.dog__anim');
+  if (!a) { a = new Image(); a.className = 'dog__clip dog__anim'; a.alt = ''; a.decoding = 'async'; media.appendChild(a); }
+  (animDaten[src] || (animDaten[src] = fetch(src).then(r => r.blob()))).then(blob => {
+    const alt = a.dataset.url, url = URL.createObjectURL(blob);   // neue Adresse = Animation beginnt von vorne
+    a.onload = () => { media.classList.add('is-playing'); if (alt) URL.revokeObjectURL(alt); };
+    a.dataset.url = url; a.src = url;
+  }).catch(() => {});
+}
+function wachhund(v, ersatz) {
+  setTimeout(() => {
+    if (ANIM_ERSATZ || !v.isConnected || v.dataset.halt === '1') return;
+    if (v.currentTime < .05) { ANIM_ERSATZ = true; ersatz(); }
+  }, 1600);
 }
 // Blockiert der Browser das automatische Abspielen (z. B. Stromsparmodus am iPhone/MacBook),
 // starten die Videos bei der ersten Berührung, dem ersten Klick oder Tastendruck auf der Seite.
@@ -267,6 +292,8 @@ const CLIP_BLENDE = 60, CLIP_VORLAUF = .125;
 function clipStart(media) {
   const vs = media ? [...media.querySelectorAll('video')] : [];
   if (!vs.length) return;
+  if (ANIM_ERSATZ) return animZeigen(media, media.dataset.anim);
+  wachhund(vs[0], () => animZeigen(media, media.dataset.anim));
   const von = +media.dataset.von || 0, bis = +media.dataset.bis || 0;
   const bereit = Math.max(0, von - CLIP_VORLAUF);        // hier wartet der jeweils ruhende Durchlauf
   vs.forEach(v => { v.muted = true; });
@@ -293,7 +320,7 @@ function clipStart(media) {
     }).catch(() => schlicht(alt));
   }
   (function takt() {
-    if (einfach || !media.isConnected) return;
+    if (einfach || !media.isConnected || !vs[aktiv].isConnected) return;   // (Ersatzbild übernommen → Ende)
     const v = vs[aktiv];
     if (!blendet && v.duration && (v.ended || Math.min(bis, v.duration) - v.currentTime <= CLIP_VORLAUF)) wechsel();
     requestAnimationFrame(takt);
