@@ -167,7 +167,7 @@ Alle Stellen sind im Code mit „VOR DEM LIVEGANG ENTFERNEN“ markiert (Details
 ## 12. Offene Fragen an den Kunden
 
 1. Adresse des Anmeldeformulars (iframe) – und kann es den Vornamen per `postMessage` zurückmelden?
-2. Gibt es für „Dauerspende“ ein eigenes Spendenwidget (monatlich vorausgewählt)? Dann dessen Nummer.
+2. Spendenwidget 115 ist eingebaut. Die Knöpfe „Jetzt monatlich helfen“ auf der Ergebnisseite springen zum Formular und sollen „monatlich“ vorauswählen – in das echte iframe kann die Seite aber nicht hineingreifen. Ist 115 schon auf „monatlich“ voreingestellt, oder gibt es dafür ein eigenes Widget bzw. einen Adress-Zusatz?
 3. Echte Namen, Fotos und Texte der sechs Tierheimhunde.
 4. Gekürzte Texte für die Ergebnisseite.
 5. Unter welcher Adresse soll das Quiz laufen (Unterordner oder Subdomain von aktivertierschutz.at)?
