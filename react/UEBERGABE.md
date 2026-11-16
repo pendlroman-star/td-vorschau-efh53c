@@ -102,7 +102,7 @@ Logik wurde über viele Runden mit dem Kunden abgestimmt und auf echten Geräten
   Einbettungscode des Anbieters, plus dessen drei Skripte (Höhenanpassung).
 - Überall sonst (Testseite, lokal) verweigert der Anbieter die Einbettung. Dort steht eine **Nachbildung** zur
   Vorschau (10 / 18 / 25 €, 18 € vorgewählt), die nichts absendet.
-- Die **Beträge im echten Formular** stellt der Formularanbieter ein, nicht diese Seite.
+- Die **Beträge und Voreinstellungen im echten Formular** kommen vom Formularanbieter, nicht von dieser Seite. Widget 115 ist laut Kunde fertig eingestellt.
 - Die Nummer steht in `src/data/config.ts` (`spendenProduktId`).
 
 ### Anmeldeformular nach dem Quiz (noch offen)
@@ -155,7 +155,7 @@ Alle Stellen sind im Code mit „VOR DEM LIVEGANG ENTFERNEN“ markiert (Details
 - [ ] **Geräteansicht** entfernen (`components/dev/DeviceSwitch.tsx`, `GeraeteApp.tsx`, `geraete.html`, Eintrag in `vite.config.ts`)
 - [ ] **Variante „Natur“** (`?stil=natur`) und Ordner `bilder/hunde/natur/` entfernen
 - [ ] **Anmeldeformular** einbinden (`formularUrl`) und `postMessage` mit Vorname prüfen
-- [ ] **Spendenwidget 115** unter aktivertierschutz.at prüfen: Beträge 10/18/25 €, Zahlungsarten, Höhe
+- [ ] **Spendenwidget 115** unter aktivertierschutz.at einmal ansehen (Darstellung, Höhe) – laut Kunde fertig eingestellt
 - [ ] **Platzhalter** ersetzen: Namen und Fotos der Tierheimhunde (nur „Moritz“ ist echt), Links in der Fußzeile (`#`)
 - [ ] **Texte der Ergebnisseite**: der Kunde liefert noch gekürzte Fassungen
 - [ ] Bankdaten (IBAN/BIC) in der Fußzeile prüfen
@@ -167,10 +167,9 @@ Alle Stellen sind im Code mit „VOR DEM LIVEGANG ENTFERNEN“ markiert (Details
 ## 12. Offene Fragen an den Kunden
 
 1. Adresse des Anmeldeformulars (iframe) – und kann es den Vornamen per `postMessage` zurückmelden?
-2. Spendenwidget 115 ist eingebaut. Die Knöpfe „Jetzt monatlich helfen“ auf der Ergebnisseite springen zum Formular und sollen „monatlich“ vorauswählen – in das echte iframe kann die Seite aber nicht hineingreifen. Ist 115 schon auf „monatlich“ voreingestellt, oder gibt es dafür ein eigenes Widget bzw. einen Adress-Zusatz?
-3. Echte Namen, Fotos und Texte der sechs Tierheimhunde.
-4. Gekürzte Texte für die Ergebnisseite.
-5. Unter welcher Adresse soll das Quiz laufen (Unterordner oder Subdomain von aktivertierschutz.at)?
+2. Echte Namen, Fotos und Texte der sechs Tierheimhunde.
+3. Gekürzte Texte für die Ergebnisseite.
+4. Unter welcher Adresse soll das Quiz laufen (Unterordner oder Subdomain von aktivertierschutz.at)?
 
 ## 13. Ansprechpartner
 

@@ -14,7 +14,7 @@ export interface Config {
   /** ms für den Übergang „Dein Doppelgänger wird analysiert …“ */
   analyseDauer: number
   /** Produkt-ID des Spendenwidgets bei formulare.aktivertierschutz.at (nur auf der Live-Seite eingebunden).
-      Offen: Gibt es beim Formularanbieter ein eigenes Produkt für die Dauerspende (monatlich voreingestellt)? Dann hier eintragen. */
+      Laut Kunde (16.11.2026) fertig eingestellt, inkl. Beträgen und Voreinstellung. */
   spendenProduktId: number
 }
 
