@@ -1,0 +1,104 @@
+/* ==========================================================================
+   HUNDE-SLIDER (Hero der Startseite) – Bühne, Formen, Hunde, Siegel, Pause
+   Choreografie (Gleiten der Formen, Überblendung, Parallax) – daher als CSS.
+   ========================================================================== */
+@layer components {
+  .showcase { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .stage {
+    position: relative;
+    width: min(100%, 540px, calc((100svh - var(--header-h) - 130px) / 1.1));
+    min-width: 300px;
+    aspect-ratio: 1000 / 1100;
+    container-type: inline-size;
+    touch-action: pan-y;
+    user-select: none; -webkit-user-select: none;
+  }
+  .layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+
+  /* Formen: Lage/Größe je Hund setzt der Slider (--x, --y, --s, --r aus KOMPOSITION) */
+  .bubble {
+    position: absolute; left: 0; top: 0; width: 100cqw;
+    transform:
+      translate(calc(var(--x, 50) * 1cqw - 50%), calc(var(--y, 50) * 1cqw - 50%))
+      rotate(calc(var(--r, 0) * 1deg)) scale(var(--s, .5));
+    transition: transform 1400ms cubic-bezier(.45, 0, .2, 1);   /* ruhiges Gleiten, kein Nachfedern */
+    will-change: transform;
+  }
+  .bubble:nth-child(2) { transition-delay: 40ms; }
+  .bubble:nth-child(3) { transition-delay: 80ms; }
+  .bubble:nth-child(4) { transition-delay: 120ms; }
+  .bubble:nth-child(5) { transition-delay: 160ms; }
+  .bubble__pulse { will-change: transform, opacity; }
+  .bubble svg { width: 100%; height: auto; animation: var(--float) var(--dur, 10s) ease-in-out var(--delay, 0s) infinite alternate; will-change: transform; }
+  .bubble path { fill: currentColor; }
+  .bubble--1 { color: var(--color-lime-200); --float: float-y;   --dur: 9s; }
+  .bubble--2 { color: var(--color-lime);     --float: float-x;   --dur: 12s; --delay: -3s; }
+  .bubble--3 { color: var(--color-lime-400); --float: float-rot; --dur: 14s; --delay: -6s; }
+  .bubble--4 { color: var(--color-lime-300); --float: float-xy;  --dur: 10.5s; --delay: -2s; }
+  .bubble--5 { color: var(--color-lime-600); --float: float-y;   --dur: 8s; --delay: -4s; }
+
+  .dog-shadow {
+    position: absolute; left: 19%; bottom: .5%; width: 62%; height: 7%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(13, 58, 32, .26), rgba(13, 58, 32, .08) 60%, transparent);
+    will-change: transform, opacity;
+  }
+  .dogs { position: absolute; inset: 6% 5% 0 5%; animation: dog-breathe 3.6s ease-in-out infinite alternate; will-change: transform; }
+  .dog { position: absolute; inset: 0; margin: 0; opacity: 0; will-change: opacity; pointer-events: none; }
+  .dog.is-active { opacity: 1; }
+
+  /* Siegel „Dein Hunde-Match wartet!“ – in der CI-Akzentfarbe */
+  .badge {
+    position: absolute; right: -6%; top: -2%; z-index: 3;
+    width: clamp(92px, 24cqw, 132px); aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-red);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-cream);
+    transition: transform 400ms var(--ease-spring), background-color 200ms;
+  }
+  .badge:hover { transform: scale(1.06) rotate(-4deg); background: var(--color-red-700); }
+  .badge:focus-visible { outline: 3px solid var(--color-forest); outline-offset: 4px; border-radius: 50%; }
+  .badge__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: spin 26s linear infinite; }
+  .badge__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 14.5px; fill: currentColor; }
+  .badge__heart { position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; animation: heartbeat 2.4s ease-in-out infinite; }
+  .badge__heart path { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Anhalten/Abspielen – dezent, aber sichtbar und für alle erreichbar
+     (Barrierefreiheit, WCAG 2.2.2: Bewegung, die von selbst startet und länger als 5 s läuft, muss anhaltbar sein) */
+  .still-btn {
+    position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%;
+    display: grid; place-items: center; flex: none;
+    width: 34px; height: 34px; padding: 0; border-radius: 50%;
+    border: 1.5px solid rgba(19, 73, 42, .25); background: rgba(255, 255, 255, .75);
+    color: var(--color-forest); cursor: pointer;
+    transition: background-color 200ms, border-color 200ms, transform 300ms var(--ease-smooth);
+  }
+  .still-btn:hover { background: var(--color-lime); border-color: var(--color-lime); transform: scale(1.06); }
+  .still-btn:focus-visible { outline: 3px solid var(--color-forest); outline-offset: 3px; }
+  .still-btn svg { width: 14px; height: 14px; }
+  .still-btn .i-play { display: none; }
+  .showcase.is-still .still-btn .i-play { display: block; }
+  .showcase.is-still .still-btn .i-pause { display: none; }
+  /* Angehalten: jede Bewegung im Hundebereich steht still */
+  .showcase.is-still *, .showcase.is-still *::before, .showcase.is-still *::after { animation-play-state: paused !important; }
+
+  @media (max-width: 900px) {
+    .stage { width: min(calc(100% + 2 * clamp(16px, 4vw, 40px)), 540px); min-width: 0; }
+    .badge { right: 2%; }
+    .still-btn { left: auto; right: 0; top: auto; bottom: calc(100% + 8px); translate: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bubble svg, .dogs, .badge__ring, .badge__heart { animation: none !important; }
+    .bubble { transition: none; }
+  }
+
+  @keyframes float-y   { from { transform: translateY(-1.6%); } to { transform: translateY(1.6%); } }
+  @keyframes float-x   { from { transform: translateX(-2.4%); } to { transform: translateX(2.4%); } }
+  @keyframes float-rot { from { transform: rotate(-2deg); }     to { transform: rotate(2deg); } }
+  @keyframes float-xy  { from { transform: translate(1.4%, -1.4%) rotate(-1deg); } to { transform: translate(-1.4%, 1.4%) rotate(1deg); } }
+  @keyframes dog-breathe { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-0.9cqw) rotate(-.35deg); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes heartbeat { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(1.12); } 90% { transform: scale(.97); } }
+}

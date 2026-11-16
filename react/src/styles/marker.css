@@ -1,0 +1,36 @@
+/* ==========================================================================
+   LIME-MARKER (Balken in der unteren Hälfte des Worts, wie im Entwurf)
+   ========================================================================== */
+@layer components {
+  .marker { position: relative; display: inline-block; z-index: 0; }
+  .marker::before {
+    content: ""; position: absolute; z-index: -1;
+    left: -.12em; right: -.1em; bottom: .02em; height: .5em;
+    background: var(--color-lime);
+    border-radius: .25em .4em .3em .35em / .4em .3em .4em .3em;
+    transform: rotate(-1.2deg) scaleX(var(--mk, 1));
+    transform-origin: left center;
+  }
+  /* Ergebnisseite: links etwas knapper */
+  .marker--knapp::before { left: -.1em; }
+  /* wächst beim Laden von links nach rechts (Hero der Startseite / Name auf der Ergebnisseite) */
+  .marker--waechst::before { animation: marker-in 900ms var(--ease-smooth) var(--marker-delay, 300ms) both; }
+
+  /* Rassenname kann zweizeilig sein (Jack Russell Terrier, Labrador Retriever):
+     Marker als Hintergrund je Zeile – jede Zeile bekommt ihren eigenen, passend langen Balken */
+  .marker--zeilen {
+    display: inline; padding: 0 .08em; margin: 0 -.08em;
+    background-image: linear-gradient(var(--color-lime), var(--color-lime));
+    background-repeat: no-repeat; background-position: 0 88%; background-size: 100% .48em;
+    border-radius: .25em;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    animation: marker-line 900ms var(--ease-smooth) 900ms both;
+  }
+  .marker--zeilen::before { content: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marker--waechst::before, .marker--zeilen { animation: none; }
+  }
+  @keyframes marker-in { from { transform: rotate(-1.2deg) scaleX(0); } to { transform: rotate(-1.2deg) scaleX(1); } }
+  @keyframes marker-line { from { background-size: 0% .48em; } to { background-size: 100% .48em; } }
+}

@@ -1,0 +1,21 @@
+/* ==========================================================================
+   QUIZ – Rasteraufteilung einer Frage und kurze Schrittnummern am Handy
+   (alles andere als Tailwind-Klassen in den Komponenten)
+   ========================================================================== */
+@layer components {
+  .q {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    grid-template-areas: "head head" "answers media" "back .";
+    column-gap: clamp(20px, 3.5vw, 40px);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .q { grid-template-columns: 1fr; grid-template-areas: "head" "media" "answers" "back"; }
+  }
+  /* Handy: statt „Frage 1“ nur „1“ (Bildschirmleser lesen weiter das aria-label) */
+  @media (max-width: 520px) {
+    .step__text { font-size: 0; }
+    .step__text::after { content: attr(data-short); font-size: .82rem; }
+  }
+}

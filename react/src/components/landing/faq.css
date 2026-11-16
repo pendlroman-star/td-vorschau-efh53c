@@ -1,0 +1,8 @@
+/* FAQ: weiches Auf-/Zuklappen (moderne Browser), eigenes Pfeil-Symbol statt Dreieck */
+@layer components {
+  .faq-item summary { list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item[open] summary svg { transform: rotate(180deg); }
+  .faq-item::details-content { block-size: 0; overflow: hidden; transition: block-size 450ms var(--ease-smooth), content-visibility 450ms allow-discrete; }
+  .faq-item[open]::details-content { block-size: auto; }
+}

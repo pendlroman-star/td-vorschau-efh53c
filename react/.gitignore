@@ -1,0 +1,23 @@
+# Abhängigkeiten
+node_modules
+
+# Build-Ausgabe: landet außerhalb dieses Ordners in ../react-vorschau
+# (vite.config.ts → build.outDir). Eine .gitignore wirkt nur auf ihren eigenen
+# Ordner – soll ../react-vorschau nicht ins Repository, muss die Zeile
+# „react-vorschau/“ in die .gitignore im Repository-Hauptordner.
+dist
+dist-ssr
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Lokales / Editor
+*.local
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.sw?

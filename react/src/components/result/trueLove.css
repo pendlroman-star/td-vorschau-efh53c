@@ -1,0 +1,15 @@
+/* Siegel „Schenke Hunden einen sicheren Platz“ – sitzt rechts oben auf dem Kartenrand, Text läuft im Kreis */
+@layer components {
+  .true-love { position: absolute; right: clamp(-46px, -3.2vw, -14px); top: clamp(-56px, -4vw, -34px); z-index: 2; width: clamp(110px, 11.5vw, 138px); aspect-ratio: 1; border-radius: 50%; background: var(--color-red); color: var(--color-cream); box-shadow: var(--shadow-lg); }
+  .true-love__ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; animation: true-love-spin 24s linear infinite; }
+  .true-love__ring text { font-family: var(--font-fun); font-weight: 800; font-size: 11.5px; fill: currentColor; }
+  .true-love__heart { position: absolute; left: 28%; top: 28%; width: 44%; height: 44%; }
+  .true-love__heart circle, .true-love__heart path { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 900px) {
+    .true-love { right: -6px; top: -22px; width: 88px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .true-love__ring { animation: none; }
+  }
+  @keyframes true-love-spin { to { transform: rotate(360deg); } }
+}
