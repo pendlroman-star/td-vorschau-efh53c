@@ -560,7 +560,7 @@ m.alt = `Noch ein Bild von ${e.tiername}`;
 
 /* ---------- Spenden ---------- */
 // Offen: Gibt es beim Formularanbieter ein eigenes Produkt für die Dauerspende (monatlich voreingestellt)? Dann hier dessen productid eintragen.
-const SPENDENFORMULAR = 'https://formulare.aktivertierschutz.at/embed/product?productid=11';
+const SPENDENFORMULAR = 'https://formulare.aktivertierschutz.at/embed/product?productid=115';   // Spendenwidget laut Kunde (16.11.2026)
 $('s-title').textContent = `Hilf ${e.tiername} und allen anderen Tieren in Not`;
 $('s-text').textContent  = `${e.tiername} wartet bei uns auf ein Zuhause. Bis es so weit ist, kümmern wir uns um ${ihn} – mit Futter, tierärztlicher Versorgung und viel Zuwendung. Mit deiner Spende hilfst du ${e.tiername} und allen anderen Tieren im Tierheim.`;
 
@@ -568,7 +568,7 @@ const slot = $('donate-slot');
 const live = /(^|\.)aktivertierschutz\.at$/.test(location.hostname);
 if (live) {
   // Echtes Formular – genauso eingebunden wie auf aktivertierschutz.at/spenden
-  slot.innerHTML = `<iframe class="fso_iframe" src="${SPENDENFORMULAR}" title="Spendenformular" loading="lazy"></iframe>`;
+  slot.innerHTML = `<iframe class="fso_iframe" src="${SPENDENFORMULAR}" title="Spendenformular" loading="lazy" allow="clipboard-write;payment" sandbox="allow-scripts allow-same-origin allow-top-navigation allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>`;
   $('donate-note').remove();
   ['iFrameResizer.min.js', 'IFrameRegistration.js', 'fso-forms-api-parent.js'].forEach(f => {
     const sc = document.createElement('script'); sc.src = `https://formulare.aktivertierschutz.at/js/${f}`; sc.async = false; document.body.appendChild(sc);
