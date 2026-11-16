@@ -302,10 +302,10 @@ a { color: inherit; }
 .breed span { display: inline-block; will-change: transform, opacity; }
 .slider-bar { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; }
 .slider-bar .breed { margin: 0; }
-/* Anhalten/Abspielen – dezent, aber für alle erreichbar (Barrierefreiheit) */
+/* Anhalten/Abspielen – dezent, aber sichtbar und für alle erreichbar
+   (Barrierefreiheit, WCAG 2.2.2: Bewegung, die von selbst startet und länger als 5 s läuft, muss anhaltbar sein) */
 .still-btn {
   position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%;
-  opacity: 0; pointer-events: none;                 /* kein sichtbares Pausezeichen (Kundenwunsch) … */
   display: grid; place-items: center; flex: none;
   width: 34px; height: 34px; padding: 0; border-radius: 50%;
   border: 1.5px solid rgba(19, 73, 42, .25); background: rgba(255, 255, 255, .75);
@@ -313,7 +313,7 @@ a { color: inherit; }
   transition: background-color 200ms, border-color 200ms, transform 300ms var(--ease);
 }
 .still-btn:hover { background: var(--lime); border-color: var(--lime); transform: scale(1.06); }
-.still-btn:focus-visible { opacity: 1; pointer-events: auto; outline: 3px solid var(--forest); outline-offset: 3px; }   /* … außer bei Tastaturbedienung */
+.still-btn:focus-visible { outline: 3px solid var(--forest); outline-offset: 3px; }
 .still-btn svg { width: 14px; height: 14px; }
 .still-btn .i-play { display: none; }
 .showcase.is-still .still-btn .i-play { display: block; }
@@ -669,8 +669,7 @@ a { color: inherit; }
 
       <div class="slider-bar">
         <p class="breed" aria-hidden="true"><span id="breedName"></span></p>
-        <!-- Kundenwunsch 11.11.: kein sichtbares Pausezeichen. Der Knopf bleibt für Tastatur und Screenreader
-             erhalten und erscheint nur, wenn er den Fokus hat (Barrierefreiheit: Bewegung muss anhaltbar sein). -->
+        <!-- Pausezeichen sichtbar (16.11., Barrierefreiheit WCAG 2.2.2) -->
         <button type="button" class="still-btn" id="stillBtn" aria-controls="dogs" aria-label="Bewegung anhalten" title="Bewegung anhalten">
           <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>
           <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.4 0-1.8l-10-6.4C8.9 4.3 8 4.8 8 5.6z"/></svg>
@@ -1365,5 +1364,6 @@ if ('IntersectionObserver' in window) {
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
 }
 </script>
+<script src="geraete.js?v=1" defer></script>
 </body>
 </html>

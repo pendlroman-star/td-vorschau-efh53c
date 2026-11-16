@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Geräteansicht – Tierischer Doppelgänger</title>
+<!-- Nur für Entwickler/Test: zeigt eine Seite in Tablet- oder Smartphone-Breite. Vor dem Livegang entfernen. -->
+<style>
+  :root { --forest: #13492a; --cream: #f6f9ed; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { display: flex; flex-direction: column; background: #e4e6dc; font: 14px/1.4 system-ui, -apple-system, sans-serif; color: var(--forest); }
+  .leiste { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; padding: 10px 16px; background: var(--forest); color: var(--cream); }
+  .leiste b { font-weight: 700; }
+  .gruppe { display: flex; gap: 2px; padding: 3px; border-radius: 99px; background: rgba(255,255,255,.1); }
+  .gruppe a, .gruppe button { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 0; border-radius: 99px; background: none; color: rgba(255,255,255,.8); font: 700 12px/1 inherit; font-family: inherit; text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .gruppe a:hover, .gruppe button:hover { color: #fff; background: rgba(255,255,255,.12); }
+  .gruppe [aria-current="true"], .gruppe [aria-pressed="true"], .gruppe [aria-current="true"]:hover, .gruppe [aria-pressed="true"]:hover { background: #fff; color: var(--forest); }
+  .gruppe svg { width: 14px; height: 14px; }
+  .mass { opacity: .7; font-variant-numeric: tabular-nums; }
+  .buehne { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+  .geraet { position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 36px; padding: 14px; background: #1d1d1f; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); transform-origin: center; }
+  .geraet--tablet { border-radius: 30px; padding: 18px; }
+  iframe { display: block; border: 0; border-radius: 22px; background: #fff; }
+  .geraet--tablet iframe { border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="leiste">
+  <b>Geräteansicht</b>
+  <nav class="gruppe" aria-label="Gerät">
+    <a href="#" data-g="desktop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11H3zM9 20h6M12 16v4"/></svg>Desktop</a>
+    <a href="#" data-g="tablet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M11 18h2"/></svg>Tablet</a>
+    <a href="#" data-g="phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>Smartphone</a>
+  </nav>
+  <div class="gruppe"><button type="button" id="drehen" aria-pressed="false">Quer</button></div>
+  <span class="mass" id="mass"></span>
+</div>
+<div class="buehne" id="buehne">
+  <div class="geraet" id="geraet"><iframe id="seite" title="Vorschau der Seite"></iframe></div>
+</div>
+<script>
+  const GERAETE = { tablet: { w: 820, h: 1180, name: 'Tablet (iPad Air)' }, phone: { w: 390, h: 844, name: 'Smartphone (iPhone 14)' } };
+  const p = new URLSearchParams(location.search);
+  let g = GERAETE[p.get('g')] ? p.get('g') : 'phone';
+  let quer = p.get('quer') === '1';
+  const seite = p.get('s') || 'index.html';
+  const frame = document.getElementById('seite'), geraet = document.getElementById('geraet'), buehne = document.getElementById('buehne');
+  // nur Seiten dieser Testseite zulassen
+  frame.src = /^[\w-]+\.html(\?.*)?$/.test(seite) ? seite : 'index.html';
+
+  // aktuelle Adresse in der Vorschau (z. B. nach dem Quiz auf der Ergebnisseite)
+  const aktuell = () => { try { const l = frame.contentWindow.location; return l.pathname.split('/').pop() + l.search; } catch (_) { return seite; } };
+
+  function zeigen() {
+    const d = GERAETE[g], w = quer ? d.h : d.w, h = quer ? d.w : d.h;
+    geraet.className = 'geraet geraet--' + g;
+    frame.style.width = w + 'px'; frame.style.height = h + 'px';
+    document.getElementById('mass').textContent = `${d.name} · ${w} × ${h}`;
+    document.querySelectorAll('[data-g]').forEach(a => a.setAttribute('aria-current', a.dataset.g === g));
+    document.getElementById('drehen').setAttribute('aria-pressed', quer);
+    passen();
+  }
+  // auf den verfügbaren Platz verkleinern (nie vergrößern)
+  function passen() {
+    geraet.style.scale = 1;
+    const r = geraet.getBoundingClientRect(), b = buehne.getBoundingClientRect();
+    geraet.style.scale = Math.min(1, (b.width - 40) / r.width, (b.height - 40) / r.height);
+  }
+  document.querySelectorAll('[data-g]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    if (a.dataset.g === 'desktop') { location.href = aktuell(); return; }
+    g = a.dataset.g; zeigen();
+    history.replaceState(null, '', `?g=${g}${quer ? '&quer=1' : ''}&s=${encodeURIComponent(aktuell())}`);
+  }));
+  document.getElementById('drehen').addEventListener('click', () => { quer = !quer; zeigen(); });
+  addEventListener('resize', passen);
+  zeigen();
+</script>
+</body>
+</html>
