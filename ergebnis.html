@@ -467,7 +467,7 @@ const werte = { name: e.tiername, vorname };
 
 // 1) Dein Charakter
 $('r-breed').textContent = h.name;
-$('r-traits').innerHTML  = h.eigenschaften.map(t => `<li>${t}</li>`).join('');
+$('r-traits').innerHTML  = h.eigenschaften.slice(0, 4).map(t => `<li>${t}</li>`).join('');
 $('r-pfote').innerHTML   = textHTML(' 🐾');
 $('r-charakter').textContent = e.charakter;
 // Echo: das Zitat aus dem Quiz hervorheben
@@ -579,8 +579,8 @@ if (live) {
     <form class="fso" novalidate aria-label="Spendenformular (Vorschau)">
       <h3>Gleich spenden und sofort helfen</h3>
       <div class="fso__amounts" role="group" aria-label="Betrag">
-        ${[15, 25, 40, 150].map(b => `<button type="button" class="fso__amount" data-b="${b}" aria-pressed="${b === 25}">${heart}${b} €</button>`).join('')}
-        <div class="fso__custom"><span>€</span><input type="text" inputmode="numeric" value="25" aria-label="Anderer Betrag in Euro"></div>
+        ${[10, 18, 25].map(b => `<button type="button" class="fso__amount" data-b="${b}" aria-pressed="${b === 18}">${heart}${b} €</button>`).join('')}
+        <div class="fso__custom"><span>€</span><input type="text" inputmode="numeric" value="18" aria-label="Anderer Betrag in Euro"></div>
       </div>
       <label for="f-freq">Wie häufig möchten Sie diesen Betrag spenden?</label>
       <select id="f-freq"><option>einmalig</option><option selected>monatlich</option><option>jährlich</option></select>

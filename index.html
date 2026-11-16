@@ -524,8 +524,8 @@ a { color: inherit; }
    CTA-BAND & FOOTER
    ========================================================================== */
 .cta-band { background: var(--lime); padding: 18px 0; text-align: center; font-weight: 700; }
-.cta-band a { text-underline-offset: 3px; text-decoration-thickness: 2px; margin-left: .3em; }
-.cta-band a:hover { text-decoration-color: var(--white); }
+.cta-band a { display: inline-block; margin-left: .5em; padding: .45em 1.1em; border-radius: 99px; background: var(--red); color: var(--white); text-decoration: none; transition: background-color 150ms; }
+.cta-band a:hover { background: var(--red-700); }
 
 .site-footer { background: var(--forest); color: var(--cream); padding: clamp(44px, 6vw, 64px) 0 0; font-size: .95rem; }
 .footer-grid { display: grid; grid-template-columns: repeat(4, auto) 1fr; gap: 28px clamp(28px, 5vw, 64px); align-items: start; padding-bottom: clamp(36px, 5vw, 52px); }
